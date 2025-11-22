@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib/core';
-import { GProjectStack } from '../lib/g.project-stack';
+import { GProjectStack } from '../lib/cdk-lambda';
 
 const app = new cdk.App();
 new GProjectStack(app, 'GProjectStack', {
