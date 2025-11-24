@@ -1,15 +1,38 @@
-'use client'                              // directive to clarify client-side. Place at top of ALL .tsx files
-import React from 'react'
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+import React from 'react';
+import styles from './page.module.css';
 
-import { RegisterShopper } from './boundary'
 
 
 export default function Home() {
+  // const [..., ...] = React.useState(...);
+
+  // if we want something like this to sync React variables
+  /*
+  const sync = () => {
+    updateScreen(...);
+    forceRedraw(redraw + 1);
+  }
+  */
+
+  let screen = </* name of starting screen function */ /* sync={sync}*//>;
+  if(/* screen enum value */) {
+    screen = </* name of starting screen function */ /* sync={sync}*//>;
+
+    // display auction screen if ongoing
+  } else if (/* other screen enum value */) {
+    screen = </* name of starting screen function */ /* sync={sync}*//>;
+
+  } else {
+    screen = </* name of starting screen function */ /* sync={sync}*//>;
+  }
+
+
   return (
-    <div>
-      <h1>A nice template to start with</h1>
+    <div className={styles.page}>
+      <main className={styles.main}>
+        {screen}
+      </main>
     </div>
   );
 }
