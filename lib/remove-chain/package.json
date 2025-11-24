@@ -1,8 +1,0 @@
-{
- "name": "RemoveChain",
- "version": "1.0.0",
- "dependencies": {
-  "mysql": "^2.18.1",
-  "mysql2": "^3.15.3"
- }
-}

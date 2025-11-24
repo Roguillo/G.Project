@@ -45,9 +45,12 @@ export class ApplicationStack extends cdk.Stack {
     const shopCompResource = api_endpoint.root.addResource('shopComp')
     const addChainResource = shopCompResource.addResource('add-chain')
     const addStoreToChainResource = shopCompResource.addResource('add-store-to-chain')
+    const addToReceiptResource = shopCompResource.addResource('add-to-receipt')
     const loginAdminResource = shopCompResource.addResource('login-admin')
     const loginShopperResource = shopCompResource.addResource('login-shopper')
     const registerShopperResource = shopCompResource.addResource('register-shopper')
+    const removeChainResource = shopCompResource.addResource('remove-chain')
+    const removeStoreResource = shopCompResource.addResource('remove-store')
     const showAdminDashboardResource = shopCompResource.addResource('show-admin-dashboard')
 
     // https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/aws-apigateway/README.md
@@ -135,6 +138,18 @@ export class ApplicationStack extends cdk.Stack {
     addStoreToChainResource.addMethod('POST', new apigw.LambdaIntegration(addStoreToChain_fn, integration_parameters), response_parameters)
 
 
+    // Add a POST method to the '/shopComp/addChain' resource
+    const addToReceipt_fn = new lambdaNodejs.NodejsFunction(this, 'AddToReceiptFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'addToReceipt.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'add-to-receipt')),
+      vpc: vpc,                                                             // Reference the VPC defined above
+      securityGroups: [securityGroup],                                      // Associate the security group
+      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+    })
+    addToReceiptResource.addMethod('POST', new apigw.LambdaIntegration(addToReceipt_fn, integration_parameters), response_parameters)
+
+
     // Add a POST method to the '/shopComp/loginAdmin' resource
     const loginAdmin_fn = new lambdaNodejs.NodejsFunction(this, 'LoginAdminFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
@@ -170,6 +185,30 @@ export class ApplicationStack extends cdk.Stack {
     })
     registerShopperResource.addMethod('POST', new apigw.LambdaIntegration(registerShopper_fn, integration_parameters), response_parameters)
 
+
+    // Add a POST method to the '/shopComp/addChain' resource
+    const removeChain_fn = new lambdaNodejs.NodejsFunction(this, 'RemoveChainFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'removeChain.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'remove-chain')),
+      vpc: vpc,                                                             // Reference the VPC defined above
+      securityGroups: [securityGroup],                                      // Associate the security group
+      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+    })
+    removeChainResource.addMethod('POST', new apigw.LambdaIntegration(removeChain_fn, integration_parameters), response_parameters)
+
+    
+    // Add a POST method to the '/shopComp/addChain' resource
+    const removeStore_fn = new lambdaNodejs.NodejsFunction(this, 'RemoveStoreFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'removeStore.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'remove-store')),
+      vpc: vpc,                                                             // Reference the VPC defined above
+      securityGroups: [securityGroup],                                      // Associate the security group
+      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+    })
+    removeStoreResource.addMethod('POST', new apigw.LambdaIntegration(removeStore_fn, integration_parameters), response_parameters)
+    
 
     // Add a POST method to the '/shopComp/showAdminDashboard' resource
     const showAdminDashboard_fn = new lambdaNodejs.NodejsFunction(this, 'ShowAdminDashboardFunction', {
