@@ -43,8 +43,12 @@ export class ApplicationStack extends cdk.Stack {
 
     // Create a resource (e.g., '/calc')
     const shopCompResource = api_endpoint.root.addResource('shopComp')
-    const registerShopperResource = shopCompResource.addResource('register-shopper')
+    const addChainResource = shopCompResource.addResource('add-chain')
+    const addStoreToChainResource = shopCompResource.addResource('add-store-to-chain')
+    const loginAdminResource = shopCompResource.addResource('login-admin')
     const loginShopperResource = shopCompResource.addResource('login-shopper')
+    const registerShopperResource = shopCompResource.addResource('register-shopper')
+    const showAdminDashboardResource = shopCompResource.addResource('show-admin-dashboard')
 
     // https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/aws-apigateway/README.md
     const integration_parameters = { 
@@ -106,20 +110,45 @@ export class ApplicationStack extends cdk.Stack {
   ]
     }
 
-    // Add a POST method to the '/shopComp/registerShopper' resource
-    const add_fn = new lambdaNodejs.NodejsFunction(this, 'RegisterShopperFunction', {
+
+    // Add a POST method to the '/shopComp/addChain' resource
+    const addChain_fn = new lambdaNodejs.NodejsFunction(this, 'AddChainFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'registerShopper.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'register-shopper')),
+      handler: 'addChain.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'add-chain')),
       vpc: vpc,                                                             // Reference the VPC defined above
       securityGroups: [securityGroup],                                      // Associate the security group
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
     })
+    addChainResource.addMethod('POST', new apigw.LambdaIntegration(addChain_fn, integration_parameters), response_parameters)
 
-    registerShopperResource.addMethod('POST', new apigw.LambdaIntegration(add_fn, integration_parameters), response_parameters)
+
+    // Add a POST method to the '/shopComp/addStoreToChain' resource
+    const addStoreToChain_fn = new lambdaNodejs.NodejsFunction(this, 'AddStoreToChainFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'addStoreToChain.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'add-store-to-chain')),
+      vpc: vpc,                                                             // Reference the VPC defined above
+      securityGroups: [securityGroup],                                      // Associate the security group
+      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+    })
+    addStoreToChainResource.addMethod('POST', new apigw.LambdaIntegration(addStoreToChain_fn, integration_parameters), response_parameters)
+
+
+    // Add a POST method to the '/shopComp/loginAdmin' resource
+    const loginAdmin_fn = new lambdaNodejs.NodejsFunction(this, 'LoginAdminFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'loginAdmin.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'login-admin')),
+      vpc: vpc,                                                             // Reference the VPC defined above
+      securityGroups: [securityGroup],                                      // Associate the security group
+      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+    })
+    loginAdminResource.addMethod('POST', new apigw.LambdaIntegration(loginAdmin_fn, integration_parameters), response_parameters)
+    
 
     // Add a POST method to the '/shopComp/loginShopper' resource
-    const multiply_fn = new lambdaNodejs.NodejsFunction(this, 'LoginShopperFunction', {
+    const loginShopper_fn = new lambdaNodejs.NodejsFunction(this, 'LoginShopperFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'loginShopper.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, 'login-shopper')),
@@ -127,7 +156,30 @@ export class ApplicationStack extends cdk.Stack {
       securityGroups: [securityGroup],                                      // Associate the security group
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
     })
-    loginShopperResource.addMethod('POST', new apigw.LambdaIntegration(multiply_fn, integration_parameters), response_parameters)
+    loginShopperResource.addMethod('POST', new apigw.LambdaIntegration(loginShopper_fn, integration_parameters), response_parameters)
+
+
+    // Add a POST method to the '/shopComp/registerShopper' resource
+    const registerShopper_fn = new lambdaNodejs.NodejsFunction(this, 'RegisterShopperFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'registerShopper.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'register-shopper')),
+      vpc: vpc,                                                             // Reference the VPC defined above
+      securityGroups: [securityGroup],                                      // Associate the security group
+      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+    })
+    registerShopperResource.addMethod('POST', new apigw.LambdaIntegration(registerShopper_fn, integration_parameters), response_parameters)
+
+
+    // Add a POST method to the '/shopComp/showAdminDashboard' resource
+    const showAdminDashboard_fn = new lambdaNodejs.NodejsFunction(this, 'ShowAdminDashboardFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'showAdminDashboard.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'show-admin-dashboard')),
+      vpc: vpc,                                                             // Reference the VPC defined above
+      securityGroups: [securityGroup],                                      // Associate the security group
+      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+    })
+    showAdminDashboardResource.addMethod('POST', new apigw.LambdaIntegration(showAdminDashboard_fn, integration_parameters), response_parameters)
   }
 }
-
