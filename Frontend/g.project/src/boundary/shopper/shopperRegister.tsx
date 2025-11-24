@@ -11,12 +11,14 @@ function RegisterShopper({instance, andRefreshDisplay}: {instance: any, andRefre
         const username = inputElementUsername.value
         const password = inputElementPassword.value
 
-        instance.post('/registerShopper').then((response) => {
-            let bodyData = response.data.body
-            andRefreshDisplay()
-        })
-
-
+        instance.post('/registerShopper', {
+                "name": name,
+                "username": username,
+                "password": password
+            })
+            .then((response) => {
+                console.log(response.data.body)
+            })
 
         // in case any parent React code needs to know about this change, call the passed-in function
         andRefreshDisplay()
