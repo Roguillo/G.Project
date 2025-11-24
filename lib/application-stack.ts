@@ -7,7 +7,7 @@ import * as path from 'node:path'
 import * as ec2 from 'aws-cdk-lib/aws-ec2'
 import { Duration } from 'aws-cdk-lib'
 
-export class CDKLambdaStack extends cdk.Stack {
+export class ApplicationStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
 
@@ -31,9 +31,9 @@ export class CDKLambdaStack extends cdk.Stack {
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
     })
 
-    const api_endpoint = new apigw.LambdaRestApi(this, `calculatorapi`, {
+    const api_endpoint = new apigw.LambdaRestApi(this, `shopcompapi`, {
       handler: default_fn,
-      restApiName: `CalculatorAPI`, 
+      restApiName: `ShopCompAPI`, 
       proxy: false,
       defaultCorsPreflightOptions: {                                        // Optional BUT very helpful: Add CORS configuration 
         allowOrigins: apigw.Cors.ALL_ORIGINS,
@@ -43,8 +43,8 @@ export class CDKLambdaStack extends cdk.Stack {
 
     // Create a resource (e.g., '/calc')
     const shopCompResource = api_endpoint.root.addResource('shopComp')
-    const registerShopperResource = shopCompResource.addResource('registerShopper')
-    const loginShopperResource = shopCompResource.addResource('loginShopper')
+    const registerShopperResource = shopCompResource.addResource('register-shopper')
+    const loginShopperResource = shopCompResource.addResource('login-shopper')
 
     // https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/aws-apigateway/README.md
     const integration_parameters = { 
@@ -110,7 +110,7 @@ export class CDKLambdaStack extends cdk.Stack {
     const add_fn = new lambdaNodejs.NodejsFunction(this, 'RegisterShopperFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'registerShopper.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'registerShopper')),
+      code: lambda.Code.fromAsset(path.join(__dirname, 'register-shopper')),
       vpc: vpc,                                                             // Reference the VPC defined above
       securityGroups: [securityGroup],                                      // Associate the security group
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
@@ -122,7 +122,7 @@ export class CDKLambdaStack extends cdk.Stack {
     const multiply_fn = new lambdaNodejs.NodejsFunction(this, 'LoginShopperFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'loginShopper.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'loginShopper')),
+      code: lambda.Code.fromAsset(path.join(__dirname, 'login-shopper')),
       vpc: vpc,                                                             // Reference the VPC defined above
       securityGroups: [securityGroup],                                      // Associate the security group
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
