@@ -7,6 +7,7 @@ import { instance } from './aws'
 import { AdminDashboard, RemoveStore, RemoveChain } from '../boundary/adminDashboard'
 import { LoginAdmin } from '../boundary/loginPage'
 import { RegisterShopper, LoginShopper } from '../boundary/shopper/shopperRegister'
+import { AddChain, AddStore } from '../boundary/shopper/shopperDashboard'
 import { Model } from '../Model'
 
 export default function Home() {
@@ -37,7 +38,12 @@ export default function Home() {
           ) : (
             <div>
               {!adminToken ? (
+                <div>
                 <h1>This is the shopper dashboard</h1>
+                <AddChain instance={instance} andRefreshDisplay={andRefreshDisplay} loginToken={model.getLoginToken()} />
+                <AddStore instance={instance} andRefreshDisplay={andRefreshDisplay} loginToken={model.getLoginToken()} />
+                </div>
+
               ) : (
                 <div>
                   <AdminDashboard instance={instance} adminToken={adminToken} refreshKey = {redraw}/>
