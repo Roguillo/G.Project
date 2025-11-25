@@ -1,7 +1,8 @@
-'use client'                              // directive to clarify client-side. Place at top of ALL .tsx files
-import React from 'react'
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+import React from 'react';
+import styles from './page.module.css';
+
+import { ReceiptView } from '../boundary/shopper/shopperReceiptView.tsx'
 import { instance } from './aws'
 
 import { AdminDashboard, RemoveStore, RemoveChain } from '../boundary/adminDashboard'

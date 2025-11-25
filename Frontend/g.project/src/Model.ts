@@ -1,3 +1,12 @@
+export enum currentView{
+    login,
+    shopperDash,
+    shopperRcpt,
+    shopperHist,
+    shopperList,
+    adminDash
+}
+
 export class Model {
     shopper: Shopper | undefined
     admin: Admin | undefined
