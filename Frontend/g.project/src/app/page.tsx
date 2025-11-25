@@ -4,7 +4,7 @@ import styles from './page.module.css';
 
 import { RegisterShopper, LoginShopper } from '../boundary/shopper/shopperRegister.tsx'
 import { instance } from './aws'
-import { Model } from '../model'
+import { Model } from '../Model'
 
 
 export default function Home() {
