@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 
 export function AddStore({instance, andRefreshDisplay, loginToken}: {instance: any, andRefreshDisplay: any, loginToken: any}){
-  const [apiMessage, changeApiMessage] = React.useState()
+  const [apiMessage, changeApiMessage] = React.useState("")
   
   async function addStore() {
 
@@ -27,7 +27,7 @@ export function AddStore({instance, andRefreshDisplay, loginToken}: {instance: a
       if (message.error != undefined) {
         changeApiMessage(message.error);
       } else {
-        changeApiMessage(message);  
+        changeApiMessage("Store Added");  
       }
 
     andRefreshDisplay();
@@ -39,13 +39,14 @@ export function AddStore({instance, andRefreshDisplay, loginToken}: {instance: a
       <b>Store Name: </b><input id="store-name-to-add" placeholder="Store Name" data-testid="store-name-to-add"></input>
       <b>Store Address: </b><input id="store-address-to-add" placeholder="Store Address" data-testid="store-address-to-add"></input>
       <button onClick={() => {addStore()}}>Add Store</button>
+      {apiMessage}
 
     </div>
   )
 }
 
 export function AddChain({instance, andRefreshDisplay, loginToken}: {instance: any, andRefreshDisplay: any, loginToken: any}){
-  const [apiMessage, changeApiMessage] = React.useState()
+  const [apiMessage, changeApiMessage] = React.useState("")
   
   async function addChain() {
 
@@ -66,7 +67,7 @@ export function AddChain({instance, andRefreshDisplay, loginToken}: {instance: a
       if (message.error != undefined) {
         changeApiMessage(message.error);
       } else {
-        changeApiMessage(message);  
+        changeApiMessage("Chain Added");  
       }
 
     andRefreshDisplay();
@@ -78,6 +79,7 @@ export function AddChain({instance, andRefreshDisplay, loginToken}: {instance: a
       <b>Chain Url: </b><input id="chain-url-to-add" placeholder="Chain Url" data-testid="chain-url-to-add"></input>
 
       <button onClick={() => {addChain()}}>Add Chain</button>
+      {apiMessage}
 
     </div>
   )
