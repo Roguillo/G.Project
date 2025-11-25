@@ -43,15 +43,15 @@ export class ApplicationStack extends cdk.Stack {
 
     // Create a resource (e.g., '/calc')
     const shopCompResource = api_endpoint.root.addResource('shopComp')
-    const addChainResource = shopCompResource.addResource('add-chain')
-    const addStoreToChainResource = shopCompResource.addResource('add-store-to-chain')
-    const addToReceiptResource = shopCompResource.addResource('add-to-receipt')
-    const loginAdminResource = shopCompResource.addResource('login-admin')
-    const loginShopperResource = shopCompResource.addResource('login-shopper')
-    const registerShopperResource = shopCompResource.addResource('register-shopper')
-    const removeChainResource = shopCompResource.addResource('remove-chain')
-    const removeStoreResource = shopCompResource.addResource('remove-store')
-    const showAdminDashboardResource = shopCompResource.addResource('show-admin-dashboard')
+    const addChainResource = shopCompResource.addResource('addChain')
+    const addStoreToChainResource = shopCompResource.addResource('addStoreToChain')
+    const addToReceiptResource = shopCompResource.addResource('addToReceipt')
+    const loginAdminResource = shopCompResource.addResource('loginAdmin')
+    const loginShopperResource = shopCompResource.addResource('loginShopper')
+    const registerShopperResource = shopCompResource.addResource('registerShopper')
+    const removeChainResource = shopCompResource.addResource('removeChain')
+    const removeStoreResource = shopCompResource.addResource('removeStore')
+    const showAdminDashboardResource = shopCompResource.addResource('showAdminDashboard')
 
     // https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/aws-apigateway/README.md
     const integration_parameters = { 
@@ -118,7 +118,7 @@ export class ApplicationStack extends cdk.Stack {
     const addChain_fn = new lambdaNodejs.NodejsFunction(this, 'AddChainFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'addChain.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'add-chain')),
+      code: lambda.Code.fromAsset(path.join(__dirname, 'addChain')),
       vpc: vpc,                                                             // Reference the VPC defined above
       securityGroups: [securityGroup],                                      // Associate the security group
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
@@ -130,7 +130,7 @@ export class ApplicationStack extends cdk.Stack {
     const addStoreToChain_fn = new lambdaNodejs.NodejsFunction(this, 'AddStoreToChainFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'addStoreToChain.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'add-store-to-chain')),
+      code: lambda.Code.fromAsset(path.join(__dirname, 'addStoreToChain')),
       vpc: vpc,                                                             // Reference the VPC defined above
       securityGroups: [securityGroup],                                      // Associate the security group
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
@@ -142,7 +142,7 @@ export class ApplicationStack extends cdk.Stack {
     const addToReceipt_fn = new lambdaNodejs.NodejsFunction(this, 'AddToReceiptFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'addToReceipt.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'add-to-receipt')),
+      code: lambda.Code.fromAsset(path.join(__dirname, 'addToReceipt')),
       vpc: vpc,                                                             // Reference the VPC defined above
       securityGroups: [securityGroup],                                      // Associate the security group
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
@@ -154,7 +154,7 @@ export class ApplicationStack extends cdk.Stack {
     const loginAdmin_fn = new lambdaNodejs.NodejsFunction(this, 'LoginAdminFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'loginAdmin.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'login-admin')),
+      code: lambda.Code.fromAsset(path.join(__dirname, 'loginAdmin')),
       vpc: vpc,                                                             // Reference the VPC defined above
       securityGroups: [securityGroup],                                      // Associate the security group
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
@@ -166,7 +166,7 @@ export class ApplicationStack extends cdk.Stack {
     const loginShopper_fn = new lambdaNodejs.NodejsFunction(this, 'LoginShopperFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'loginShopper.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'login-shopper')),
+      code: lambda.Code.fromAsset(path.join(__dirname, 'loginShopper')),
       vpc: vpc,                                                             // Reference the VPC defined above
       securityGroups: [securityGroup],                                      // Associate the security group
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
@@ -178,7 +178,7 @@ export class ApplicationStack extends cdk.Stack {
     const registerShopper_fn = new lambdaNodejs.NodejsFunction(this, 'RegisterShopperFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'registerShopper.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'register-shopper')),
+      code: lambda.Code.fromAsset(path.join(__dirname, 'registerShopper')),
       vpc: vpc,                                                             // Reference the VPC defined above
       securityGroups: [securityGroup],                                      // Associate the security group
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
@@ -190,7 +190,7 @@ export class ApplicationStack extends cdk.Stack {
     const removeChain_fn = new lambdaNodejs.NodejsFunction(this, 'RemoveChainFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'removeChain.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'remove-chain')),
+      code: lambda.Code.fromAsset(path.join(__dirname, 'removeChain')),
       vpc: vpc,                                                             // Reference the VPC defined above
       securityGroups: [securityGroup],                                      // Associate the security group
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
@@ -202,7 +202,7 @@ export class ApplicationStack extends cdk.Stack {
     const removeStore_fn = new lambdaNodejs.NodejsFunction(this, 'RemoveStoreFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'removeStore.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'remove-store')),
+      code: lambda.Code.fromAsset(path.join(__dirname, 'removeStore')),
       vpc: vpc,                                                             // Reference the VPC defined above
       securityGroups: [securityGroup],                                      // Associate the security group
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
@@ -214,7 +214,7 @@ export class ApplicationStack extends cdk.Stack {
     const showAdminDashboard_fn = new lambdaNodejs.NodejsFunction(this, 'ShowAdminDashboardFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'showAdminDashboard.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'show-admin-dashboard')),
+      code: lambda.Code.fromAsset(path.join(__dirname, 'showAdminDashboard')),
       vpc: vpc,                                                             // Reference the VPC defined above
       securityGroups: [securityGroup],                                      // Associate the security group
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
