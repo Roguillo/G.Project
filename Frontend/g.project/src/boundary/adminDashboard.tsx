@@ -9,14 +9,14 @@ interface AdminDashboardData {
   stores: any[];
 }
 
-export function AdminDashboard({instance, andRefreshDisplay}: {instance: any, andRefreshDisplay: any}) {
+export function AdminDashboard({instance, andRefreshDisplay, adminToken}: {instance: any, andRefreshDisplay: any, adminToken: any}) {
   const [dashboard, setDashboard] = useState<AdminDashboardData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function fetchDashboard() {
     
       const response = await instance.post('/showAdminDashboard', {
-        adminToken: 'adminTokenTest'
+        adminToken: adminToken
       });
 
       const message = JSON.parse(response.data.body);
