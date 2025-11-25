@@ -17,8 +17,8 @@ export default function Home() {
   
   return (
     <div>
-      <h1>A nice template to start with</h1>
-      <RegisterShopper instance={instance} andRefreshDisplay={andRefreshDisplay}></RegisterShopper>
+      <RegisterShopper instance={instance} andRefreshDisplay={andRefreshDisplay}></RegisterShopper><br></br>
+      <LoginShopper instance={instance} andRefreshDisplay={andRefreshDisplay}></LoginShopper>
     </div>
-  );
+  )
 }
