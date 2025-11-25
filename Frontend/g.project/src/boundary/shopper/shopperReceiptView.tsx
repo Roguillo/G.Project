@@ -1,42 +1,94 @@
-import React from 'react'
+import  React from 'react';
 import {Model} from '../../Model'
 
-function ReceiptView({instance, andRefreshDisplay}: {instance: any, andRefreshDisplay: any}) {
-    const [apiMessage, changeApiMessage] = React.useState()
-    const [model, updateModel] = React.useState(new Model())
+
+
+export function ShopperReceiptView({ instance, sync } : { instance: any, sync: any }) {
+    // react state variables
+    const [rAPIMessage, updateAPIMessage] = React.useState();
+    const [model      , updateModel     ] = React.useState(new Model());
+    // API message variable
+    let     APIMessage;
+    
+    // get date
+    const today = new Date();
+    const day   = today.getDate();
+    const month = today.getMonth() + 1;
+    const year  = today.getFullYear();
+
+    
+    // create receipt controller
+    function CreateReceiptController() {
+        // get login token from model
+        const loginToken = "test-token1234"; //TODO: get from model
+
+
+        // get store and chain IDs from shopper
+        const StoreIDElement = document.getElementById("store-ID") as HTMLInputElement;
+        const ChainIDElement = document.getElementById("chain-ID") as HTMLInputElement;
+        const StoreID = StoreIDElement.value;
+        const ChainID = ChainIDElement.value;
+
+
+        instance.post('/createReceipt', 
+                {  
+                    "loginToken" : loginToken,
+                    "storeID"    : StoreID,
+                    "chainID"    : ChainID,
+                    "date"       :   
+                        {  
+                            "day"   : day,  
+                            "month" : month,  
+                            "year"  : year 
+                        }  
+                }
+                )
+                .then((response : any) => {
+                    APIMessage = JSON.parse(response.data.body)
+                    
+                    if (APIMessage.error != undefined) {
+                        updateAPIMessage(APIMessage.error);
+
+                    } else {
+                        updateAPIMessage(APIMessage);
+         
+                    }
+        });
+
+        sync();
+    }
+
 
     function addItemToReceipt() {
+        const inputElementItemName     = document.getElementById("new-item-name")     as HTMLInputElement;
+        const inputElementItemCategory = document.getElementById("new-item-category") as HTMLInputElement;
+        const inputElementItemPrice    = document.getElementById("new-item-price")    as HTMLInputElement;
+        const inputElementItemQuantity = document.getElementById("new-item-quantity") as HTMLInputElement;
 
-        const inputElementItemName = document.getElementById("new-item-name") as HTMLInputElement
-        const inputElementItemCategory = document.getElementById("new-item-category") as HTMLInputElement
-        const inputElementItemPrice = document.getElementById("new-item-price") as HTMLInputElement
-        const inputElementItemQuantity = document.getElementById("new-item-quantity") as HTMLInputElement
 
-
-        const itemName = inputElementItemName.value
-        const itemCategory = inputElementItemCategory.value
-        const itemPrice = inputElementItemPrice.value
-        const itemQuantity = inputElementItemQuantity.value
+        const itemName     = inputElementItemName.value;
+        const itemCategory = inputElementItemCategory.value;
+        const itemPrice    = inputElementItemPrice.value;
+        const itemQuantity = inputElementItemQuantity.value;
 
         instance.post('/addToReceipt', {
                 "loginToken" : model.shopper?.loginToken,
                 "name": itemName,
                 "category": itemCategory,
-                ""
 
             })
-            .then((response) => {
-                let message = JSON.parse(response.data.body)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
+            .then((response : any) => {
+                APIMessage = JSON.parse(response.data.body);
                 
-                if (message.error != undefined) {
-                    changeApiMessage(message.error)
-                } else {
-                    changeApiMessage(message)
-                }
-            })
+                if (APIMessage.error != undefined) {
+                    updateAPIMessage(APIMessage.error);
 
-        // in case any parent React code needs to know about this change, call the passed-in function
-        andRefreshDisplay()
+                } else {
+                    updateAPIMessage(APIMessage);
+                }
+            });
+
+        sync();
     }
 
 
@@ -54,6 +106,18 @@ function ReceiptView({instance, andRefreshDisplay}: {instance: any, andRefreshDi
      */
     return (
         <div>
+        <div>
+            <b>store ID: </b><input id="store-ID" placeholder="store ID"></input>
+            <b>chain ID: </b><input id="chain-ID" placeholder="chain ID"></input>
+            <button onClick={() => {CreateReceiptController()}}>create receipt</button>
+            <div>Current Receipt:</div>
+            <div>Date: { day }</div>
+            <div>Month: { month }</div>
+            <div>Year: { year }</div>
+            {rAPIMessage}
+        </div>
+
+                <div>
             <h2>Receipt View</h2>
             <h4> {/*receipt store*/} </h4>
             <h4> {/*receipt chain*/} </h4>
@@ -68,7 +132,7 @@ function ReceiptView({instance, andRefreshDisplay}: {instance: any, andRefreshDi
                 </tr>
                 </thead>
                 <tbody>
-                {apiMessage.map((item:any) => (
+                {rAPIMessage.map((item:any) => (
                     <tr key = {item.ID}>
                     <td>{item.name}</td>
                     <td>${item.category}</td>
@@ -78,17 +142,10 @@ function ReceiptView({instance, andRefreshDisplay}: {instance: any, andRefreshDi
                 </tbody>
             </table>
 
-
-        
-
           <br></br>
-          {apiMessage}
+          {rAPIMessage}
           
         </div>
-    )
+        </div>
+    );
 }
-
-
-
-
-export { ReceiptView }
