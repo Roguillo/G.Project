@@ -140,7 +140,7 @@ export class Admin {
     password: string
     adminToken: string
 
-    constructor(name: string, username: string, password: string, adminToken, string) {
+    constructor(name: string, username: string, password: string, adminToken: string) {
         this.name = name
         this.username = username
         this.password = password

@@ -18,7 +18,7 @@ function RegisterShopper({model, instance, andRefreshDisplay}: {model: any, inst
                 "username": username,
                 "password": password
             })
-            .then((response) => {
+            .then((response: any) => {
                 let message = JSON.parse(response.data.body)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
                 
                 if (message.error != undefined) {
@@ -67,7 +67,7 @@ function LoginShopper({model, instance, andRefreshDisplay}: {model: any, instanc
                 "username": username,
                 "password": password
             })
-            .then((response) => {
+            .then((response: any) => {
                 let message = JSON.parse(response.data.body)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
                 console.log(message)
                 if (message.error != undefined) {
