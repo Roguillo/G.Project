@@ -42,14 +42,14 @@ export const handler = async (event) => {
   // Checks if a username and password align
   let validateCredentials = (username, password) => {
     return new Promise((resolve, reject) => {
-      const selectQuery = "SELECT shopperID FROM Shoppers WHERE username = ? AND password = ?"
+      const selectQuery = "SELECT * FROM Shoppers WHERE username = ? AND password = ?"
       pool.query(selectQuery, [username, password], (error, rows) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
         } else if (rows.length == 0) {
           reject(new Error("Incorrect password"))
         } else {
-          resolve(rows[0].shopperID)
+          resolve([rows[0].shopperID, rows[0].name])
         }
       })
     })
@@ -88,7 +88,7 @@ export const handler = async (event) => {
     }
 
     // Check if the username and password match, return error if not
-    const shopperCredentials = await validateCredentials(username, password)
+    const [shopperCredentials, name] = await validateCredentials(username, password)
 
     
     // Creates and stores login token if all previous test cases pass
@@ -97,7 +97,8 @@ export const handler = async (event) => {
 
     // Returns 200 and success result
     result = { "body" : "Successfully logged into " + username,
-               "loginToken" : loginToken }
+               "loginToken" : loginToken,
+               "name" : name }
     code = 200
 
   } catch (error) {
