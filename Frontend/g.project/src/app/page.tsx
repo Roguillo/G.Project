@@ -2,7 +2,7 @@
 import React from 'react';
 import styles from './page.module.css';
 
-import { RegisterShopper, LoginShopper } from '../boundary/shopper/shopperRegister.tsx'
+import { ReceiptView } from '../boundary/shopper/shopperReceiptView.tsx'
 import { instance } from './aws'
 
 
@@ -24,24 +24,23 @@ export default function Home() {
     forceRedraw(redraw + 1)
   }
   
-  let screen = </* name of starting screen function */ /* sync={sync}*//>;
-  if(/* screen enum value */) {
-    screen = </* name of starting screen function */ /* sync={sync}*//>;
+  // let screen = </* name of starting screen function */ /* sync={sync}*//>;
+  // if(/* screen enum value */) {
+  //   screen = </* name of starting screen function */ /* sync={sync}*//>;
 
-    // display auction screen if ongoing
-  } else if (/* other screen enum value */) {
-    screen = </* name of starting screen function */ /* sync={sync}*//>;
+  //   // display auction screen if ongoing
+  // } else if (/* other screen enum value */) {
+  //   screen = </* name of starting screen function */ /* sync={sync}*//>;
 
-  } else {
-    screen = </* name of starting screen function */ /* sync={sync}*//>;
-  }
+  // } else {
+  //   screen = </* name of starting screen function */ /* sync={sync}*//>;
+  // }
     
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <RegisterShopper instance={instance} andRefreshDisplay={andRefreshDisplay}></RegisterShopper><br></br>
-        <LoginShopper instance={instance} andRefreshDisplay={andRefreshDisplay}></LoginShopper>
-        {screen}
+        <ReceiptView instance={instance} andRefreshDisplay={andRefreshDisplay}></ReceiptView>
+       {/*screen*/}
       </main>
     </div>
   )
