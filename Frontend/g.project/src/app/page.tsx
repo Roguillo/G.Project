@@ -2,9 +2,13 @@
 import React from 'react';
 import styles from './page.module.css';
 
+import { RegisterShopper, LoginShopper } from '../boundary/shopper/shopperRegister.tsx'
+import { instance } from './aws'
 
 
 export default function Home() {
+  const [redraw, forceRedraw] = React.useState(0)
+
   // const [..., ...] = React.useState(...);
 
   // if we want something like this to sync React variables
@@ -14,7 +18,12 @@ export default function Home() {
     forceRedraw(redraw + 1);
   }
   */
-
+  
+  // Helper function that forces React app to redraw whenever this is called.
+  function andRefreshDisplay() {
+    forceRedraw(redraw + 1)
+  }
+  
   let screen = </* name of starting screen function */ /* sync={sync}*//>;
   if(/* screen enum value */) {
     screen = </* name of starting screen function */ /* sync={sync}*//>;
@@ -26,13 +35,14 @@ export default function Home() {
   } else {
     screen = </* name of starting screen function */ /* sync={sync}*//>;
   }
-
-
+    
   return (
     <div className={styles.page}>
       <main className={styles.main}>
+        <RegisterShopper instance={instance} andRefreshDisplay={andRefreshDisplay}></RegisterShopper><br></br>
+        <LoginShopper instance={instance} andRefreshDisplay={andRefreshDisplay}></LoginShopper>
         {screen}
       </main>
     </div>
-  );
+  )
 }
