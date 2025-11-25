@@ -1,5 +1,5 @@
 {
-    "name" : "addToRcpt",
+    "name" : "addToReceipt",
     "version": "1.0.0",
 
     "dependencies": {
