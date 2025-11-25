@@ -46,16 +46,16 @@ function LoginAdmin({instance, andRefreshDisplay, onLoginSuccess}: {instance: an
       )
   }
 
-  function UseCaseController() {
-      const thingElement = document.getElementById(`name of thing`) as HTMLInputElement;
-      const thing        = thingElement.value;
+//   function UseCaseController() {
+//       const thingElement = document.getElementById(`name of thing`) as HTMLInputElement;
+//       const thing        = thingElement.value;
 
-      // stuff to do with thing
+//       // stuff to do with thing
 
-      //sync() or update() maybe
-  }
+//       //sync() or update() maybe
+//   }
 
-  // other controllers as needed
+//   // other controllers as needed
 
   
   // return (

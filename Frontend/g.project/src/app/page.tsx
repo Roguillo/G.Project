@@ -5,6 +5,7 @@ import styles from './page.module.css';
 import { ReceiptView } from '../boundary/shopper/shopperReceiptView.tsx'
 import { instance } from './aws'
 import { ShopperReceiptView } from '../boundary/shopper/shopperReceiptView'
+import { Model } from '../Model'
 
 
 import { AdminDashboard, RemoveStore, RemoveChain } from '../boundary/adminDashboard'
@@ -20,6 +21,14 @@ export default function Home() {
 
   const handleLoginSuccess = (token: string) => {
     setAdminToken(token);
+  const [view, updateView] = React.useState(0)
+  const [model, updateModel] = React.useState(new Model());
+  const [shopper, updateShopper] = React.useState(model.shopper);
+
+  function sync() {
+    updateView(view + 1);
+    updateModel(model);
+    updateShopper(model.shopper);
   }
 
   function andRefreshDisplay() {
