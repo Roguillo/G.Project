@@ -4,6 +4,8 @@ import styles from './page.module.css';
 
 import { ReceiptView } from '../boundary/shopper/shopperReceiptView.tsx'
 import { instance } from './aws'
+import { ShopperReceiptView } from '../boundary/shopper/shopperReceiptView'
+
 
 import { AdminDashboard, RemoveStore, RemoveChain } from '../boundary/adminDashboard'
 import { LoginAdmin } from '../boundary/loginPage'
