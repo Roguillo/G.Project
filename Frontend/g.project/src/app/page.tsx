@@ -4,7 +4,7 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { instance } from './aws'
 
-import { AdminDashboard } from '../boundary/adminDashboard'
+import { AdminDashboard, RemoveStore, RemoveChain } from '../boundary/adminDashboard'
 import { LoginAdmin } from '../boundary/loginPage'
 
 export default function Home() {
@@ -26,7 +26,11 @@ export default function Home() {
         <LoginAdmin instance={instance} andRefreshDisplay={andRefreshDisplay} onLoginSuccess={handleLoginSuccess} />
       ) : (
         // Render dashboard once token is available
-        <AdminDashboard instance={instance} andRefreshDisplay={andRefreshDisplay} adminToken={adminToken} />
+        <div>
+        <AdminDashboard instance={instance} adminToken={adminToken} refreshKey = {redraw}/>
+        <RemoveChain instance={instance} andRefreshDisplay={andRefreshDisplay} adminToken={adminToken} />
+        <RemoveStore instance={instance} andRefreshDisplay={andRefreshDisplay} adminToken={adminToken} />
+        </div>
       )}
     </div>
   );

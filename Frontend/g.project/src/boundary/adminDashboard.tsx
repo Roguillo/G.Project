@@ -9,7 +9,7 @@ interface AdminDashboardData {
   stores: any[];
 }
 
-export function AdminDashboard({instance, andRefreshDisplay, adminToken}: {instance: any, andRefreshDisplay: any, adminToken: any}) {
+export function AdminDashboard({instance, refreshKey, adminToken}: {instance: any, refreshKey: any, adminToken: any}) {
   const [dashboard, setDashboard] = useState<AdminDashboardData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,12 +28,11 @@ export function AdminDashboard({instance, andRefreshDisplay, adminToken}: {insta
         setDashboard(message);  
       }
 
-    andRefreshDisplay();
   }
 
   useEffect(() => {
     fetchDashboard();
-  }, []);
+  }, [refreshKey]);
 
 
   // error first
@@ -68,4 +67,73 @@ export function AdminDashboard({instance, andRefreshDisplay, adminToken}: {insta
 
     </div>
   );
+}
+
+export function RemoveStore({instance, andRefreshDisplay, adminToken}: {instance: any, andRefreshDisplay: any, adminToken: any}){
+  const [apiMessage, changeApiMessage] = React.useState()
+  
+  async function removeStore() {
+
+      const inputElementName = document.getElementById("store-name") as HTMLInputElement
+      const storeName = inputElementName.value
+    
+      const response = await instance.post('/removeStore', {
+        storeName: storeName,
+        adminToken: adminToken
+      });
+
+      const message = JSON.parse(response.data.body);
+      console.log(message);
+
+      if (message.error != undefined) {
+        changeApiMessage(message.error);
+      } else {
+        changeApiMessage(message);  
+      }
+
+    andRefreshDisplay();
+  }
+
+  return(
+    <div>
+      <b>Store Name: </b><input id="store-name" placeholder="Store Name" data-testid="store-name"></input>
+      <button onClick={() => {removeStore()}}>Remove Store</button>
+
+    </div>
+  )
+}
+
+
+export function RemoveChain({instance, andRefreshDisplay, adminToken}: {instance: any, andRefreshDisplay: any, adminToken: any}){
+  const [apiMessage, changeApiMessage] = React.useState()
+  
+  async function removeChain() {
+
+      const inputElementName = document.getElementById("chain-name") as HTMLInputElement
+      const chainName = inputElementName.value
+    
+      const response = await instance.post('/removeChain', {
+        chainName: chainName,
+        adminToken: adminToken
+      });
+
+      const message = JSON.parse(response.data.body);
+      console.log(message);
+
+      if (message.error != undefined) {
+        changeApiMessage(message.error);
+      } else {
+        changeApiMessage(message);  
+      }
+
+    andRefreshDisplay();
+  }
+
+  return(
+    <div>
+      <b>Chain Name: </b><input id="chain-name" placeholder="Chain Name" data-testid="chain-name"></input>
+      <button onClick={() => {removeChain()}}>Remove Chain</button>
+
+    </div>
+  )
 }
