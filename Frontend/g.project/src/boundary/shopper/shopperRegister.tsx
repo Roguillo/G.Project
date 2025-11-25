@@ -1,6 +1,6 @@
 import React from 'react'
 
-function RegisterShopper({instance, andRefreshDisplay}: {instance: any, andRefreshDisplay: any}) {
+function RegisterShopper({model, instance, andRefreshDisplay}: {model: any, instance: any, andRefreshDisplay: any}) {
     const [apiMessage, changeApiMessage] = React.useState()
 
     function registerShopper() {
@@ -50,7 +50,7 @@ function RegisterShopper({instance, andRefreshDisplay}: {instance: any, andRefre
 }
 
 
-function LoginShopper({instance, andRefreshDisplay}: {instance: any, andRefreshDisplay: any}) {
+function LoginShopper({model, instance, andRefreshDisplay}: {model: any, instance: any, andRefreshDisplay: any}) {
     const [apiMessage, changeApiMessage] = React.useState()
 
     function loginShopper() {
@@ -60,6 +60,8 @@ function LoginShopper({instance, andRefreshDisplay}: {instance: any, andRefreshD
 
         const username = inputElementUsername.value
         const password = inputElementPassword.value
+        let name: string
+        let loginToken:string
 
         instance.post('/loginShopper', {
                 "username": username,
@@ -70,13 +72,13 @@ function LoginShopper({instance, andRefreshDisplay}: {instance: any, andRefreshD
                 console.log(message)
                 if (message.error != undefined) {
                     changeApiMessage(message.error)
+                    andRefreshDisplay()
                 } else {
+                    model.loginShopper(message.name, username, password, message.loginToken)
                     changeApiMessage(message.body)
+                    andRefreshDisplay()
                 }
             })
-
-        // in case any parent React code needs to know about this change, call the passed-in function
-        andRefreshDisplay()
     }
 
     return (
