@@ -6,7 +6,8 @@ import { instance } from './aws'
 
 import { AdminDashboard, RemoveStore, RemoveChain } from '../boundary/adminDashboard'
 import { LoginAdmin } from '../boundary/loginPage'
-import { RegisterShopper, LoginShopper } from '../boundary/shopper/shopperRegister.tsx'
+import { RegisterShopper, LoginShopper } from '../boundary/shopper/shopperRegister'
+import { AddChain, AddStore } from '../boundary/shopper/shopperDashboard'
 import { Model } from '../Model'
 
 export default function Home() {
@@ -26,7 +27,7 @@ export default function Home() {
     <div className={styles.page}>
       <main className={styles.main}>
         <div>
-          {!model.shopper?.name || !adminToken ? (
+          {!model.shopper?.name && !adminToken ? (
             // Render shopper and admin login first if no loginToken or adminToken
             <div>
               <h1>{model.shopper && "Welcome back " + model.shopper?.name}</h1><br></br>
@@ -37,7 +38,12 @@ export default function Home() {
           ) : (
             <div>
               {!adminToken ? (
+                <div>
                 <h1>This is the shopper dashboard</h1>
+                <AddChain instance={instance} andRefreshDisplay={andRefreshDisplay} loginToken={model.getLoginToken()} />
+                <AddStore instance={instance} andRefreshDisplay={andRefreshDisplay} loginToken={model.getLoginToken()} />
+                </div>
+
               ) : (
                 <div>
                   <AdminDashboard instance={instance} adminToken={adminToken} refreshKey = {redraw}/>
