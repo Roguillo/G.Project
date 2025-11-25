@@ -27,7 +27,7 @@ export default function Home() {
     <div className={styles.page}>
       <main className={styles.main}>
         <div>
-          {!model.shopper?.loginToken || !adminToken ? (
+          {!model.shopper?.loginToken && !adminToken ? (
             // Render shopper and admin login first if no loginToken or adminToken
             <div>
               <h1>{model.shopper && "Welcome back " + model.shopper?.name}</h1><br></br>
