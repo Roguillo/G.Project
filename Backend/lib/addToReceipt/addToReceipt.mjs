@@ -76,6 +76,15 @@ var pool = mysql.createPool({
         "quantity"   : XXX,  
         "price"      : XXX 
     }  
+
+    response:
+    200:
+      {  
+    "itemID" : "itemIDXXXX", , 
+    "name" : "itemName",  
+    "category"  : "itemCategory",  
+    "price" : 123 
+  } 
    */
 
   let response_code
@@ -98,8 +107,16 @@ export const handler = async (event) => {
 
     // add the item to DB and thus to receipt
     await(addItemToReceipt(quantity, itemID, storeID, receiptID, name, category, price))
+
+    let itemInfo = {
+    "itemID" : itemID,
+    "name" : name,  
+    "category" : category, 
+    "price" : price 
+    }
+
     response_code =  200;
-    response_body = { msg: "Item added to receipt" };
+    response_body = { itemInfo };
   }
 
   catch(error){
