@@ -6,6 +6,7 @@ import { instance } from './aws'
 
 import { AdminDashboard, RemoveStore, RemoveChain } from '../boundary/adminDashboard'
 import { LoginAdmin } from '../boundary/loginPage'
+import { AddChain, AddStore } from '../boundary/shopper/shopperDashboard'
 
 export default function Home() {
   const [redraw, forceRedraw] = React.useState(0)
@@ -30,6 +31,8 @@ export default function Home() {
         <AdminDashboard instance={instance} adminToken={adminToken} refreshKey = {redraw}/>
         <RemoveChain instance={instance} andRefreshDisplay={andRefreshDisplay} adminToken={adminToken} />
         <RemoveStore instance={instance} andRefreshDisplay={andRefreshDisplay} adminToken={adminToken} />
+        <AddChain instance={instance} andRefreshDisplay={andRefreshDisplay} loginToken={'test-token1234'} />
+        <AddStore instance={instance} andRefreshDisplay={andRefreshDisplay} loginToken={'test-token1234'} />
         </div>
       )}
     </div>
