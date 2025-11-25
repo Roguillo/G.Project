@@ -11,28 +11,46 @@ export enum currentView{
 }
 
 export class Model {
-    shopper: Shopper | undefined
-    admin: Admin | undefined
-    receipts: Receipt[] | undefined
-    shoppingLists: ShoppingList[] | undefined
-    chains: Chain[] | undefined
-    stores: Store[] | undefined
+    shopper      : Shopper | undefined;
+    admin        : Admin | undefined;
+    receipts     : Receipt[];
+    shoppingLists: ShoppingList[];
+    chains       : Chain[];
+    stores       : Store[];
 
 
     constructor(){
         this.shopper = undefined
         this.admin = undefined
-        this.receipts = undefined
-        this.shoppingLists = undefined
-        this.chains = undefined
-        this.stores = undefined
+        this.receipts = []
+        this.shoppingLists = []
+        this.chains = []
+        this.stores = []
     }
 
     loginShopper(name: string, username: string, password: string, loginToken: string) {
         this.shopper = new Shopper(name, username, password, loginToken)
 
     }
-    
+
+    makeReceipt(receiptID:string, date:Date){
+        let newRcpt = new Receipt(receiptID)
+        newRcpt.setDate(date)
+        this.receipts.push(newRcpt)
+    }
+
+
+    pickReceipt(receiptID:any){
+        if (this.receipts === undefined) {
+            return null
+        }
+        //ChatGPT query: "what function should I use to pick a specific item out of an array in javascript? 
+        // I have an array of receipt objects, and I need to pick one out by its receiptID field. 
+        // Every receipt has a unique id"
+        else{
+            return(this.receipts.find(receipt => receipt.receiptID === receiptID))
+        }
+    }
 }
 
 export class Shopper {
@@ -51,13 +69,13 @@ export class Shopper {
 
 export class Receipt {
     receiptID: string
-    name: string
+    //name: string
     items: Item[]
     date: Date | undefined
 
-    constructor(rcptID: string, name: string) {
+    constructor(rcptID: string) {
         this.receiptID = rcptID
-        this.name = name
+        //this.name = name
         this.items = []
     }
 
@@ -171,7 +189,7 @@ export class Admin {
     password: string
     adminToken: string
 
-    constructor(name: string, username: string, password: string, adminToken, string) {
+    constructor(name: string, username: string, password: string, adminToken : string) {
         this.name = name
         this.username = username
         this.password = password

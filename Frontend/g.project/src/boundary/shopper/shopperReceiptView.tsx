@@ -1,14 +1,13 @@
-import  React from 'react';
-import {Model} from '../../Model'
+import   React   from 'react';
+import { Model, Shopper } from '../../Model'
 
 
 
-export function ShopperReceiptView({ instance, sync } : { instance: any, sync: any }) {
+export function ShopperReceiptView({ model, instance, sync } : { model : any, instance: any, sync: any }) {
     // react state variables
     const [rAPIMessage, updateAPIMessage] = React.useState();
-    const [model      , updateModel     ] = React.useState(new Model());
     // API message variable
-    let     APIMessage;
+    let     APIMessage : any;
     
     // get date
     const today = new Date();
@@ -18,9 +17,14 @@ export function ShopperReceiptView({ instance, sync } : { instance: any, sync: a
 
     
     // create receipt controller
-    function CreateReceiptController() {
+    async function CreateReceiptController() {
+        if (!model.shopper) {
+            model.shopper = new Shopper("", "", "", "");
+        }
+
         // get login token from model
-        const loginToken = "test-token1234"; //TODO: get from model
+        model.shopper.loginToken = "test-token1234"; // temporary login token
+        const loginToken = model.shopper?.loginToken;
 
 
         // get store and chain IDs from shopper
@@ -30,7 +34,7 @@ export function ShopperReceiptView({ instance, sync } : { instance: any, sync: a
         const ChainID = ChainIDElement.value;
 
 
-        instance.post('/createReceipt', 
+        await instance.post('/createReceipt', 
                 {  
                     "loginToken" : loginToken,
                     "storeID"    : StoreID,
@@ -44,22 +48,26 @@ export function ShopperReceiptView({ instance, sync } : { instance: any, sync: a
                 }
                 )
                 .then((response : any) => {
-                    APIMessage = JSON.parse(response.data.body)
+                    APIMessage = (typeof response.data.body === 'string') ? JSON.parse(response.data.body) : response.data.body;
                     
                     if (APIMessage.error != undefined) {
                         updateAPIMessage(APIMessage.error);
 
                     } else {
                         updateAPIMessage(APIMessage);
-         
+                    
                     }
         });
 
+        //update the local model
+        model.makeReceipt(APIMessage.receiptID, today)
+        
+        
         sync();
     }
 
 
-    function addItemToReceipt() {
+    async function addItemToReceipt() {
         const inputElementItemName     = document.getElementById("new-item-name")     as HTMLInputElement;
         const inputElementItemCategory = document.getElementById("new-item-category") as HTMLInputElement;
         const inputElementItemPrice    = document.getElementById("new-item-price")    as HTMLInputElement;
@@ -70,12 +78,15 @@ export function ShopperReceiptView({ instance, sync } : { instance: any, sync: a
         const itemCategory = inputElementItemCategory.value;
         const itemPrice    = inputElementItemPrice.value;
         const itemQuantity = inputElementItemQuantity.value;
+        
 
-        instance.post('/addToReceipt', {
+        await instance.post('/addToReceipt', {
                 "loginToken" : model.shopper?.loginToken,
+                "receiptID" : "id",
                 "name": itemName,
-                "category": itemCategory,
-
+                "category": itemCategory, 
+                "price"  :  itemPrice,
+                "quantity" : itemQuantity
             })
             .then((response : any) => {
                 APIMessage = JSON.parse(response.data.body);
@@ -86,7 +97,10 @@ export function ShopperReceiptView({ instance, sync } : { instance: any, sync: a
                 } else {
                     updateAPIMessage(APIMessage);
                 }
-            });
+            }
+        );
+
+        //update model
 
         sync();
     }
@@ -94,6 +108,8 @@ export function ShopperReceiptView({ instance, sync } : { instance: any, sync: a
 
     // make another function for remove item from receipt and export it
 
+
+    
 
     /**
      * ok ideas
@@ -104,48 +120,76 @@ export function ShopperReceiptView({ instance, sync } : { instance: any, sync: a
      * figure out how to get the receipt data laterrrrrrrr (probably redo outputs for ur lambda fns) just make the structure rn
      * 
      */
+
+    // ChatGPT for GUI --> prompt: "make it pretty + <html code>" (for the code we already had)
     return (
-        <div>
-        <div>
-            <b>store ID: </b><input id="store-ID" placeholder="store ID"></input>
-            <b>chain ID: </b><input id="chain-ID" placeholder="chain ID"></input>
-            <button onClick={() => {CreateReceiptController()}}>create receipt</button>
-            <div>Current Receipt:</div>
-            <div>Date: { day }</div>
-            <div>Month: { month }</div>
-            <div>Year: { year }</div>
-            {rAPIMessage}
-        </div>
+        <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+            {/* Input Section */}
+            <div style={{ marginBottom: '30px', borderBottom: '1px solid #ccc', paddingBottom: '20px' }}>
+                <div style={{ marginBottom: '10px' }}>
+                <label style={{ marginRight: '10px' }}>
+                    <b>Store ID:</b>
+                    <input
+                    id="store-ID"
+                    placeholder="store ID"
+                    style={{ marginLeft: '5px', padding: '5px' }}
+                    />
+                </label>
+
+                <label style={{ marginRight: '10px' }}>
+                    <b>Chain ID:</b>
+                    <input
+                    id="chain-ID"
+                    placeholder="chain ID"
+                    style={{ marginLeft: '5px', padding: '5px' }}
+                    />
+                </label>
+
+                <button
+                    onClick={() => CreateReceiptController()}
+                    style={{ padding: '5px 15px', cursor: 'pointer' }}
+                >
+                    Create Receipt
+                </button>
+                </div>
 
                 <div>
-            <h2>Receipt View</h2>
-            <h4> {/*receipt store*/} </h4>
-            <h4> {/*receipt chain*/} </h4>
-            <h4>{/*receipt date*/}</h4>
+                <h4>Current Receipt:</h4>
+                <div>Date: {day}</div>
+                <div>Month: {month}</div>
+                <div>Year: {year}</div>
+                {rAPIMessage?.msg && <div style={{ marginTop: '10px', color: 'green' }}>{rAPIMessage.msg}</div>}
+                </div>
+            </div>
 
-            <table style={{ borderSpacing: '15px' }}>
+            {/* Receipt View Section */}
+            <div>
+                <h2>Receipt View</h2>
+                <h4>{/* Receipt store */}</h4>
+                <h4>{/* Receipt chain */}</h4>
+                <h4>{/* Receipt date */}</h4>
+
+                <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '15px', marginTop: '20px' }}>
                 <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                </tr>
-                </thead>
-                <tbody>
-                {rAPIMessage.map((item:any) => (
-                    <tr key = {item.ID}>
-                    <td>{item.name}</td>
-                    <td>${item.category}</td>
-                    <td>{item.price}</td>
+                    <tr>
+                    <th style={{ textAlign: 'left' }}>Item</th>
+                    <th style={{ textAlign: 'left' }}>Category</th>
+                    <th style={{ textAlign: 'left' }}>Price</th>
                     </tr>
-                ))}
-                </tbody>
-            </table>
+                </thead>
+                {/* <tbody>
+                    {rAPIMessage?.map((item: any) => (
+                    <tr key={item.ID} style={{ borderBottom: '1px solid #eee' }}>
+                        <td>{item.name}</td>
+                        <td>{item.category}</td>
+                        <td>${item.price}</td>
+                    </tr>
+                    ))}
+                </tbody> */}
+                </table>
 
-          <br></br>
-          {rAPIMessage}
-          
-        </div>
+                {rAPIMessage?.msg && <div style={{ marginTop: '20px', color: 'blue' }}>{rAPIMessage.msg}</div>}
+            </div>
         </div>
     );
 }
