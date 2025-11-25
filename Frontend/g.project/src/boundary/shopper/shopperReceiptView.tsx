@@ -3,19 +3,27 @@ import {Model} from '../../Model'
 
 function ReceiptView({instance, andRefreshDisplay}: {instance: any, andRefreshDisplay: any}) {
     const [apiMessage, changeApiMessage] = React.useState()
-    const [model, updateModel] = React.useState(Model)
+    const [model, updateModel] = React.useState(new Model())
 
     function addItemToReceipt() {
 
-        const inputElementUsername = document.getElementById("new-shopper-username") as HTMLInputElement
-        const inputElementPassword = document.getElementById("new-shopper-password") as HTMLInputElement
+        const inputElementItemName = document.getElementById("new-item-name") as HTMLInputElement
+        const inputElementItemCategory = document.getElementById("new-item-category") as HTMLInputElement
+        const inputElementItemPrice = document.getElementById("new-item-price") as HTMLInputElement
+        const inputElementItemQuantity = document.getElementById("new-item-quantity") as HTMLInputElement
 
-        const username = inputElementUsername.value
-        const password = inputElementPassword.value
+
+        const itemName = inputElementItemName.value
+        const itemCategory = inputElementItemCategory.value
+        const itemPrice = inputElementItemPrice.value
+        const itemQuantity = inputElementItemQuantity.value
 
         instance.post('/addToReceipt', {
-                "username": username,
-                "password": password
+                "loginToken" : model.shopper?.loginToken,
+                "name": itemName,
+                "category": itemCategory,
+                ""
+
             })
             .then((response) => {
                 let message = JSON.parse(response.data.body)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse

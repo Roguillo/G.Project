@@ -19,10 +19,20 @@ export class Model {
     stores: Store[] | undefined
 
 
+    constructor(){
+        this.shopper = undefined
+        this.admin = undefined
+        this.receipts = undefined
+        this.shoppingLists = undefined
+        this.chains = undefined
+        this.stores = undefined
+    }
 
     loginShopper(name: string, username: string, password: string, loginToken: string) {
         this.shopper = new Shopper(name, username, password, loginToken)
+
     }
+    
 }
 
 export class Shopper {
@@ -40,17 +50,27 @@ export class Shopper {
 }
 
 export class Receipt {
+    receiptID: string
     name: string
     items: Item[]
     date: Date | undefined
 
-    constructor(name: string) {
+    constructor(rcptID: string, name: string) {
+        this.receiptID = rcptID
         this.name = name
         this.items = []
     }
 
     setItems(items: Item[]) {
         this.items = items
+    }
+
+    addItem(item: Item){
+        this.items.push(item)
+    }
+
+    rmItem(item: Item){
+        this.items = this.items.filter(items => items !== item)
     }
 
     setDate(date: Date) {
@@ -68,15 +88,18 @@ export class Date {
         this.month = month
         this.year = year
     }
+
 }
 
 export class Item {
+    itemID: string
     name: string
     category: string
     price: number | undefined
     store: Store | undefined
 
-    constructor(name: string, category: string) {
+    constructor(itemID:string, name: string, category: string) {
+        this.itemID = itemID
         this.name = name
         this.category = category
     }

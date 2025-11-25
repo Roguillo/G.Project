@@ -40,7 +40,6 @@ export default function Home() {
     <div className={styles.page}>
       <main className={styles.main}>
         <ReceiptView instance={instance} andRefreshDisplay={andRefreshDisplay}></ReceiptView>
-       {/*screen*/}
       </main>
     </div>
   )
