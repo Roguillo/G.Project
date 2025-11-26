@@ -87,7 +87,12 @@ export const handler = async (event) => {
     await(createReceipt(day, month, year, receiptID, shopperID, storeID, chainID));
 
     response_code =  200;
-    response_body = { msg: "Receipt created" };
+    response_body =
+      {
+        msg      : "Receipt created",
+        receiptID: receiptID,
+        shopperID: shopperID
+      };
 
   } catch (error) {
     response_code =   400;

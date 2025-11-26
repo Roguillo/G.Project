@@ -46,10 +46,7 @@ var pool = mysql.createPool({
 
   //TODO: we need to determine how we will get storeID. For now leave it null
   //get store ID from receipt ID. receipt ID should be externally scraped from the webpage.
-  let addItemToReceipt = (quantity, itemID, storeID, receiptID, name, category, price) =>{
-    //repeat making this item for as many times as specified by quanitity param
-    for(let i = 0; i < quantity; i++){
-
+let addItemToReceipt = (itemID, storeID, receiptID, name, category, price) =>{
     //make item, with no shoppingListID
     return new Promise((resolve, reject) => {
       const query = "INSERT INTO Items (itemID, storeID, receiptID, name, category, price) VALUES (?, ?, ?, ?, ?, ?)"
@@ -62,10 +59,7 @@ var pool = mysql.createPool({
         } 
       });
    })
-
-  }
 }
-
     /*
    payload: 
     {  
@@ -102,17 +96,24 @@ export const handler = async (event) => {
     const price = event.price
     const isLoggedIn = await(LoginTokenExists(loginToken))
     if(!isLoggedIn) throw(new Error("Shopper is not logged in")); // throw error for shopper not logged in
-
-    const itemID = "itemID" + crypto.randomUUID();            // generate unique item ID
+    
+    //initialize itemID array for output
+    let itemIDs = []
 
     // add the item to DB and thus to receipt
-    await(addItemToReceipt(quantity, itemID, storeID, receiptID, name, category, price))
+    //repeat making this item for as many times as specified by quanitity param
+    for (let i = 0; i < quantity; i++){
+      let itemID = "itemID" + crypto.randomUUID();            // generate unique item ID
+      await(addItemToReceipt(itemID, storeID, receiptID, name, category, price))
+
+      itemIDs.push(itemID)
+   }
 
     let itemInfo = {
-    "itemID" : itemID,
+    "itemID" : itemIDs,
     "name" : name,  
     "category" : category, 
-    "price" : price 
+    "price" : price,
     }
 
     response_code =  200;
