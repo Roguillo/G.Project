@@ -34,8 +34,8 @@ export class Model {
         return this.shopper?.loginToken
     }
     
-    makeReceipt(receiptID:string, date:Date){
-        let newRcpt = new Receipt(receiptID);
+    makeReceipt(chainID: string, date : Date, receiptID: string, storeID: string){
+        let newRcpt = new Receipt(chainID, date, receiptID, storeID);
         newRcpt.setDate(date)
         this.receipts.push(newRcpt)
     }

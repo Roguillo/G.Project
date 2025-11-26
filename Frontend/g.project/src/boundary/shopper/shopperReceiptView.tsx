@@ -1,100 +1,5 @@
-import   React            from 'react';
-import { Chain, Model, Shopper, Store } from '../../Model'
-
-function ReceiptView({instance, andRefreshDisplay}: {instance: any, andRefreshDisplay: any}) {
-    const [apiMessage, changeApiMessage] = React.useState()
-    const [model, updateModel] = React.useState(new Model())
-
-    function addItemToReceipt() {
-
-        const inputElementItemName = document.getElementById("new-item-name") as HTMLInputElement
-        const inputElementItemCategory = document.getElementById("new-item-category") as HTMLInputElement
-        const inputElementItemPrice = document.getElementById("new-item-price") as HTMLInputElement
-        const inputElementItemQuantity = document.getElementById("new-item-quantity") as HTMLInputElement
-
-
-        const itemName = inputElementItemName.value
-        const itemCategory = inputElementItemCategory.value
-        const itemPrice = inputElementItemPrice.value
-        const itemQuantity = inputElementItemQuantity.value
-
-        instance.post('/addToReceipt', {
-                "loginToken" : model.shopper?.loginToken,
-                "name": itemName,
-                "category": itemCategory,
-                ""
-
-            })
-            .then((response) => {
-                let message = JSON.parse(response.data.body)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
-                
-                if (message.error != undefined) {
-                    changeApiMessage(message.error)
-                } else {
-                    changeApiMessage(message)
-                }
-            })
-
-        // in case any parent React code needs to know about this change, call the passed-in function
-        andRefreshDisplay()
-    }
-
-
-    // make another function for remove item from receipt and export it
-
-
-    /**
-     * ok ideas
-     * add all receipt info in the header - date of creation, store and chain names
-     * then get the data for all of the items and map it to a table list thing like you did in IP2
-     * Then have buttons for adding an item and removing an item (with fields)
-     * all logic for those will be in the helper FNs
-     * figure out how to get the receipt data laterrrrrrrr (probably redo outputs for ur lambda fns) just make the structure rn
-     * 
-     */
-    return (
-        <div>
-            <h2>Receipt View</h2>
-            <h4> {/*receipt store*/} </h4>
-            <h4> {/*receipt chain*/} </h4>
-            <h4>{/*receipt date*/}</h4>
-
-            <table style={{ borderSpacing: '15px' }}>
-                <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                </tr>
-                </thead>
-                <tbody>
-                {apiMessage.map((item:any) => (
-                    <tr key = {item.ID}>
-                    <td>{item.name}</td>
-                    <td>${item.category}</td>
-                    <td>{item.price}</td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-
-
-        
-
-          <br></br>
-          {apiMessage}
-          
-        </div>
-    )
-}
-
-
-
-
-export { ReceiptView }
-import React from 'react';
-
-
+import   React     from 'react';
+import { Shopper } from '../../Model'
 
 
 
@@ -177,7 +82,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         model.makeReceipt(ChainID, today, APIMessage.receiptID, StoreID);
         
         sync();
-  }
+    }
 
 
     async function addItemToReceipt() {
@@ -215,7 +120,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         );
 
         //add each item + set price for each item
-        for(let i = 1; i <= itemQuantity; i++){
+        for(let i = 1; i <= itemQuantity; i++) {
             model.addItemToReceipt(
                                                           itemCategory,
                 APIMessage                               .itemID,
