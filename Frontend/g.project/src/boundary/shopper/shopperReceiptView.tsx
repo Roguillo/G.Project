@@ -1,37 +1,56 @@
-import   React   from 'react';
-import { Model, Shopper } from '../../Model'
+import   React            from 'react';
+import { Chain, Model, Shopper, Store } from '../../Model'
 
 
 
-export function ShopperReceiptView({ model, instance, sync } : { model : any, instance: any, sync: any }) {
-    // react state variables
-    const [rAPIMessage, updateAPIMessage] = React.useState();
-    // API message variable
-    let     APIMessage : any;
+
+
+export function ShopperReceiptView({ model,       instance,      sync      } : 
+                                   { model : any, instance: any, sync: any }) {
+    // possible fields for JSON
+    type APIresponse = {
+        category ? : string;
+        error    ? : string;
+        itemID   ? : string;
+        msg      ? : string;
+        name     ? : string;
+        price    ? : string;
+        quantity ? : string;
+        receiptID? : string;
+        shopperID? : string;
+    }
     
+
+    // react state variables
+    const [rAPIMessage, updateAPIMessage] = React.useState<APIresponse>();
+    // API response message variable
+    let APIMessage : any;
+
+
+    // for testing
+    if(!model.shopper)             model.shopper            = new Shopper("", "", "", "");
+    if(!model.shopper?.loginToken) model.shopper.loginToken = "test-token1234";
+    
+
     // get date
-    const today = new Date();
-    const day   = today.getDate();
-    const month = today.getMonth() + 1;
+    const today = new Date         ();
+    const day   = today.getDate    ();
+    const month = today.getMonth   () + 1;
     const year  = today.getFullYear();
 
     
+
     // create receipt controller
     async function CreateReceiptController() {
-        if (!model.shopper) {
-            model.shopper = new Shopper("", "", "", "");
-        }
-
         // get login token from model
-        model.shopper.loginToken = "test-token1234"; // temporary login token
         const loginToken = model.shopper?.loginToken;
 
 
         // get store and chain IDs from shopper
-        const StoreIDElement = document.getElementById("store-ID") as HTMLInputElement;
-        const ChainIDElement = document.getElementById("chain-ID") as HTMLInputElement;
-        const StoreID = StoreIDElement.value;
-        const ChainID = ChainIDElement.value;
+        const StoreIDElement = document      .getElementById("store-ID") as HTMLInputElement;
+        const ChainIDElement = document      .getElementById("chain-ID") as HTMLInputElement;
+        const StoreID        = StoreIDElement.value;
+        const ChainID        = ChainIDElement.value;
 
 
         await instance.post('/createReceipt', 
@@ -48,7 +67,9 @@ export function ShopperReceiptView({ model, instance, sync } : { model : any, in
                 }
                 )
                 .then((response : any) => {
-                    APIMessage = (typeof response.data.body === 'string') ? JSON.parse(response.data.body) : response.data.body;
+                    APIMessage = (typeof    (response.data.body) === 'string') ?
+                                 (JSON.parse(response.data.body)             ) :
+                                 (           response.data.body              );
                     
                     if (APIMessage.error != undefined) {
                         updateAPIMessage(APIMessage.error);
@@ -60,56 +81,65 @@ export function ShopperReceiptView({ model, instance, sync } : { model : any, in
         });
 
         //update the local model
-        model.makeReceipt(APIMessage.receiptID, today)
-        
+        model.makeReceipt(ChainID, today, APIMessage.receiptID, StoreID);
         
         sync();
     }
 
 
     async function addItemToReceipt() {
-        const inputElementItemName     = document.getElementById("new-item-name")     as HTMLInputElement;
+        const inputElementItemName     = document.getElementById("new-item-name"    ) as HTMLInputElement;
         const inputElementItemCategory = document.getElementById("new-item-category") as HTMLInputElement;
-        const inputElementItemPrice    = document.getElementById("new-item-price")    as HTMLInputElement;
+        const inputElementItemPrice    = document.getElementById("new-item-price"   ) as HTMLInputElement;
         const inputElementItemQuantity = document.getElementById("new-item-quantity") as HTMLInputElement;
-
 
         const itemName     = inputElementItemName.value;
         const itemCategory = inputElementItemCategory.value;
         const itemPrice    = inputElementItemPrice.value;
-        const itemQuantity = inputElementItemQuantity.value;
+        const itemQuantity = parseInt(inputElementItemQuantity.value);
         
 
         await instance.post('/addToReceipt', {
-                "loginToken" : model.shopper?.loginToken,
-                "receiptID" : "id",
-                "name": itemName,
-                "category": itemCategory, 
-                "price"  :  itemPrice,
-                "quantity" : itemQuantity
+                "loginToken" : model.shopper.loginToken,
+                "receiptID"  : model.receipts[model.receipts.length - 1].receiptID, // latest receipt
+                "name"       : itemName,
+                "category"   : itemCategory, 
+                "price"      : itemPrice,
+                "quantity"   : itemQuantity
             })
             .then((response : any) => {
-                APIMessage = JSON.parse(response.data.body);
+                APIMessage = (typeof    (response.data.body) === 'string') ?
+                             (JSON.parse(response.data.body)             ) :
+                             (           response.data.body              );
                 
                 if (APIMessage.error != undefined) {
                     updateAPIMessage(APIMessage.error);
 
                 } else {
-                    updateAPIMessage(APIMessage);
+                    updateAPIMessage(APIMessage      );
                 }
             }
         );
 
-        //update model
+        model.addItemToReceipt(
+                                                      itemCategory,
+            APIMessage                               .itemID,
+                                                      itemName,
+                                                      itemQuantity,
+            model.receipts[model.receipts.length - 1].receiptID
+        );
 
+        model.receipts[model.receipts.length - 1].
+        items[model.receipts[model.receipts.length - 1].items.length - 1].
+        setPrice(itemPrice);
+
+        //update
         sync();
     }
 
 
     // make another function for remove item from receipt and export it
 
-
-    
 
     /**
      * ok ideas
@@ -121,75 +151,54 @@ export function ShopperReceiptView({ model, instance, sync } : { model : any, in
      * 
      */
 
-    // ChatGPT for GUI --> prompt: "make it pretty + <html code>" (for the code we already had)
+    // ChatGPT for GUI --> prompt: "make it pretty:\n\n <html portion of code>" (for the code we already had)
     return (
-        <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-            {/* Input Section */}
-            <div style={{ marginBottom: '30px', borderBottom: '1px solid #ccc', paddingBottom: '20px' }}>
-                <div style={{ marginBottom: '10px' }}>
-                <label style={{ marginRight: '10px' }}>
-                    <b>Store ID:</b>
-                    <input
-                    id="store-ID"
-                    placeholder="store ID"
-                    style={{ marginLeft: '5px', padding: '5px' }}
-                    />
-                </label>
-
-                <label style={{ marginRight: '10px' }}>
-                    <b>Chain ID:</b>
-                    <input
-                    id="chain-ID"
-                    placeholder="chain ID"
-                    style={{ marginLeft: '5px', padding: '5px' }}
-                    />
-                </label>
-
-                <button
-                    onClick={() => CreateReceiptController()}
-                    style={{ padding: '5px 15px', cursor: 'pointer' }}
-                >
-                    Create Receipt
-                </button>
-                </div>
-
-                <div>
-                <h4>Current Receipt:</h4>
-                <div>Date: {day}</div>
-                <div>Month: {month}</div>
-                <div>Year: {year}</div>
-                {rAPIMessage?.msg && <div style={{ marginTop: '10px', color: 'green' }}>{rAPIMessage.msg}</div>}
-                </div>
-            </div>
-
-            {/* Receipt View Section */}
-            <div>
-                <h2>Receipt View</h2>
-                <h4>{/* Receipt store */}</h4>
-                <h4>{/* Receipt chain */}</h4>
-                <h4>{/* Receipt date */}</h4>
-
-                <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '15px', marginTop: '20px' }}>
-                <thead>
-                    <tr>
-                    <th style={{ textAlign: 'left' }}>Item</th>
-                    <th style={{ textAlign: 'left' }}>Category</th>
-                    <th style={{ textAlign: 'left' }}>Price</th>
-                    </tr>
-                </thead>
-                {/* <tbody>
-                    {rAPIMessage?.map((item: any) => (
-                    <tr key={item.ID} style={{ borderBottom: '1px solid #eee' }}>
-                        <td>{item.name}</td>
-                        <td>{item.category}</td>
-                        <td>${item.price}</td>
-                    </tr>
-                    ))}
-                </tbody> */}
-                </table>
-
-                {rAPIMessage?.msg && <div style={{ marginTop: '20px', color: 'blue' }}>{rAPIMessage.msg}</div>}
-            </div>
+    <div style={{ padding: '10px' }}>
+        {/* Create Receipt */}
+        <div style={{ marginBottom: '15px' }}>
+        <input id="store-ID" placeholder="Store ID" style={{ marginRight: '5px' }} />
+        <input id="chain-ID" placeholder="Chain ID" style={{ marginRight: '5px' }} />
+        <button onClick={CreateReceiptController}>Create Receipt</button>
         </div>
+
+        {/* Add Item */}
+        <div style={{ marginBottom: '15px' }}>
+        <input id="new-item-name" placeholder="Name" style={{ marginRight: '5px' }} />
+        <input id="new-item-category" placeholder="Category" style={{ marginRight: '5px' }} />
+        <input id="new-item-price" placeholder="Price" style={{ marginRight: '5px' }} />
+        <input id="new-item-quantity" placeholder="Qty" style={{ marginRight: '5px' }} />
+        <button onClick={addItemToReceipt}>Add Item</button>
+        </div>
+
+        {/* Show Current Receipt Items */}
+        <div>Current Receipt</div>
+        <div>Date: {month}/{day}/{year}</div>
+        <div>Chain: {model.receipts[model.receipts.length - 1]?.chainID ?? ''}</div>
+        <div>Store: {model.receipts[model.receipts.length - 1]?.storeID ?? ''}</div>
+
+        <div style={{ marginBottom: '15px' }}>
+        <table border={1} cellPadding={5} cellSpacing={0}>
+            <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Quantity</th>
+            </tr>
+            </thead>
+            <tbody>
+            {model.receipts.length > 0 &&
+                model.receipts[model.receipts.length - 1].items?.map((item: any, index: number) => (
+                <tr key={item.ID ?? index}>
+                    <td>{item.name}</td>
+                    <td>{item.category}</td>
+                    <td>{item.price}</td>
+                    <td>{item.quantity}</td>
+                </tr>
+                ))}
+            </tbody>
+        </table>
+        </div>
+    </div>
     );
 }
