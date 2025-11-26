@@ -279,7 +279,6 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 <th>Item Name</th>
                 <th>Category</th>
                 <th>Price</th>
-                <th>Quantity</th>
             </tr>
             </thead>
             <tbody>
@@ -289,7 +288,6 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                     <td>{item.name}</td>
                     <td>{item.category}</td>
                     <td>{item.price}</td>
-                    <td>{item.quantity}</td>
                 </tr>
                 ))}
             </tbody>
