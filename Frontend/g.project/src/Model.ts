@@ -50,9 +50,9 @@ export class Model {
         else return(this.receipts.find(receipt => receipt.receiptID === receiptID));
     }
 
-    addItemToReceipt(category : string, itemID : string, name : string, quantity : number, receiptID : string) {
+    addItemToReceipt(category : string, itemID : string, name : string, receiptID : string) {
         this.receipts[this.receipts.length - 1].addItem(new Item(
-            category, itemID, name, quantity, receiptID)
+            category, itemID, name, receiptID)
         );
     }
 }
@@ -120,16 +120,14 @@ export class Item {
     category  : string;
     itemID    : string;
     name      : string;
-    price     : number | undefined
-    quantity  : number
+    price     : number | undefined;
     receiptID : string;
-    store     : Store | undefined
+    store     : Store | undefined;
 
-    constructor( cateogry : string, itemID : string, name : string, quantity : number, receiptID : string) {
+    constructor( cateogry : string, itemID : string, name : string, receiptID : string) {
         this.category  = cateogry;
         this.itemID    = itemID;
         this.name      = name;
-        this.quantity  = quantity;
         this.receiptID = receiptID;
     }
 
