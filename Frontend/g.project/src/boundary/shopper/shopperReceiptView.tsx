@@ -97,7 +97,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         const itemCategory = inputElementItemCategory.value;
         const itemPrice    = inputElementItemPrice.value;
         const itemQuantity = parseInt(inputElementItemQuantity.value);
-        
+    
 
         await instance.post('/addToReceipt', {
                 "loginToken" : model.shopper.loginToken,
@@ -121,21 +121,24 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             }
         );
 
-        model.addItemToReceipt(
-                                                      itemCategory,
-            APIMessage                               .itemID,
-                                                      itemName,
-                                                      itemQuantity,
-            model.receipts[model.receipts.length - 1].receiptID
-        );
+        //add each item + set price for each item
+        for(let i = 1; i <= itemQuantity; i++){
+            model.addItemToReceipt(
+                                                          itemCategory,
+                APIMessage                               .itemID,
+                                                          itemName,
+                model.receipts[model.receipts.length - 1].receiptID
+            );
 
-        model.receipts[model.receipts.length - 1].
-        items[model.receipts[model.receipts.length - 1].items.length - 1].
-        setPrice(itemPrice);
+            model.receipts[model.receipts.length - 1].
+            items[model.receipts[model.receipts.length - 1].items.length - i].
+            setPrice(itemPrice);
+        }
 
         //update
         sync();
     }
+
 
 
     // make another function for remove item from receipt and export it
