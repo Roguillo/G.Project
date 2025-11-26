@@ -34,14 +34,14 @@ function RegisterShopper({model, instance, andRefreshDisplay}: {model: any, inst
 
     return (
         <div>
-          <h2>Register Account</h2>
+          <h2>Register Shopper Account</h2>
           <b>Name: </b><input id="new-shopper-name" placeholder="Name" data-testid="new-shopper-name"></input>
-          <button onClick={() => {registerShopper()}}>Register Account</button>
 
           <p><b>Username: </b><input id="new-shopper-username" placeholder="Username" data-testid="new-shopper-username"></input></p>
 
           <p><b>Password: </b><input id="new-shopper-password" placeholder="Password" data-testid="new-shopper-password"></input></p>
 
+          <button onClick={() => {registerShopper()}}>Register Shopper Account</button>
           <br></br>
           {apiMessage}
           
@@ -83,12 +83,12 @@ function LoginShopper({model, instance, andRefreshDisplay}: {model: any, instanc
 
     return (
         <div>
-          <h2>Login to Account</h2>
+          <h2>Login to Shopper Account</h2>
           <b>Username: </b><input id="shopper-username" placeholder="Username" data-testid="shopper-username"></input>
-          <button onClick={() => {loginShopper()}}>Login to Account</button>
 
           <p><b>Password: </b><input id="shopper-password" placeholder="Password" data-testid="shopper-password"></input></p>
 
+          <button onClick={() => {loginShopper()}}>Login to Shopper Account</button>
           <br></br>
           {apiMessage}
           

@@ -38,16 +38,10 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <ShopperReceiptView
-          model={model}
-          instance={instance}
-          sync={sync}
-        />
-        {/* <div> 
+        <div> 
           {!model.shopper?.loginToken && !adminToken ? (
             // No shopper logged in AND no admin logged in
             <div>
-              <h1>{model.shopper && "Welcome back " + model.shopper?.name}</h1>
               <br />
 
               <RegisterShopper
@@ -61,7 +55,7 @@ export default function Home() {
                 model={model}
                 instance={instance}
                 andRefreshDisplay={andRefreshDisplay}
-              />
+              /><br></br>
 
               <LoginAdmin
                 instance={instance}
@@ -74,24 +68,30 @@ export default function Home() {
               {!adminToken ? (
                 // Shopper dashboard
                 <div>
-                  <h1>This is the shopper dashboard</h1>
+                  <h1>{model.shopper && "Welcome, " + model.shopper?.name + "!"}</h1><br></br>
 
                   <AddChain
                     instance={instance}
                     andRefreshDisplay={andRefreshDisplay}
                     loginToken={model.getLoginToken()}
-                  />
+                  /><br></br>
 
                   <AddStore
                     instance={instance}
                     andRefreshDisplay={andRefreshDisplay}
                     loginToken={model.getLoginToken()}
+                  /><br></br>
+
+                  <ShopperReceiptView
+                    model={model}
+                    instance={instance}
+                    sync={sync}
                   />
                 </div>
               ) : (
                 // Admin dashboard
                 <div>
-                  <AdminDashboard instance={instance} adminToken={adminToken} refreshKey={redraw} />
+                  <AdminDashboard instance={instance} adminToken={adminToken} refreshKey={redraw} /><br></br>
 
                   <RemoveChain
                     instance={instance}
@@ -108,7 +108,7 @@ export default function Home() {
               )}
             </div>
           )}
-        </div> */}
+        </div>
       </main>
     </div>
   );

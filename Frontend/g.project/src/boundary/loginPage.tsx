@@ -32,12 +32,12 @@ function LoginAdmin({instance, andRefreshDisplay, onLoginSuccess}: {instance: an
 
       return (
         <div>
-          <h2>Login to Admin</h2>
+          <h2>Login to Admin Account</h2>
           <b>Username: </b><input id="admin-username" placeholder="Username" data-testid="admin-username"></input>
 
           <p><b>Password: </b><input id="admin-password" placeholder="Password" data-testid="admin-password"></input></p>
 
-          <button onClick={() => {loginAdmin()}}>Login</button>
+          <button onClick={() => {loginAdmin()}}>Login to Admin Account</button>
 
           <br></br>
           {apiMessage}
