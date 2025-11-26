@@ -17,12 +17,12 @@ export class Model {
 
 
     constructor(){
-        this.shopper = undefined
-        this.admin = undefined
-        this.receipts = []
-        this.shoppingLists = []
-        this.chains = []
-        this.stores = []
+        this.shopper       = undefined;
+        this.admin         = undefined;
+        this.receipts      = [];
+        this.shoppingLists = [];
+        this.chains        = [];
+        this.stores        = [];
     }
 
     loginShopper(name: string, username: string, password: string, loginToken: string) {
@@ -35,22 +35,25 @@ export class Model {
     }
     
     makeReceipt(receiptID:string, date:Date){
-        let newRcpt = new Receipt(receiptID)
+        let newRcpt = new Receipt(receiptID);
         newRcpt.setDate(date)
         this.receipts.push(newRcpt)
     }
 
 
     pickReceipt(receiptID:any){
-        if (this.receipts === undefined) {
-            return null
-        }
+        if(this.receipts === undefined) return(null);
+
         //ChatGPT query: "what function should I use to pick a specific item out of an array in javascript? 
         // I have an array of receipt objects, and I need to pick one out by its receiptID field. 
         // Every receipt has a unique id"
-        else{
-            return(this.receipts.find(receipt => receipt.receiptID === receiptID))
-        }
+        else return(this.receipts.find(receipt => receipt.receiptID === receiptID));
+    }
+
+    addItemToReceipt(category : string, itemID : string, name : string, quantity : number, receiptID : string) {
+        this.receipts[this.receipts.length - 1].addItem(new Item(
+            category, itemID, name, quantity, receiptID)
+        );
     }
 }
 
@@ -69,15 +72,18 @@ export class Shopper {
 }
 
 export class Receipt {
-    receiptID: string
-    //name: string
-    items: Item[]
-    date: Date | undefined
+    chainID  : string;
+    date     : Date | undefined;
+    items    : Item[];
+    receiptID: string;
+    storeID  : string;
 
-    constructor(rcptID: string) {
-        this.receiptID = rcptID
-        //this.name = name
-        this.items = []
+    constructor(chainID: string, date : Date, receiptID: string, storeID: string) {
+        this.chainID   = chainID;
+        this.date      = date;
+        this.items     = [];
+        this.receiptID = receiptID;
+        this.storeID   = storeID;
     }
 
     setItems(items: Item[]) {
@@ -111,16 +117,20 @@ export class Date {
 }
 
 export class Item {
-    itemID: string
-    name: string
-    category: string
-    price: number | undefined
-    store: Store | undefined
+    category  : string;
+    itemID    : string;
+    name      : string;
+    price     : number | undefined
+    quantity  : number
+    receiptID : string;
+    store     : Store | undefined
 
-    constructor(itemID:string, name: string, category: string) {
-        this.itemID = itemID
-        this.name = name
-        this.category = category
+    constructor( cateogry : string, itemID : string, name : string, quantity : number, receiptID : string) {
+        this.category  = cateogry;
+        this.itemID    = itemID;
+        this.name      = name;
+        this.quantity  = quantity;
+        this.receiptID = receiptID;
     }
 
     setPrice(price: number) {
