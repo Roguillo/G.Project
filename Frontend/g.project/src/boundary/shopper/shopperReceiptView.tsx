@@ -131,7 +131,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             );
 
             model.receipts[model.receipts.length - 1].
-            items[model.receipts[model.receipts.length - 1].items.length - i].
+            items[model.receipts[model.receipts.length - 1].items.length - 1].
             setPrice(itemPrice);
         }
 
