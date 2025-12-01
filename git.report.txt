@@ -1,0 +1,1299 @@
+commit 8b428e14ece5cb37fb69d3202bc59dfb61ef8fd0
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Wed Nov 26 02:13:00 2025 -0500
+
+    Wrapped up code, now looks finalized
+
+ Frontend/g.project/src/app/page.tsx                | 24 +++++++++++-----------
+ Frontend/g.project/src/boundary/loginPage.tsx      |  4 ++--
+ .../src/boundary/shopper/shopperDashboard.tsx      | 10 ++++-----
+ .../src/boundary/shopper/shopperRegister.tsx       |  8 ++++----
+ Frontend/g.project/tsconfig.json                   |  2 +-
+ 5 files changed, 24 insertions(+), 24 deletions(-)
+
+commit 6a1610130a4e75ec0e7655c11ee0c48dfdbc6b6d
+Author: Roguillo <rcafreeskates@gmail.com>
+Date:   Wed Nov 26 01:52:41 2025 -0500
+
+    a couple tweaks
+
+ Frontend/g.project/src/Model.ts                    |   4 +-
+ Frontend/g.project/src/app/page.tsx                | 107 +++++++++++++++------
+ .../src/boundary/shopper/shopperReceiptView.tsx    | 103 +-------------------
+ .../src/boundary/shopper/shopperRegister.tsx       |   2 +-
+ Frontend/g.project/tsconfig.json                   |   2 +-
+ 5 files changed, 83 insertions(+), 135 deletions(-)
+
+commit 6fe5c0471bc42871f06454e56dd9133ee112ba69
+Author: Roguillo <rcafreeskates@gmail.com>
+Date:   Wed Nov 26 00:50:18 2025 -0500
+
+    slight changes
+
+ Frontend/g.project/src/boundary/shopper/shopperReceiptView.tsx | 2 +-
+ Frontend/g.project/src/boundary/shopper/shopperRegister.tsx    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 35e7d77d0bfa8731043b838193756e35c4f0e994
+Author: MLucasA <lalano@wpi.edu>
+Date:   Tue Nov 25 23:44:57 2025 -0500
+
+    minor changes
+
+ Frontend/g.project/src/boundary/shopper/shopperReceiptView.tsx | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 0ad8ff01681e09a67b49a807bebcefca6d8dfc00
+Author: MLucasA <lalano@wpi.edu>
+Date:   Tue Nov 25 23:04:30 2025 -0500
+
+    Co-authored-by: Roberto Carrillo Aguilar <Roguillo@users.noreply.github.com>
+    continued development of receipt view
+
+ Frontend/g.project/src/Model.ts                    | 12 +++++------
+ .../src/boundary/shopper/shopperReceiptView.tsx    | 25 ++++++++++++----------
+ 2 files changed, 19 insertions(+), 18 deletions(-)
+
+commit 1db85709cdea1238ec3be4964e55b3b2d60a2066
+Author: Roguillo <rcafreeskates@gmail.com>
+Date:   Tue Nov 25 21:50:55 2025 -0500
+
+    should be mostly done
+
+ Frontend/g.project/src/Model.ts                    |  72 ++++---
+ .../src/boundary/shopper/shopperReceiptView.tsx    | 215 +++++++++++----------
+ 2 files changed, 153 insertions(+), 134 deletions(-)
+
+commit 154a43784f42a6e24f2f6952da0936259bf2676f
+Author: Roguillo <rcafreeskates@gmail.com>
+Date:   Tue Nov 25 18:19:00 2025 -0500
+
+    create receipt done, progress on add item as well. Liveshare: Roberto, Lucas
+
+ Frontend/g.project/src/Model.ts                    |  47 ++++--
+ Frontend/g.project/src/app/page.tsx                |   9 ++
+ Frontend/g.project/src/boundary/loginPage.tsx      |  16 +-
+ .../src/boundary/shopper/shopperReceiptView.tsx    | 166 ++++++++++++++++++---
+ 4 files changed, 194 insertions(+), 44 deletions(-)
+
+commit fa35834f83d52103f832a6ca02b5fdad08cc6cde
+Author: Glisso <jacubb5@outlook.com>
+Date:   Mon Nov 24 19:43:25 2025 -0500
+
+    Working CDK Code (FOR REAL THIS TIME)
+
+ .../{add-chain/index.mjs => addChain/addChain.mjs} |   0
+ Backend/lib/{add-chain => addChain}/config.mjs     |   0
+ .../lib/{add-chain => addChain}/package-lock.json  |   4 +-
+ Backend/lib/{add-chain => addChain}/package.json   |   2 +-
+ .../addStoreToChain.mjs}                           |   0
+ .../config.mjs                                     |   0
+ .../package-lock.json                              |   4 +-
+ .../package.json                                   |   2 +-
+ .../index.m => addToReceipt/addToReceipt.m}        |   0
+ .../{add-to-receipt => addToReceipt}/config.mjs    |   0
+ .../lib/{add-to-receipt => addToReceipt}/index.mjs |   0
+ .../package-lock.json                              |   4 +-
+ .../{add-to-receipt => addToReceipt}/package.json  |   2 +-
+ .../{add-to-receipt => addToReceipt}/upload.zip    | Bin
+ Backend/lib/application-stack.ts                   |  36 ++--
+ Backend/lib/{login-admin => loginAdmin}/config.mjs |   0
+ .../index.mjs => loginAdmin/loginAdmin.mjs}        |   0
+ .../{login-admin => loginAdmin}/package-lock.json  |   4 +-
+ .../lib/{login-admin => loginAdmin}/package.json   |   2 +-
+ .../lib/{login-shopper => loginShopper}/config.mjs |   0
+ .../index.mjs => loginShopper/loginShopper.mjs}    |   0
+ .../package-lock.json                              |   4 +-
+ .../{login-shopper => loginShopper}/package.json   |   2 +-
+ .../lib/{login-shopper => loginShopper}/upload.zip | Bin
+ .../config.mjs                                     |   0
+ .../package-lock.json                              |   4 +-
+ .../package.json                                   |   2 +-
+ .../registerShopper.mjs}                           |   0
+ Backend/lib/remove-store/package-lock.json         | 240 ---------------------
+ Backend/lib/remove-store/package.json              |   8 -
+ .../lib/{remove-chain => removeChain}/config.mjs   |   0
+ .../package-lock.json                              |   4 +-
+ .../lib/{remove-chain => removeChain}/package.json |   2 +-
+ .../index.mjs => removeChain/removeChain.mjs}      |   0
+ .../lib/{remove-store => removeStore}/config.mjs   |   0
+ Backend/lib/removeStore/package-lock.json          | 240 +++++++++++++++++++++
+ Backend/lib/removeStore/package.json               |   8 +
+ .../index.mjs => removeStore/removeStore.mjs}      |   0
+ Backend/lib/show-admin-dashboard/package-lock.json | 240 ---------------------
+ Backend/lib/show-admin-dashboard/package.json      |   8 -
+ .../config.mjs                                     |   0
+ Backend/lib/showAdminDashboard/package-lock.json   | 240 +++++++++++++++++++++
+ Backend/lib/showAdminDashboard/package.json        |   8 +
+ .../showAdminDashboard.mjs}                        |   0
+ 44 files changed, 535 insertions(+), 535 deletions(-)
+
+commit 2acf4db9b6b0b71d4f6fda0128790e5b9d91f02f
+Author: MLucasA <lalano@wpi.edu>
+Date:   Mon Nov 24 15:10:48 2025 -0500
+
+    finished remove item from receipt lambda fn
+
+ lib/rmItemFromRcpt/config.mjs        |   6 ++
+ lib/rmItemFromRcpt/index.mjs         | 120 ++++++++++++++++++++++++++++
+ lib/rmItemFromRcpt/package-lock.json | 146 +++++++++++++++++++++++++++++++++++
+ lib/rmItemFromRcpt/package.json      |   8 ++
+ lib/rmItemFromRcpt/upload.zip        | Bin 0 -> 616020 bytes
+ 5 files changed, 280 insertions(+)
+
+commit b7a59604e30b9db0587248d4d469c005f244588a
+Author: Roguillo <rcafreeskates@gmail.com>
+Date:   Tue Nov 25 15:59:24 2025 -0500
+
+    partially working
+
+ Frontend/g.project/src/app/page.tsx                |  2 +
+ .../src/boundary/shopper/shopperDashboard.tsx      |  2 +-
+ .../src/boundary/shopper/shopperReceiptView.tsx    | 74 +++++++++++++++++++++-
+ 3 files changed, 76 insertions(+), 2 deletions(-)
+
+commit 7d01426ac62e6de6ea349754edae776194868221
+Author: MLucasA <lalano@wpi.edu>
+Date:   Tue Nov 25 15:59:49 2025 -0500
+
+    Updated model, page, shopperReceiptView (none working yet)
+
+ Frontend/g.project/package-lock.json               |  2 +-
+ Frontend/g.project/package.json                    |  2 +-
+ Frontend/g.project/src/Model.ts                    | 26 ++++++++++++++++++++--
+ .../src/boundary/shopper/shopperReceiptView.tsx    | 22 ++++++++++++------
+ 4 files changed, 41 insertions(+), 11 deletions(-)
+
+commit e8bcbcd4caf1d817c771a9bb35b5f00a4ea730ef
+Author: MLucasA <lalano@wpi.edu>
+Date:   Tue Nov 25 11:31:06 2025 -0500
+
+    working on developing receipt view frontend
+
+ Frontend/g.project/src/Model.ts                    |  9 +++
+ Frontend/g.project/src/app/page.tsx                |  9 ++-
+ .../src/boundary/shopper/shopperReceiptView.tsx    | 86 ++++++++++++++++++++++
+ 3 files changed, 100 insertions(+), 4 deletions(-)
+
+commit ca1fba143fc75d0e92dc1f0766e300f87327b532
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Tue Nov 25 15:33:07 2025 -0500
+
+    OUTPUT ACTUALLY WORKS HERE
+
+ Frontend/g.project/next.config.ts |  6 ++----
+ Frontend/g.project/tsconfig.json  | 16 ++++++++++++----
+ 2 files changed, 14 insertions(+), 8 deletions(-)
+
+commit bc4b57022a3136cda3f3a51bc10337fd45e6bd9e
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Tue Nov 25 14:34:38 2025 -0500
+
+    Fixed a line
+
+ Frontend/g.project/next.config.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 1ad43ead7ab48ec280e975958cd6be69b4f8271b
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Tue Nov 25 14:32:15 2025 -0500
+
+    Update page.tsx
+
+ Frontend/g.project/src/app/page.tsx | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit b4f1b4761f067242c6e311ba1625884870d37a93
+Merge: 5369056 df30a6f
+Author: jacubb5 <97991630+jacubb5@users.noreply.github.com>
+Date:   Tue Nov 25 14:18:15 2025 -0500
+
+    Merge pull request #23 from Roguillo/Frontend-S3-Bucket
+    
+    S3 Bucket Implementation
+
+commit df30a6f425ca421a7a481297d1a5c56256ca2147
+Merge: 5924acb 5369056
+Author: jacubb5 <97991630+jacubb5@users.noreply.github.com>
+Date:   Tue Nov 25 14:18:06 2025 -0500
+
+    Merge branch 'Frontend' into Frontend-S3-Bucket
+
+commit 5924acbd94f90f9c1be38d90526aa4f4881e1882
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Tue Nov 25 14:15:33 2025 -0500
+
+    S3 Bucket
+
+ Frontend/g.project/next.config.ts                           | 5 ++++-
+ Frontend/g.project/src/Model.ts                             | 2 +-
+ Frontend/g.project/src/app/page.tsx                         | 4 ++--
+ Frontend/g.project/src/boundary/shopper/shopperRegister.tsx | 4 ++--
+ 4 files changed, 9 insertions(+), 6 deletions(-)
+
+commit 536905653d7fdcf426fe327c394a127d9ad02ac3
+Author: Joseph D'Angelo <joseph.dangelo717@gmail.com>
+Date:   Tue Nov 25 14:15:31 2025 -0500
+
+    Added Message
+
+ Frontend/g.project/src/boundary/shopper/shopperDashboard.tsx | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+commit 994b969d80de5474b2893fea9a18ff6ff78a3303
+Author: Joseph D'Angelo <joseph.dangelo717@gmail.com>
+Date:   Tue Nov 25 14:10:05 2025 -0500
+
+    I tink dis works
+
+ Frontend/g.project/src/app/page.tsx                | 10 ++-
+ .../src/boundary/shopper/shopperDashboard.tsx      | 84 ++++++++++++++++++++++
+ 2 files changed, 92 insertions(+), 2 deletions(-)
+
+commit 607916a2657fe0e8b7e58bf45ee4cb26cca6a356
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Tue Nov 25 13:42:17 2025 -0500
+
+    Trying to get shopper dashboard to show
+
+ Frontend/g.project/src/app/page.tsx           | 84 +++++++++------------------
+ Frontend/g.project/src/boundary/loginPage.tsx |  6 +-
+ 2 files changed, 29 insertions(+), 61 deletions(-)
+
+commit e835274ffe8b532463e8ef8183d5815519f9f18f
+Merge: 265d143 0c761f0
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Tue Nov 25 13:17:59 2025 -0500
+
+    Merge pull request #22 from Roguillo/AdminDashboardFrontend
+    
+    Admin dashboard frontend
+
+commit 0c761f054ea73643c2565d82190152f535c36d18
+Merge: 3019118 265d143
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Tue Nov 25 13:17:43 2025 -0500
+
+    Merge branch 'Frontend' into AdminDashboardFrontend
+
+commit 265d1438af1b323867aac003d133752897b59d60
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Tue Nov 25 12:38:48 2025 -0500
+
+    Fixed Model capitalization
+
+ Frontend/g.project/src/app/page.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 737ae890a838dc0f9bf52ba183a4bb3eff0e34af
+Merge: 12afbb9 0f3b785
+Author: jacubb5 <97991630+jacubb5@users.noreply.github.com>
+Date:   Tue Nov 25 12:35:43 2025 -0500
+
+    Merge pull request #21 from Roguillo/Frontend-registerShopper-Model-Functionality
+    
+    Frontend register shopper model functionality
+
+commit 0f3b785140cf9518dc2d98851c88f40fad37364d
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Tue Nov 25 12:33:28 2025 -0500
+
+    Login and Register Model Functionality (Recommit)
+
+ Frontend/g.project/src/Model.ts                    |  4 ++++
+ Frontend/g.project/src/app/page.tsx                | 28 ++++++++++++----------
+ .../src/boundary/shopper/shopperRegister.tsx       | 12 ++++++----
+ 3 files changed, 27 insertions(+), 17 deletions(-)
+
+commit a16ab7412dd8d6f8bffe30d24f0f6ef9da6c4868
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Tue Nov 25 12:32:41 2025 -0500
+
+    Fully functional login and register integration with model
+
+ package-lock.json | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit 12afbb9dfcc8e73a1d93287d07f8398375e33860
+Merge: 0903927 31b3700
+Author: jacubb5 <97991630+jacubb5@users.noreply.github.com>
+Date:   Tue Nov 25 11:24:30 2025 -0500
+
+    Merge pull request #20 from Roguillo/Frontend-Model
+    
+    Adding Model to Frontend
+
+commit 31b370068a0ac02742c50d55b5e73df424de6b10
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Tue Nov 25 11:21:07 2025 -0500
+
+    Added remaining model classes
+
+ Frontend/g.project/src/Model.ts | 83 +++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 80 insertions(+), 3 deletions(-)
+
+commit d3cfbd10a41218fad0f28bdc77f955e24676a537
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Tue Nov 25 11:09:15 2025 -0500
+
+    Added Model, Shopper, and Receipt
+
+ Frontend/g.project/src/Model.ts | 68 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+
+commit 30191185ce6fd14a9edcd51bad815238d34a2dc8
+Author: Joseph D'Angelo <joseph.dangelo717@gmail.com>
+Date:   Tue Nov 25 00:09:45 2025 -0500
+
+    Should be working i tink
+
+ Frontend/g.project/src/app/page.tsx                |  8 ++-
+ Frontend/g.project/src/boundary/adminDashboard.tsx | 74 +++++++++++++++++++++-
+ 2 files changed, 77 insertions(+), 5 deletions(-)
+
+commit 66b781ab9bfe00202aaa967ae44813e864ba43f5
+Author: Joseph D'Angelo <joseph.dangelo717@gmail.com>
+Date:   Mon Nov 24 22:57:06 2025 -0500
+
+    Should be working i tink
+
+ Frontend/g.project/src/app/page.tsx                |  15 ++-
+ Frontend/g.project/src/boundary/adminDashboard.tsx |   4 +-
+ Frontend/g.project/src/boundary/loginPage.tsx      | 132 ++++++---------------
+ 3 files changed, 50 insertions(+), 101 deletions(-)
+
+commit 75b87329d2e2137981d28565f3602098347cd43c
+Author: Joseph D'Angelo <joseph.dangelo717@gmail.com>
+Date:   Mon Nov 24 22:02:05 2025 -0500
+
+    Should be working idk tho
+
+ Backend/lib/show-admin-dashboard/index.mjs         |   2 +-
+ Frontend/g.project/package-lock.json               | 128 ++++++++++++++++++---
+ Frontend/g.project/package.json                    |   1 +
+ Frontend/g.project/src/app/aws.ts                  |  10 ++
+ Frontend/g.project/src/app/boundary.tsx            |   7 --
+ Frontend/g.project/src/app/page.tsx                |  11 +-
+ Frontend/g.project/src/boundary/adminDashboard.tsx |  71 ++++++++++++
+ package-lock.json                                  |   6 +
+ 8 files changed, 211 insertions(+), 25 deletions(-)
+
+commit 09039270d93fec4e5c8eaf8f49f736a0fbb52c31
+Merge: 04020fb 1f5b0fe
+Author: jacubb5 <97991630+jacubb5@users.noreply.github.com>
+Date:   Mon Nov 24 20:57:14 2025 -0500
+
+    Merge pull request #18 from Roguillo/registerShopper-Frontend
+    
+    Register shopper frontend
+
+commit 1f5b0fe68e43789ee253b6bb7177da8ee66e5992
+Merge: 3633130 04020fb
+Author: jacubb5 <97991630+jacubb5@users.noreply.github.com>
+Date:   Mon Nov 24 20:57:05 2025 -0500
+
+    Merge branch 'Frontend' into registerShopper-Frontend
+
+commit 3633130a3677c48825b32bd6af550756990d9a44
+Author: Glisso <jacubb5@outlook.com>
+Date:   Mon Nov 24 20:54:25 2025 -0500
+
+    Working Shopper Register/Login
+
+ Frontend/g.project/src/app/page.tsx                |  6 +--
+ .../src/boundary/shopper/shopperRegister.tsx       | 58 ++++++++++++++++++++--
+ 2 files changed, 58 insertions(+), 6 deletions(-)
+
+commit 4ab89e99e0d3201529035c0010dc9a00829f2506
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Mon Nov 24 18:28:40 2025 -0500
+
+    Small changes to instance
+
+ .../g.project/src/boundary/shopper/shopperRegister.tsx     | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+commit df85ef9030460b1fecec1305a9ca3fa8be109cb4
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Mon Nov 24 15:52:31 2025 -0500
+
+    Unfinished code, need to complete axios work
+
+ Frontend/g.project/package-lock.json               | 111 +++++++++++++++++++++
+ Frontend/g.project/package.json                    |   1 +
+ Frontend/g.project/src/app/aws.ts                  |  10 ++
+ Frontend/g.project/src/app/boundary.tsx            |   7 --
+ Frontend/g.project/src/app/page.tsx                |  11 +-
+ .../src/boundary/shopper/shopperRegister.tsx       |  43 ++++++++
+ 6 files changed, 175 insertions(+), 8 deletions(-)
+
+commit 04020fb30891d1937b29a9b48fd5c3d6ca144abb
+Author: Roguillo <rcafreeskates@gmail.com>
+Date:   Mon Nov 24 15:39:15 2025 -0500
+
+    page.tsx template
+
+ Frontend/g.project/src/app/page.tsx | 39 +++++++++++++++++++++++++++++--------
+ 1 file changed, 31 insertions(+), 8 deletions(-)
+
+commit c9206a1d7e9381d1758583363420c9867fdec714
+Author: Roguillo <rcafreeskates@gmail.com>
+Date:   Mon Nov 24 15:26:03 2025 -0500
+
+    made a generic template in loginPage.tsx
+
+ Frontend/g.project/src/boundary/loginPage.tsx | 103 ++------------------------
+ 1 file changed, 7 insertions(+), 96 deletions(-)
+
+commit e452ed7aff66587681f7eaae9c41029cb36be34f
+Author: Roguillo <rcafreeskates@gmail.com>
+Date:   Mon Nov 24 15:19:15 2025 -0500
+
+    created template boundary files
+
+ Frontend/g.project/src/boundary/adminDashboard.tsx |   0
+ Frontend/g.project/src/boundary/loginPage.tsx      | 114 +++++++++++++++++++++
+ .../src/boundary/shopper/shopperDashboard.tsx      |   0
+ .../src/boundary/shopper/shopperHistoryView.tsx    |   0
+ .../src/boundary/shopper/shopperListVew.tsx        |   0
+ .../src/boundary/shopper/shopperReceiptView.tsx    |   0
+ 6 files changed, 114 insertions(+)
+
+commit a229963f2a08c4be4614c512b8aa66a56a9d9eda
+Merge: 77ec814 0574ef1
+Author: jacubb5 <97991630+jacubb5@users.noreply.github.com>
+Date:   Mon Nov 24 15:01:58 2025 -0500
+
+    Merge pull request #15 from Roguillo/Starting-Frontend-Work
+    
+    Finalized Frontend Starting Point
+
+commit 0574ef10eae57a36dc92f1451ced083f59016123
+Merge: 51f4f92 77ec814
+Author: jacubb5 <97991630+jacubb5@users.noreply.github.com>
+Date:   Mon Nov 24 15:00:07 2025 -0500
+
+    Merge branch 'main' into Starting-Frontend-Work
+
+commit 77ec814624231df1d0b9926ffd5d2360579f9c02
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Mon Nov 24 14:59:10 2025 -0500
+
+    Delete lib/addToRcpt directory
+
+ lib/addToRcpt/upload.zip | Bin 615226 -> 0 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 146f27c9cd03d689272a36f73c56f5762809d29e
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Mon Nov 24 14:58:57 2025 -0500
+
+    Rename lib/addToRcpt/package.json to Backend/lib/add-to-receipt/package.json
+
+ {lib/addToRcpt => Backend/lib/add-to-receipt}/package.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit d21eb42f77f343e63ccf9154beb11e76a9628b08
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Mon Nov 24 14:58:35 2025 -0500
+
+    Rename lib/addToRcpt/package-lock.json to Backend/lib/add-to-receipt/package-lock.json
+
+ {lib/addToRcpt => Backend/lib/add-to-receipt}/package-lock.json | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 4ab32f8bc81737b95bd55a2f8e5b5fb0b7d838ec
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Mon Nov 24 14:58:02 2025 -0500
+
+    Rename lib/addToRcpt/index.mjs to Backend/lib/add-to-receipt/index.m
+
+ lib/addToRcpt/index.mjs => Backend/lib/add-to-receipt/index.m | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit ef3feb3afa06e061ce6ff36b2342bf9fb99a1a15
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Mon Nov 24 14:57:26 2025 -0500
+
+    Rename lib/addToRcpt/config.mjs to Backend/lib/add-to-receipt/config.mjs
+
+ {lib/addToRcpt => Backend/lib/add-to-receipt}/config.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 51f4f92af5a2bda5acba885ab2c6b78009b03097
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Mon Nov 24 14:50:44 2025 -0500
+
+    Added Boundary File
+
+ Frontend/g.project/src/app/boundary.tsx |    7 +
+ Frontend/g.project/src/app/page.tsx     |    5 +
+ Frontend/package-lock.json              | 3019 -------------------------------
+ Frontend/package.json                   |   24 -
+ 4 files changed, 12 insertions(+), 3043 deletions(-)
+
+commit 18cc108e7e2f82d1665486585904afc3ca66cf88
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Mon Nov 24 14:49:48 2025 -0500
+
+    Update and rename lib/remove-chain/package.json to Backend/lib/remove-chain/package.json
+
+ {lib => Backend/lib}/remove-chain/package.json | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit a2ed3ca2f4e62806bfb2385feaccb128024c5b8a
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Mon Nov 24 14:49:22 2025 -0500
+
+    Update and rename lib/remove-chain/package-lock.json to Backend/lib/remove-chain/package-lock.json
+
+ {lib => Backend/lib}/remove-chain/package-lock.json | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit e5394125561e87121964da822662580cb524bba3
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Mon Nov 24 14:48:48 2025 -0500
+
+    Rename lib/remove-chain/index.mjs to Backend/lib/remove-chain/index.mjs
+
+ {lib => Backend/lib}/remove-chain/index.mjs | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 0fae97260b3b33d354e4bcf04ef7b976151b612a
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Mon Nov 24 14:48:01 2025 -0500
+
+    Create config.mjs
+
+ Backend/lib/remove-chain/config.mjs | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit 160c0aeb2e7a1ae8ecc13a8e6e246a9a627ea781
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Mon Nov 24 14:46:31 2025 -0500
+
+    Delete backend/lib/remove-chain directory
+
+ backend/lib/remove-chain/config.mjs | 6 ------
+ 1 file changed, 6 deletions(-)
+
+commit 8a007e219c58efe526c783ba849f4e7994ea6fc1
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Mon Nov 24 14:45:54 2025 -0500
+
+    Cleaned Up Folders and CDK Deploy
+
+ .../lib/add-to-receipt}/config.mjs                 |   0
+ .../lib/add-to-receipt}/index.mjs                  |   0
+ .../lib/add-to-receipt}/package-lock.json          |   0
+ .../lib/add-to-receipt}/package.json               |   0
+ .../lib/add-to-receipt}/upload.zip                 | Bin
+ Backend/lib/application-stack.ts                   |  39 ++
+ {lib => Backend/lib}/remove-chain/config.mjs       |   0
+ {lib => Backend/lib}/remove-chain/index.mjs        |   0
+ .../lib}/remove-chain/package-lock.json            | 480 ++++++++++-----------
+ {lib => Backend/lib}/remove-chain/package.json     |  16 +-
+ 10 files changed, 287 insertions(+), 248 deletions(-)
+
+commit 5d8ff5f5d7e86aa6d530b9ff6c568cde72cbff40
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Mon Nov 24 14:45:41 2025 -0500
+
+    Rename lib/remove-chain/config.mjs to backend/lib/remove-chain/config.mjs
+
+ {lib => backend/lib}/remove-chain/config.mjs | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit d5c2fedb2611dd48033841132e0b4584109f8509
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Mon Nov 24 14:37:57 2025 -0500
+
+    Able to do npm run dev
+
+ Frontend/g.project/src/app/page.tsx |   60 +-
+ Frontend/package-lock.json          | 3019 +++++++++++++++++++++++++++++++++++
+ Frontend/package.json               |   24 +
+ 3 files changed, 3045 insertions(+), 58 deletions(-)
+
+commit 7e5f6cb5db821d30ad3606155f15b7182ffae482
+Merge: a4fa367 a506b9d
+Author: jacubb5 <97991630+jacubb5@users.noreply.github.com>
+Date:   Mon Nov 24 14:26:49 2025 -0500
+
+    Merge pull request #9 from Roguillo/Remove-Chain
+    
+    Remove chain
+
+commit a4fa367775b6c167ca546927d2df52987b915f76
+Merge: c6f54e0 e34ea96
+Author: jacubb5 <97991630+jacubb5@users.noreply.github.com>
+Date:   Mon Nov 24 14:26:20 2025 -0500
+
+    Merge pull request #11 from Roguillo/Add-Item-To-Receipt
+    
+    Add item to receipt
+
+commit c6f54e06ddfd7810a82037aa975e15daff479854
+Merge: 55554de 80aa91e
+Author: jacubb5 <97991630+jacubb5@users.noreply.github.com>
+Date:   Mon Nov 24 14:25:29 2025 -0500
+
+    Merge pull request #12 from Roguillo/Remove-Store
+    
+    Remove store
+
+commit 55554de196b021a5c6c2694d54bf105dd83ff382
+Merge: 3ee0817 da223d9
+Author: jacubb5 <97991630+jacubb5@users.noreply.github.com>
+Date:   Mon Nov 24 14:22:39 2025 -0500
+
+    Merge pull request #14 from Roguillo/Adding-Lambda-Functions-to-CDK-Deploy
+    
+    Updated and Working CDK Code
+
+commit da223d95784aed339afeefa195c587011f799692
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Mon Nov 24 14:21:40 2025 -0500
+
+    Updated and working CDK code
+
+ Backend/lib/application-stack.ts                   | 72 +++++++++++++++++++---
+ .../config.mjs                                     |  0
+ .../index.mjs                                      |  0
+ .../package-lock.json                              |  0
+ .../package.json                                   |  0
+ 5 files changed, 62 insertions(+), 10 deletions(-)
+
+commit 3ee08175569918138f62339e064273685fead42e
+Merge: 7351889 19a3ff9
+Author: jacubb5 <97991630+jacubb5@users.noreply.github.com>
+Date:   Mon Nov 24 14:07:30 2025 -0500
+
+    Merge pull request #13 from Roguillo/CDK-testing
+    
+    CDK Merge to Backend (instead of the other way around)
+
+commit 19a3ff93bcf4eda9ca6105d085544e01aba06c4a
+Merge: b9b8a2f 7351889
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Mon Nov 24 14:01:14 2025 -0500
+
+    Merge branch 'main' into CDK-testing
+
+commit b9b8a2f3d42ad45e82ba207db6e80286f113c421
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Mon Nov 24 13:52:52 2025 -0500
+
+    FINALLY WORKING CDK CODE :WOEAS:
+
+ bin/g.project.ts                            |  4 ++--
+ cdk.context.json                            |  5 +++++
+ lib/{cdk-lambda.ts => application-stack.ts} | 14 +++++++-------
+ lib/default/default.mjs                     | 12 ++++++++++++
+ lib/default/package-lock.json               | 12 ++++++++++++
+ lib/default/package.json                    |  7 +++++++
+ 6 files changed, 45 insertions(+), 9 deletions(-)
+
+commit 80aa91e0b476febce35d86fb872c6e5a9b15d175
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Mon Nov 24 13:24:49 2025 -0500
+
+    Add files via upload
+
+ Backend/lib/remove-store/index.mjs         |  76 +++++++++
+ Backend/lib/remove-store/package-lock.json | 240 +++++++++++++++++++++++++++++
+ Backend/lib/remove-store/package.json      |   8 +
+ 3 files changed, 324 insertions(+)
+
+commit 04cf0d951fdde093423c7365f8b19dda494b6dc4
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Mon Nov 24 13:24:09 2025 -0500
+
+    Create config.mjs
+
+ Backend/lib/remove-store/config.mjs | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit e34ea96cdea4b315857b8ef547eb140d395608ac
+Author: MLucasA <lalano@wpi.edu>
+Date:   Mon Nov 24 11:55:23 2025 -0500
+
+    Reorganized folders
+
+ {addToRcpt => lib/addToRcpt}/config.mjs        |   0
+ {addToRcpt => lib/addToRcpt}/index.mjs         |   0
+ {addToRcpt => lib/addToRcpt}/package-lock.json |   0
+ {addToRcpt => lib/addToRcpt}/package.json      |   0
+ {addToRcpt => lib/addToRcpt}/upload.zip        | Bin
+ 5 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 672f957d12bc95ce2b6e5d045213043cff84a3dd
+Author: MLucasA <lalano@wpi.edu>
+Date:   Mon Nov 24 11:43:06 2025 -0500
+
+    Finished add item to receipt lambda fn
+
+ addToRcpt/config.mjs        |   6 ++
+ addToRcpt/index.mjs         | 116 +++++++++++++++++++++++++++++++++++
+ addToRcpt/package-lock.json | 146 ++++++++++++++++++++++++++++++++++++++++++++
+ addToRcpt/package.json      |   8 +++
+ addToRcpt/upload.zip        | Bin 0 -> 615226 bytes
+ 5 files changed, 276 insertions(+)
+
+commit 735188963647db9696f5f36c42831f1b3e5a2729
+Merge: e66f0fa 6d0483b
+Author: jacubb5 <97991630+jacubb5@users.noreply.github.com>
+Date:   Sun Nov 23 20:29:33 2025 -0500
+
+    Merge pull request #10 from Roguillo/Making-Front-and-Back-End
+    
+    Added folders and created next project
+
+commit 6d0483b3ecaf3a4c74d0800d7730a2370c73ea72
+Author: Glisso <jacubb5@outlook.com>
+Date:   Sun Nov 23 16:50:10 2025 -0500
+
+    Added folders and created next project
+
+ .npmignore => Backend/.npmignore                   |    0
+ {bin => Backend/bin}/g.project.ts                  |    0
+ cdk.json => Backend/cdk.json                       |    0
+ jest.config.js => Backend/jest.config.js           |    0
+ {lib => Backend/lib}/ShowAdminDashboard/config.mjs |    0
+ {lib => Backend/lib}/ShowAdminDashboard/index.mjs  |    0
+ .../lib}/ShowAdminDashboard/package-lock.json      |  480 +-
+ .../lib}/ShowAdminDashboard/package.json           |   16 +-
+ {lib => Backend/lib}/add-chain/config.mjs          |    0
+ {lib => Backend/lib}/add-chain/index.mjs           |    0
+ {lib => Backend/lib}/add-chain/package-lock.json   |  480 +-
+ {lib => Backend/lib}/add-chain/package.json        |   16 +-
+ {lib => Backend/lib}/add-store-to-chain/config.mjs |    0
+ {lib => Backend/lib}/add-store-to-chain/index.mjs  |    0
+ .../lib}/add-store-to-chain/package-lock.json      |  480 +-
+ .../lib}/add-store-to-chain/package.json           |   16 +-
+ {lib => Backend/lib}/g.project-stack.ts            |    0
+ {lib => Backend/lib}/login-admin/config.mjs        |    0
+ {lib => Backend/lib}/login-admin/index.mjs         |    0
+ {lib => Backend/lib}/login-admin/package-lock.json |  480 +-
+ {lib => Backend/lib}/login-admin/package.json      |   16 +-
+ {lib => Backend/lib}/login-shopper/config.mjs      |    0
+ {lib => Backend/lib}/login-shopper/index.mjs       |    0
+ .../lib}/login-shopper/package-lock.json           |    0
+ {lib => Backend/lib}/login-shopper/package.json    |    0
+ {lib => Backend/lib}/login-shopper/upload.zip      |  Bin
+ {lib => Backend/lib}/register-shopper/config.mjs   |    0
+ {lib => Backend/lib}/register-shopper/index.mjs    |    0
+ .../lib}/register-shopper/package-lock.json        |    0
+ {lib => Backend/lib}/register-shopper/package.json |    0
+ package-lock.json => Backend/package-lock.json     |    0
+ package.json => Backend/package.json               |    0
+ {test => Backend/test}/g.project.test.ts           |    0
+ tsconfig.json => Backend/tsconfig.json             |    0
+ Frontend/g.project/.gitignore                      |   41 +
+ Frontend/g.project/README.md                       |   36 +
+ Frontend/g.project/eslint.config.mjs               |   18 +
+ Frontend/g.project/next.config.ts                  |    7 +
+ Frontend/g.project/package-lock.json               | 5939 ++++++++++++++++++++
+ Frontend/g.project/package.json                    |   24 +
+ Frontend/g.project/public/file.svg                 |    1 +
+ Frontend/g.project/public/globe.svg                |    1 +
+ Frontend/g.project/public/next.svg                 |    1 +
+ Frontend/g.project/public/vercel.svg               |    1 +
+ Frontend/g.project/public/window.svg               |    1 +
+ Frontend/g.project/src/app/favicon.ico             |  Bin 0 -> 25931 bytes
+ Frontend/g.project/src/app/globals.css             |   42 +
+ Frontend/g.project/src/app/layout.tsx              |   32 +
+ Frontend/g.project/src/app/page.module.css         |  141 +
+ Frontend/g.project/src/app/page.tsx                |   66 +
+ Frontend/g.project/tsconfig.json                   |   34 +
+ 51 files changed, 7377 insertions(+), 992 deletions(-)
+
+commit a506b9de357cefcf81f97e0e4a236657fc909810
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 16:09:29 2025 -0500
+
+    Add files via upload
+
+ lib/remove-chain/index.mjs         |  76 ++++++++++++
+ lib/remove-chain/package-lock.json | 240 +++++++++++++++++++++++++++++++++++++
+ lib/remove-chain/package.json      |   8 ++
+ 3 files changed, 324 insertions(+)
+
+commit 528f43fa87c02fc6e2663e9cb5d09fa8dae0dd1d
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 16:08:50 2025 -0500
+
+    Create config.mjs
+
+ lib/remove-chain/config.mjs | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit e66f0faf0623172ae4492432e258473b1f2c3bdf
+Merge: e7d0ebf a70aa60
+Author: MLucasA <mlucasalano@gmail.com>
+Date:   Sat Nov 22 15:59:39 2025 -0500
+
+    Merge pull request #5 from Roguillo/Show-Admin-Dashboard
+    
+    Show admin dashboard
+
+commit e7d0ebf5b1c606df8f96b6595cb8e47f543fd04e
+Merge: c2297f9 a99635e
+Author: MLucasA <mlucasalano@gmail.com>
+Date:   Sat Nov 22 15:59:25 2025 -0500
+
+    Merge pull request #6 from Roguillo/Login-Admin
+    
+    Login admin
+
+commit c2297f9463b1505ef60ce405b31e254a174ad436
+Merge: 61d0188 b6277ee
+Author: MLucasA <mlucasalano@gmail.com>
+Date:   Sat Nov 22 15:59:06 2025 -0500
+
+    Merge pull request #7 from Roguillo/Add-Chain
+    
+    Add chain
+
+commit 61d0188cc1bb314b7401f9cfb2d10022bbbae119
+Merge: b044868 49ac03b
+Author: MLucasA <mlucasalano@gmail.com>
+Date:   Sat Nov 22 15:57:29 2025 -0500
+
+    Merge pull request #8 from Roguillo/Add-Store-To-Chain
+    
+    Add store to chain
+
+commit 60526009f2f9bc919f0e123015c64a5fa47ea4e5
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Sat Nov 22 15:48:31 2025 -0500
+
+    Passing off work for someone else
+
+ bin/g.project.ts  | 4 ++--
+ package-lock.json | 5 +++++
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+commit 49ac03bf72b13bee3a9b153167e6ddc02f55673a
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 15:38:07 2025 -0500
+
+    Update index.mjs
+
+ lib/add-store-to-chain/index.mjs | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit b6277ee7cc0820136f79d01043db8fa85b2a5f86
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 15:35:27 2025 -0500
+
+    Update index.mjs
+
+ lib/add-chain/index.mjs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit a70aa6087fc521c0857cb07cb6dba52e62a4a648
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 15:31:51 2025 -0500
+
+    Update index.mjs
+
+ lib/ShowAdminDashboard/index.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a99635ea969a70afa7fb9862f54f921bd9fbf7a6
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 15:27:40 2025 -0500
+
+    Update index.mjs
+
+ lib/login-admin/index.mjs | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+commit fd98697d027dac3fe54863dc903884d31a1fa809
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Sat Nov 22 15:22:49 2025 -0500
+
+    CDK Template Before CDK Synth
+
+ bin/g.project.ts       |   2 +-
+ lib/cdk-lambda.ts      | 133 +++++++++++++++++++++++++++++++++++++++++++++++++
+ lib/g.project-stack.ts |  16 ------
+ 3 files changed, 134 insertions(+), 17 deletions(-)
+
+commit b0448689eaffcc11f0d0496dadf21e8b67b85fc4
+Merge: a46b348 8ecb0a7
+Author: Glisso <97991630+Glisso@users.noreply.github.com>
+Date:   Sat Nov 22 15:08:04 2025 -0500
+
+    Merge pull request #4 from Roguillo/Login-Shopper
+    
+    Completed Login-Shopper Code
+
+commit a46b348a625a84a3d736381fdbeb1af737553299
+Merge: 57f212f b1b096e
+Author: Glisso <97991630+Glisso@users.noreply.github.com>
+Date:   Sat Nov 22 15:07:46 2025 -0500
+
+    Merge pull request #3 from Roguillo/Register-Shopper
+    
+    Merge Register Shopper to Main
+
+commit 4e56fbc3a522eaf49734897cc2e9a4a6494c7a12
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 15:02:24 2025 -0500
+
+    Add files via upload
+
+ lib/add-store-to-chain/index.mjs         | 109 ++++++++++++++
+ lib/add-store-to-chain/package-lock.json | 240 +++++++++++++++++++++++++++++++
+ lib/add-store-to-chain/package.json      |   8 ++
+ 3 files changed, 357 insertions(+)
+
+commit ed48c8f71d4d237d45e656b145076a602987eedc
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 15:01:33 2025 -0500
+
+    Delete lib/add-store-to-chain/package.json
+
+ lib/add-store-to-chain/package.json | 8 --------
+ 1 file changed, 8 deletions(-)
+
+commit a95f3429805b93bc7d04b962d6d7504136d52942
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 15:01:26 2025 -0500
+
+    Delete lib/add-store-to-chain/package-lock.json
+
+ lib/add-store-to-chain/package-lock.json | 240 -------------------------------
+ 1 file changed, 240 deletions(-)
+
+commit 28f85e81f985c314eccc71850b547fd95c0589c0
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 15:01:14 2025 -0500
+
+    Delete lib/add-store-to-chain/index.mjs
+
+ lib/add-store-to-chain/index.mjs | 90 ----------------------------------------
+ 1 file changed, 90 deletions(-)
+
+commit 477d5ce7e05d38195bd3ed6dadc07feea24b484d
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 15:00:45 2025 -0500
+
+    Add files via upload
+
+ lib/add-store-to-chain/index.mjs         |  90 ++++++++++++
+ lib/add-store-to-chain/package-lock.json | 240 +++++++++++++++++++++++++++++++
+ lib/add-store-to-chain/package.json      |   8 ++
+ 3 files changed, 338 insertions(+)
+
+commit cb299e09aa8497ce992aed8fa25498b2a8970ec5
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 15:00:14 2025 -0500
+
+    Create config.mjs
+
+ lib/add-store-to-chain/config.mjs | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit a45ed6d95b4b321becb348c855983aaec833e3a9
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 14:58:20 2025 -0500
+
+    Add files via upload
+
+ lib/add-chain/index.mjs         |  90 +++++++++++++++
+ lib/add-chain/package-lock.json | 240 ++++++++++++++++++++++++++++++++++++++++
+ lib/add-chain/package.json      |   8 ++
+ 3 files changed, 338 insertions(+)
+
+commit ee0ac987d1ff95f189fda67639b652a8c8d21504
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 14:58:00 2025 -0500
+
+    Create config.mjs
+
+ lib/add-chain/config.mjs | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit 561e19926003326a898970210671e360a2c7e91b
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 14:55:50 2025 -0500
+
+    Add files via upload
+
+ lib/login-admin/index.mjs         |  81 +++++++++++++
+ lib/login-admin/package-lock.json | 240 ++++++++++++++++++++++++++++++++++++++
+ lib/login-admin/package.json      |   8 ++
+ 3 files changed, 329 insertions(+)
+
+commit 979cbda29d0f8365e14252835ea257a9c3c15262
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 14:55:28 2025 -0500
+
+    Create config.mjs
+
+ lib/login-admin/config.mjs | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit 662411468eb0f9b9c5eb983e3cd990f759dc8e26
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 14:52:13 2025 -0500
+
+    Add files via upload
+
+ lib/ShowAdminDashboard/index.mjs         |  99 +++++++++++++
+ lib/ShowAdminDashboard/package-lock.json | 240 +++++++++++++++++++++++++++++++
+ lib/ShowAdminDashboard/package.json      |   8 ++
+ 3 files changed, 347 insertions(+)
+
+commit c3e25ab3cff2f824287778d43ce1b1027870ad1a
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 14:51:53 2025 -0500
+
+    Create config.mjs
+
+ lib/ShowAdminDashboard/config.mjs | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit 6b669220225be8d0866d6f16beabd5928d67de0a
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 14:51:34 2025 -0500
+
+    Delete lib/LoginAdmin directory
+
+ lib/LoginAdmin/config.mjs | 6 ------
+ 1 file changed, 6 deletions(-)
+
+commit b518a5024d166a177f8845f68b33a4f189633464
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 14:51:22 2025 -0500
+
+    Create config.mjs
+
+ lib/LoginAdmin/config.mjs | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit 2339164a94edc90e857d95d6420ea2d6cd177e2c
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 14:51:05 2025 -0500
+
+    Delete lib/LoginAdmin. directory
+
+ lib/LoginAdmin./config.mjs | 6 ------
+ 1 file changed, 6 deletions(-)
+
+commit 00962a72607ee698fb7f9fde8b57a259cb485dd5
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 14:50:48 2025 -0500
+
+    Create config.mjs
+
+ lib/LoginAdmin./config.mjs | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit ab9759e5d9e72f57170e11a02dac23ce2580f571
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 14:49:05 2025 -0500
+
+    Delete lib/package.json
+
+ lib/package.json | 8 --------
+ 1 file changed, 8 deletions(-)
+
+commit 826ead00b2d3d646874e1fdfc1c1e4701a6e8993
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 14:48:57 2025 -0500
+
+    Delete lib/package-lock.json
+
+ lib/package-lock.json | 240 --------------------------------------------------
+ 1 file changed, 240 deletions(-)
+
+commit feac20f20d0aa45c750ca0b16ad6027ca08e9f4f
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 14:48:47 2025 -0500
+
+    Delete lib/index.mjs
+
+ lib/index.mjs | 99 -----------------------------------------------------------
+ 1 file changed, 99 deletions(-)
+
+commit d02c889248da50b818ff0449e77afa52cc3c45f9
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 14:48:34 2025 -0500
+
+    Delete lib/config.mjs
+
+ lib/config.mjs | 6 ------
+ 1 file changed, 6 deletions(-)
+
+commit 7820bf9c7f6997488ae682428e549f943881a294
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 22 14:42:13 2025 -0500
+
+    Add files via upload
+
+ lib/config.mjs        |   6 ++
+ lib/index.mjs         |  99 +++++++++++++++++++++
+ lib/package-lock.json | 240 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ lib/package.json      |   8 ++
+ 4 files changed, 353 insertions(+)
+
+commit 8ecb0a73cfc3b7f878fa4c68c0a841e76e1144fb
+Author: Glisso <jacubb5@outlook.com>
+Date:   Fri Nov 21 19:06:49 2025 -0500
+
+    Completed functional code
+
+ lib/login-shopper/index.mjs | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
+
+commit d24231d5e558e0f8f0f32921a80665dab5a9f174
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Fri Nov 21 14:54:07 2025 -0500
+
+    After Office Hours
+
+ lib/login-shopper/index.mjs         |  27 +++---
+ lib/login-shopper/package-lock.json | 172 ++++++++++++++++++++++--------------
+ lib/login-shopper/package.json      |   2 +-
+ lib/login-shopper/upload.zip        | Bin 324588 -> 592708 bytes
+ 4 files changed, 122 insertions(+), 79 deletions(-)
+
+commit 6635a1ece6327ea4909693eb24c882aaeb1a37a3
+Author: Glisso <jacubb5@outlook.com>
+Date:   Thu Nov 20 20:36:58 2025 -0500
+
+    Updated code (not working), need to return password and shopperID from validateCredentials()
+
+ lib/login-shopper/config.mjs        |   6 ++
+ lib/login-shopper/index.mjs         | 115 ++++++++++++++++++++++++++++++++++++
+ lib/login-shopper/package-lock.json | 108 +++++++++++++++++++++++++++++++++
+ lib/login-shopper/package.json      |   9 +++
+ lib/login-shopper/upload.zip        | Bin 0 -> 324588 bytes
+ 5 files changed, 238 insertions(+)
+
+commit b1b096e1f26915caf70ee30399d28b934605b7f7
+Author: Glisso <jacubb5@outlook.com>
+Date:   Thu Nov 20 19:06:57 2025 -0500
+
+    Added error checks and comments, code fully functional
+
+ lib/register-shopper/index.mjs | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+commit 00c34f8dc6277da6b64c8005b77265c586aec6b6
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Thu Nov 20 16:20:42 2025 -0500
+
+    Working Register Shopper Code
+
+ lib/register-shopper/config.mjs           |   6 ++
+ lib/register-shopper/index.mjs            |  87 ++++++++++++++++++++++++
+ lib/register-shopper/package-lock.json    | 108 ++++++++++++++++++++++++++++++
+ lib/register-shopper/package.json         |   9 +++
+ lib/register-shopper/register-shopper.mjs |  41 ------------
+ 5 files changed, 210 insertions(+), 41 deletions(-)
+
+commit 5dc6a58b083fe48d60a50d226e8e609f4b161eec
+Author: jacubbage <jacubbage@wpi.edu>
+Date:   Wed Nov 19 17:54:31 2025 -0500
+
+    Started Working on Register Shopper
+
+ lib/register-shopper/package.json         |  0
+ lib/register-shopper/register-shopper.mjs | 41 +++++++++++++++++++++++++++++++
+ 2 files changed, 41 insertions(+)
+
+commit 57f212f8a371380c7815022c0ad58f8b177fcd75
+Author: Roguillo <rcafreeskates@gmail.com>
+Date:   Tue Nov 18 16:22:52 2025 -0500
+
+    initialized project
+
+ .gitignore             |    9 +-
+ .npmignore             |    6 +
+ bin/g.project.ts       |   20 +
+ cdk.json               |  101 ++
+ jest.config.js         |    8 +
+ lib/g.project-stack.ts |   16 +
+ package-lock.json      | 4430 ++++++++++++++++++++++++++++++++++++++++++++++++
+ package.json           |   26 +
+ test/g.project.test.ts |   17 +
+ tsconfig.json          |   32 +
+ 10 files changed, 4664 insertions(+), 1 deletion(-)
+
+commit 2bec0f4029703036c3e7ea57c5c9995745b9b8de
+Author: Roguillo <rcafreeskates@gmail.com>
+Date:   Mon Nov 17 11:32:28 2025 -0500
+
+    added name
+
+ README.md | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+commit 9a8a9ae3149959e931963ca75b3efecc254dd86e
+Merge: f24ac9c 510debc
+Author: Glisso <97991630+Glisso@users.noreply.github.com>
+Date:   Sun Nov 16 19:14:51 2025 -0500
+
+    Merge pull request #2 from Roguillo/Add-name-to-README-(Jacob)
+    
+    Update README.md
+
+commit 510debc0a6c82bc748b23e74206dff88b664a420
+Author: Glisso <97991630+Glisso@users.noreply.github.com>
+Date:   Sun Nov 16 19:13:21 2025 -0500
+
+    Update README.md
+
+ README.md | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit f24ac9cce51727bce82253b1ce51ae94de5c5416
+Merge: 2649edc 3f87e9b
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 15 13:36:31 2025 -0500
+
+    Merge pull request #1 from Roguillo/JosephTest
+    
+    Update README.md
+
+commit 3f87e9b0e88649144c3fd19880c98da3a11ef2e4
+Merge: 3513831 2649edc
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 15 13:31:30 2025 -0500
+
+    Merge branch 'main' into JosephTest
+
+commit 2649edc15af10811270a3ddbd77363166d153dd1
+Author: MLucasA <lalano@wpi.edu>
+Date:   Sat Nov 15 13:27:25 2025 -0500
+
+    added my name to the README
+
+ README.md | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 35138317deee1fd38bd48188a612e9d743b49c08
+Author: josephdangelo17 <135060368+josephdangelo17@users.noreply.github.com>
+Date:   Sat Nov 15 13:24:28 2025 -0500
+
+    Update README.md
+    
+    This is a test
+
+ README.md | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit a131b0ba669cb8fdf890c65aff86598dea90cb8c
+Author: Roguillo <rcafreeskates@gmail.com>
+Date:   Fri Nov 14 13:37:14 2025 -0500
+
+    initial commit
+
+ .gitignore | 1 +
+ README.md  | 1 +
+ 2 files changed, 2 insertions(+)

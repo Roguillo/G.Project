@@ -37,11 +37,8 @@ export const handler = async (event) => {
   let LoginTokenGetExists = (token) => {
     return new Promise((resolve, reject) => {
       const query = "SELECT shopperID FROM LoginTokens WHERE loginToken = ?";
-      pool.query(query, [token], (error, rows, fields) => {
-        console.log("rows:", rows);
-        console.log("error:", error);
-        console.log("fields:", fields);
 
+      pool.query(query, [token], (error, rows, fields) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage));
 
@@ -86,15 +83,16 @@ export const handler = async (event) => {
     // actually create receipt
     await(createReceipt(day, month, year, receiptID, shopperID, storeID, chainID));
 
+    // good
     response_code =  200;
     response_body =
-      {
-        msg      : "Receipt created",
+      { msg      : "Receipt created",
         receiptID: receiptID,
         shopperID: shopperID
       };
 
   } catch (error) {
+    // bad
     response_code =   400;
     response_body = { error: error.message }
   }
