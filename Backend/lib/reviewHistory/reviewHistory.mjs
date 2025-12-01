@@ -1,5 +1,5 @@
-import mysql from 'mysql2';
-import {config} from './config.mjs';
+import mysql from 'mysql2'
+import {config} from './config.mjs'
 
 /**
  * event is JSON of the form:
@@ -17,99 +17,89 @@ var pool = mysql.createPool({
   database: config.database
 }).promise()
 
-async function verifyToken(token) {
-  const [rows] = await pool.query('SELECT * FROM `LoginToken` WHERE `LoginToken` = ?', [token]);
-  return rows[0].shopperID;
-}
-
-async function getReceipts(shopperID) {
-  const [rows] = await pool.query('SELECT * FROM `Receipts` WHERE `shopperID` = ?', [shopperID]);
-  for (receipts in rows) {
-    const [receipt, [items]] = await Promise.all([
-      pool.query('SELECT * FROM `Receipts` WHERE `receiptID` = ?', [receipts.receiptID]),
-      pool.query('SELECT * FROM `Items` WHERE `receiptID` = ?', [receipts.receiptID])
-    ]);
-  }
-}
-
 
 // Check for auth token, record shopper id if exists
 // Get all data on receipts linked to shopper
 // Add item data to each receipt
+
+async function verifyToken(token) {
+  const [rows] = await pool.query('SELECT * FROM `LoginTokens` WHERE `LoginToken` = ?', [token])
+  return rows[0].shopperID
+}
+
+async function getReceipts(shopperID) {
+  const [rows] = await pool.query('SELECT `receiptID` FROM `Receipts` WHERE `shopperID` = ?', [shopperID])
+  return rows
+}
+
+async function getItems(receiptID) {
+  const [items] = await pool.query('SELECT `name` FROM `Items` WHERE `receiptID` = ?', [receiptID])
+}
+
+// async function getReceipts(shopperID) {
+//   const [rows] = await pool.query('SELECT * FROM `Receipts` WHERE `shopperID` = ?', [shopperID])
+//   for (receipts in rows) {
+//     const [receipt, [items]] = await Promise.all([
+//       pool.query('SELECT * FROM `Receipts` WHERE `receiptID` = ?', [receipts.receiptID]),
+//       pool.query('SELECT * FROM `Items` WHERE `receiptID` = ?', [receipts.receiptID])
+//     ])
+//   }
+// }
 
 
 export const handler = async (event) => {
 
   let result
   let code
-  try {
-    const token = event.adminToken;
 
-    //could not find token
+  try {
+    const token = event.loginToken
+
+    // Could not find token
     if (!token) {
       code = 400
       result = {error : "Not logged into account"}
       return {
         statusCode: code,
         body: JSON.stringify(result)
-      };
+      }
     }
 
-    const valid = await verifyToken(token);
+    const shopperID = await verifyToken(token)
 
-    //token is not one in table
-    if (!valid) {
+    // Token is not one in table
+    if (!shopperID) {
       return {
         statusCode: 400,
         body: JSON.stringify({ error: "Token is not valid" })
-      };
-    }
-
-    //fetch dashboard data
-    code = 200
-    const [shoppers] = await pool.query(
-      'SELECT * FROM Shoppers'
-    );
-
-    const [stores] = await pool.query(
-      'SELECT * FROM Stores'
-    );
-
-    const [chains] = await pool.query(
-      'SELECT * FROM Chains'
-    );
-
-    //compute total sales
-    let totalSales = 0
-    for(let i = 0; i < chains.length; i++){
-      totalSales += chains[i].sales 
-    }
-
-    //create chain summary
-    let chainsSummary = chains.map(chain => {
-      let chainStores = 0
-      for(let i = 0; i < stores.length; i++){
-        if(stores[i].chainID === chain.chainID){
-          chainStores += 1
-        }
       }
-
-      return {
-        chainID: chain.chainID,
-        chainName: chain.chainName,
-        url: chain.url,
-        stores: chainStores,
-        totalSales: chain.sales
-      };
-    })
-
-    result = {
-      totalShoppers: shoppers.length,
-      totalStores: stores.length,
-      totalSales: totalSales,
-      chains: chainsSummary,
-      stores: stores
     }
+
+    const [receipts] = await getReceipts(shopperID)
+
+    console.log(parse(receipts).receiptID)
+    receiptID = receipts[0]
+    console.log(receiptID)
+    const [items] = await getItems(receiptID)
+
+    
+
+    // // Fetch all receipt data
+    // code = 200
+    // const [rows] = await pool.query('SELECT * FROM `Receipts` WHERE `shopperID` = ?', [shopperID])
+    // for (receiptID in rows.receiptID) {
+    //   const [receipt, [item]] = await Promise.all([
+    //     pool.query('SELECT * FROM `Receipts` WHERE `receiptID` = ?', [receiptID]),
+    //     pool.query('SELECT * FROM `Items` WHERE `receiptID` = ?', [receiptID])
+    //   ])
+    // }
+
+    code = 200
+    result = {
+      receipts: receipts
+      // items: item
+    }
+
   } catch (error){
     result = "SQL error:" + error
     code = 400
@@ -119,6 +109,7 @@ export const handler = async (event) => {
   const response = {
     statusCode: code,
     body: JSON.stringify(result),
-  };
-  return response;
-};
+  }
+
+  return response
+}
