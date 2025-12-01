@@ -140,6 +140,52 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     }
 
 
+     async function removeItemFromReceipt() {
+        const inputElementItemName     = document.getElementById("rm-item-name") as HTMLInputElement;
+
+        const itemName     = inputElementItemName.value;
+        const itemID = null;
+    
+        
+
+        await instance.post('/removeFromReceipt', {
+                "loginToken" : model.shopper.loginToken,
+                "receiptID"  : model.receipts[model.receipts.length - 1].receiptID, // latest receipt
+                "itemID"       : itemID,
+                "name" : itemName
+            })
+            .then((response : any) => {
+                APIMessage = (typeof    (response.data.body) === 'string') ?
+                             (JSON.parse(response.data.body)             ) :
+                             (           response.data.body              );
+                
+                if (APIMessage.error != undefined) {
+                    updateAPIMessage(APIMessage.error);
+
+                } else {
+                    updateAPIMessage(APIMessage      );
+                }
+            }
+        );
+
+        //add each item + set price for each item
+        for(let i = 1; i <= itemQuantity; i++){
+            model.addItemToReceipt(
+                                                          itemCategory,
+                APIMessage                               .itemID,
+                                                          itemName,
+                model.receipts[model.receipts.length - 1].receiptID
+            );
+
+            model.receipts[model.receipts.length - 1].
+            items[model.receipts[model.receipts.length - 1].items.length - 1].
+            setPrice(itemPrice);
+        }
+
+        //update
+        sync();
+    }
+
 
     // make another function for remove item from receipt and export it
 
