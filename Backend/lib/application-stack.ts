@@ -47,6 +47,7 @@ export class ApplicationStack extends cdk.Stack {
     const addStoreToChainResource = shopCompResource.addResource('addStoreToChain')
     const addToReceiptResource = shopCompResource.addResource('addToReceipt')
     const createReceiptResource = shopCompResource.addResource('createReceipt')
+     const editItemOnReceiptResource = shopCompResource.addResource('editItemOnReceipt')
     const loginAdminResource = shopCompResource.addResource('loginAdmin')
     const loginShopperResource = shopCompResource.addResource('loginShopper')
     const registerShopperResource = shopCompResource.addResource('registerShopper')
@@ -164,6 +165,18 @@ export class ApplicationStack extends cdk.Stack {
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
     })
     createReceiptResource.addMethod('POST', new apigw.LambdaIntegration(createReceipt_fn, integration_parameters), response_parameters)
+
+
+    // Add a POST method to the '/shopComp/editItemOnReceipt' resource
+    const editItemOnReceipt_fn = new lambdaNodejs.NodejsFunction(this, 'EditItemOnReceiptFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'editItemOnReceipt.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'editItemOnReceipt')),
+      vpc: vpc,                                                             // Reference the VPC defined above
+      securityGroups: [securityGroup],                                      // Associate the security group
+      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+    })
+    editItemOnReceiptResource.addMethod('POST', new apigw.LambdaIntegration(editItemOnReceipt_fn, integration_parameters), response_parameters)
 
 
     // Add a POST method to the '/shopComp/loginAdmin' resource
