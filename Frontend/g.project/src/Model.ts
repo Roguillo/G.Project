@@ -96,6 +96,10 @@ export class Receipt {
         this.items = this.items.filter(items => items !== item)
     }
 
+    rmItemByID(ID:string){
+        this.items = this.items.filter(item => item.itemID !== ID)
+    }
+
     setDate(date: Date) {
         this.date = date
     }
