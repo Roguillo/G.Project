@@ -128,14 +128,12 @@ export const handler = async (event) => {
     // await(rmItemFromReceipt(itemID, receiptID))
     await(rmItemFromReceipt(itemID))
 
-    //used as response body
-    let info = {
-      "name" : name,
-      "itemID" : itemID
-    }
 
     response_code =  200;
-    response_body = { info };
+    response_body = { 
+      "name" : name,
+      "itemID" : itemID
+     };
   }
 
   catch(error){
