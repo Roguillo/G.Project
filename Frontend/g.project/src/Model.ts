@@ -49,8 +49,7 @@ export class Model {
     }
 
     addItemToReceipt(category : string, itemID : string, name : string, receiptID : string) {
-        this.receipts[this.receipts.length - 1].addItem(new Item(
-            category, itemID, name, receiptID)
+        this.receipts[this.receipts.length - 1].addItem(new Item(category, itemID, name, receiptID)
         );
     }
 }
@@ -98,6 +97,7 @@ export class Receipt {
 
     rmItemByID(ID:string){
         this.items = this.items.filter(item => item.itemID !== ID)
+        console.log(this.items)
     }
 
     setDate(date: Date) {

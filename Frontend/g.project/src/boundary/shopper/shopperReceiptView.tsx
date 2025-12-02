@@ -11,7 +11,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     type APIresponse = {
         category ? : string;
         error    ? : string;
-        itemID   ? : string;
+        itemID   ? : string | string[];
         msg      ? : string;
         name     ? : string;
         price    ? : string;
@@ -24,7 +24,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     // react state variables
     const [rAPIMessage, updateAPIMessage] = React.useState<APIresponse>();
     // API response message variable
-    let APIMessage : any;
+    let APIMessage :   any;
 
 
     // for testing
@@ -108,25 +108,25 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 "quantity"   : itemQuantity
             })
             .then((response : any) => {
-                APIMessage = (typeof    (response.data.body) === 'string') ?
-                             (JSON.parse(response.data.body)             ) :
-                             (           response.data.body              );
-                
+                // APIMessage = (typeof    (response.data.body) === 'string') ?
+                //                 (JSON.parse(response.data.body)             ) :
+                //                 (           response.data.body              );
+                APIMessage = JSON.parse(response.data.body);
                 if (APIMessage.error != undefined) {
                     updateAPIMessage(APIMessage.error);
 
                 } else {
-                    updateAPIMessage(APIMessage      );
+                    updateAPIMessage(APIMessage);
+                
                 }
-            }
-        );
+            });
+
 
         //add each item + set price for each item
         for(let i = 1; i <= itemQuantity; i++){
-            model.addItemToReceipt(
-                                                          itemCategory,
-                APIMessage                               .itemID,
-                                                          itemName,
+            model.addItemToReceipt(itemCategory,
+                APIMessage.itemID[i-1],
+                itemName,
                 model.receipts[model.receipts.length - 1].receiptID
             );
 
@@ -163,7 +163,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             }
         );
 
-
+        console.log(APIMessage)
         //remove the item from the receipt
         const receipt = model.receipts[model.receipts.length-1]
         receipt.rmItemByID(APIMessage.itemID)
@@ -203,6 +203,12 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         <input id="new-item-price" placeholder="Price" style={{ marginRight: '5px' }} />
         <input id="new-item-quantity" placeholder="Qty" style={{ marginRight: '5px' }} />
         <button onClick={addItemToReceipt}>Add Item</button>
+        </div>
+
+        {/* Remove Item */}
+        <div style={{ marginBottom: '15px' }}>
+        <input id="rm-item-name" placeholder="Name" style={{ marginRight: '5px' }} />
+        <button onClick={removeItemFromReceipt}>Remove Item</button>
         </div>
 
         {/* Show Current Receipt Items */}
