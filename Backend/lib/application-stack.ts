@@ -53,6 +53,7 @@ export class ApplicationStack extends cdk.Stack {
     const removeChainResource = shopCompResource.addResource('removeChain')
     const removeFromReceiptResource = shopCompResource.addResource('removeFromReceipt')
     const removeStoreResource = shopCompResource.addResource('removeStore')
+    const reviewActivityResource = shopCompResource.addResource('reviewActivity')
     const showAdminDashboardResource = shopCompResource.addResource('showAdminDashboard')
     const showShopperDashboardResource = shopCompResource.addResource('showShopperDashboard')
   
@@ -235,6 +236,18 @@ export class ApplicationStack extends cdk.Stack {
     })
     removeStoreResource.addMethod('POST', new apigw.LambdaIntegration(removeStore_fn, integration_parameters), response_parameters)
     
+
+    // Add a POST method to the '/shopComp/reviewActivity' resource
+    const reviewActivity_fn = new lambdaNodejs.NodejsFunction(this, 'ReviewActivityFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'reviewActivity.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'reviewActivity')),
+      vpc: vpc,                                                             // Reference the VPC defined above
+      securityGroups: [securityGroup],                                      // Associate the security group
+      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+    })
+    reviewActivityResource.addMethod('POST', new apigw.LambdaIntegration(reviewActivity_fn, integration_parameters), response_parameters)
+
 
     // Add a POST method to the '/shopComp/showAdminDashboard' resource
     const showAdminDashboard_fn = new lambdaNodejs.NodejsFunction(this, 'ShowAdminDashboardFunction', {
