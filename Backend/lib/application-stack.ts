@@ -44,16 +44,20 @@ export class ApplicationStack extends cdk.Stack {
     // Create a resource (e.g., '/calc')
     const shopCompResource = api_endpoint.root.addResource('shopComp')
     const addChainResource = shopCompResource.addResource('addChain')
+    const addItemShoppingListResource = shopCompResource.addResource('addItemShoppingList')
     const addStoreToChainResource = shopCompResource.addResource('addStoreToChain')
     const addToReceiptResource = shopCompResource.addResource('addToReceipt')
     const createReceiptResource = shopCompResource.addResource('createReceipt')
-     const editItemOnReceiptResource = shopCompResource.addResource('editItemOnReceipt')
+    const createShoppingListResource = shopCompResource.addResource('createShoppingList')
+    const editItemOnReceiptResource = shopCompResource.addResource('editItemOnReceipt')
+    const listStoreChainsResource = shopCompResource.addResource('listStoreChains')
     const loginAdminResource = shopCompResource.addResource('loginAdmin')
     const loginShopperResource = shopCompResource.addResource('loginShopper')
     const registerShopperResource = shopCompResource.addResource('registerShopper')
     const removeChainResource = shopCompResource.addResource('removeChain')
     const removeFromReceiptResource = shopCompResource.addResource('removeFromReceipt')
     const removeStoreResource = shopCompResource.addResource('removeStore')
+    const reportOptionsShoppingListResource = shopCompResource.addResource('reportOptionsShoppingList')
     const showAdminDashboardResource = shopCompResource.addResource('showAdminDashboard')
     const showShopperDashboardResource = shopCompResource.addResource('showShopperDashboard')
   
@@ -131,6 +135,18 @@ export class ApplicationStack extends cdk.Stack {
     addChainResource.addMethod('POST', new apigw.LambdaIntegration(addChain_fn, integration_parameters), response_parameters)
 
 
+    // Add a POST method to the '/shopComp/addItemToShoppingList' resource
+    const addItemShoppingList_fn = new lambdaNodejs.NodejsFunction(this, 'AddItemShoppingListFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'addItemShoppingList.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'addItemShoppingList')),
+      vpc: vpc,                                                             // Reference the VPC defined above
+      securityGroups: [securityGroup],                                      // Associate the security group
+      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+    })
+    addItemShoppingListResource.addMethod('POST', new apigw.LambdaIntegration(addItemShoppingList_fn, integration_parameters), response_parameters)
+
+
     // Add a POST method to the '/shopComp/addStoreToChain' resource
     const addStoreToChain_fn = new lambdaNodejs.NodejsFunction(this, 'AddStoreToChainFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
@@ -155,7 +171,7 @@ export class ApplicationStack extends cdk.Stack {
     addToReceiptResource.addMethod('POST', new apigw.LambdaIntegration(addToReceipt_fn, integration_parameters), response_parameters)
 
 
-     // Add a POST method to the '/shopComp/createReceipt' resource
+    // Add a POST method to the '/shopComp/createReceipt' resource
     const createReceipt_fn = new lambdaNodejs.NodejsFunction(this, 'CreateReceiptFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'createReceipt.handler',
@@ -165,6 +181,18 @@ export class ApplicationStack extends cdk.Stack {
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
     })
     createReceiptResource.addMethod('POST', new apigw.LambdaIntegration(createReceipt_fn, integration_parameters), response_parameters)
+
+
+    // Add a POST method to the '/shopComp/createShoppingList' resource
+    const createShoppingList_fn = new lambdaNodejs.NodejsFunction(this, 'CreateShoppingListFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'createShoppingList.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'createShoppingList')),
+      vpc: vpc,                                                             // Reference the VPC defined above
+      securityGroups: [securityGroup],                                      // Associate the security group
+      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+    })
+    createShoppingListResource.addMethod('POST', new apigw.LambdaIntegration(createShoppingList_fn, integration_parameters), response_parameters)
 
 
     // Add a POST method to the '/shopComp/editItemOnReceipt' resource
@@ -177,6 +205,18 @@ export class ApplicationStack extends cdk.Stack {
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
     })
     editItemOnReceiptResource.addMethod('POST', new apigw.LambdaIntegration(editItemOnReceipt_fn, integration_parameters), response_parameters)
+
+
+    // Add a POST method to the '/shopComp/listStoreChains' resource
+    const listStoreChains_fn = new lambdaNodejs.NodejsFunction(this, 'ListStoreChainsFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'listStoreChains.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'listStoreChains')),
+      vpc: vpc,                                                             // Reference the VPC defined above
+      securityGroups: [securityGroup],                                      // Associate the security group
+      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+    })
+    listStoreChainsResource.addMethod('POST', new apigw.LambdaIntegration(listStoreChains_fn, integration_parameters), response_parameters)
 
 
     // Add a POST method to the '/shopComp/loginAdmin' resource
@@ -247,6 +287,18 @@ export class ApplicationStack extends cdk.Stack {
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
     })
     removeStoreResource.addMethod('POST', new apigw.LambdaIntegration(removeStore_fn, integration_parameters), response_parameters)
+
+
+    // Add a POST method to the '/shopComp/reportOptionsForShoppingList' resource
+    const reportOptionsShoppingList_fn = new lambdaNodejs.NodejsFunction(this, 'ReportOptionsShoppingListFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'reportOptionsShoppingList.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'reportOptionsShoppingList')),
+      vpc: vpc,                                                             // Reference the VPC defined above
+      securityGroups: [securityGroup],                                      // Associate the security group
+      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+    })
+    reportOptionsShoppingListResource.addMethod('POST', new apigw.LambdaIntegration(reportOptionsShoppingList_fn, integration_parameters), response_parameters)
     
 
     // Add a POST method to the '/shopComp/showAdminDashboard' resource
