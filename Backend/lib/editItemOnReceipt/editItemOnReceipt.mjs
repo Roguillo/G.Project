@@ -1,7 +1,6 @@
 import { config } from './config.mjs';
 import   mysql    from 'mysql2';
 import   crypto   from 'crypto';
-import { get } from 'https';
 
 // open connection to DB
 var pool = mysql.createPool({
@@ -160,23 +159,27 @@ export const handler = async(event) => {
         if(quantity < 1) throw new Error("Can't edit 0 or negative items");
         
 
-        let ID, itemIDs = [];
+        let ID, oldItemIDs = [], itemIDs = [];
 
         while(await(getItemID(refName, receiptID))) {
             ID = await(getItemID(refName, receiptID));
+            oldItemIDs.push(ID);
             await(removeItemFromReceipt(ID));
         }
 
-        for(let i = 0; i < quantity; i++) {
-            ID = "itemID" + crypto.randomUUID();
-            await(addItemToReceipt(ID, storeID, receiptID, name, category, price));
-            itemIDs.push(ID);
+        if(oldItemIDs.length > 0) {
+            for(let i = 0; i < quantity; i++) {
+                ID = "itemID" + crypto.randomUUID();
+                await(addItemToReceipt(ID, storeID, receiptID, name, category, price));
+                itemIDs.push(ID);
+            }
         }
 
 
 
         response_code = 200;
         response_body = {
+            oldItemIDs,
             itemIDs,
             name,
             category,
