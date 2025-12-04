@@ -44,7 +44,7 @@ export const handler = async (event) => {
     const [lists] = await pool.query(
       'SELECT * FROM ShoppingLists WHERE name = ? AND shopperID = ?',
       [shoppingListName, shopperID]
-    );
+    );  
     if(lists.length == 0) {
       code = 400
       result = ({"error" : "List does not exist"})
