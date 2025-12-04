@@ -21,6 +21,7 @@ export const handler = async (event) => {
   let result
   let code
 
+  // Checks if login token is valid and returns shopperID associated with it
   let verifyToken = (token) => {
     return new Promise((resolve, reject) => {
       const selectQuery = "SELECT shopperID FROM LoginTokens WHERE loginToken = ?"
@@ -30,12 +31,13 @@ export const handler = async (event) => {
         } else if (rows.length == 0) {
           reject(new Error("Invalid token"))
         } else {
-          resolve(rows)
+          resolve(rows[0].shopperID)
         }
       })
     })
   }
 
+  // Gets a list of receipts linked to a shopperID
   let getReceipts = (shopperID) => {
     return new Promise((resolve, reject) => {
       const selectQuery = "SELECT receiptID FROM Receipts WHERE shopperID = ?"
@@ -43,20 +45,23 @@ export const handler = async (event) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
         } else {
-          resolve([rows])
+          resolve(rows)
         }
       })
     })
   }
 
-  let getItems = (receipt) => {
+  // Gets a list of items linked to a receiptID
+  let getItem = (receipt) => {
     return new Promise((resolve, reject) => {
-      const selectQuery = "SELECT itemID, itemName FROM Items WHERE receiptID = ?"
+      const selectQuery = "SELECT name, category, price FROM Items WHERE receiptID = ?"
       pool.query(selectQuery, [receipt], (error, rows) => {
-        if (error) {a
+        if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
+        } else if (rows.length == 0) {
+          resolve([])
         } else {
-          resolve([rows])
+          resolve(rows)
         }
       })
     })
@@ -66,22 +71,24 @@ export const handler = async (event) => {
   try {
     const token = event.loginToken
 
-    const [shopperID] = await verifyToken(token)
+    const shopperID = await verifyToken(token)
 
-    const [receipt] = await getReceipts(shopperID.shopperID)
+    const receipt = await getReceipts(shopperID)
 
-    const [item] = await getItems(receipt)
+    // Uses the list of receipts and formats each receiptID to have a list of items it contains
+    const receiptData = await Promise.all(
+      receipt.map(async (receipt) => {
+        const item = await getItem(receipt.receiptID)
+        return {
+          receiptID: receipt.receiptID,
+          items: item
+        }
+      })
+    )
 
     code = 200
     result = {
-      token: token,
-      shopperID: shopperID.shopperID,
-      receipts: receipt,
-      // receiptData: {
-      //   receiptID: receipt.receiptID,
-      //   receiptStoreID: receipt.storeID
-      // },
-      items: item
+      receiptData: receiptData
     }
 
   } catch (error){
