@@ -42,25 +42,21 @@ export class ApplicationStack extends cdk.Stack {
     })
 
     // Create a resource (e.g., '/calc')
-    const shopCompResource                  = api_endpoint.root.addResource('shopComp')
-    const addChainResource                  = shopCompResource.addResource('addChain')
-    const addItemShoppingListResource       = shopCompResource.addResource('addItemShoppingList')
-    const addStoreToChainResource           = shopCompResource.addResource('addStoreToChain')
-    const addToReceiptResource              = shopCompResource.addResource('addToReceipt')
-    const createReceiptResource             = shopCompResource.addResource('createReceipt')
-    const createShoppingListResource        = shopCompResource.addResource('createShoppingList')
-    const editItemOnReceiptResource         = shopCompResource.addResource('editItemOnReceipt')
-    const listStoreChainsResource           = shopCompResource.addResource('listStoreChains')
-    const loginAdminResource                = shopCompResource.addResource('loginAdmin')
-    const loginShopperResource              = shopCompResource.addResource('loginShopper')
-    const registerShopperResource           = shopCompResource.addResource('registerShopper')
-    const removeChainResource               = shopCompResource.addResource('removeChain')
-    const removeFromReceiptResource         = shopCompResource.addResource('removeFromReceipt')
-    const removeStoreResource               = shopCompResource.addResource('removeStore')
-    const reportOptionsShoppingListResource = shopCompResource.addResource('reportOptionsShoppingList')
-    const reviewHistoryResource             = shopCompResource.addResource('reviewHistory')
-    const showAdminDashboardResource        = shopCompResource.addResource('showAdminDashboard')
-    const showShopperDashboardResource      = shopCompResource.addResource('showShopperDashboard')
+    const shopCompResource = api_endpoint.root.addResource('shopComp')
+    const addChainResource = shopCompResource.addResource('addChain')
+    const addStoreToChainResource = shopCompResource.addResource('addStoreToChain')
+    const addToReceiptResource = shopCompResource.addResource('addToReceipt')
+    const createReceiptResource = shopCompResource.addResource('createReceipt')
+    const loginAdminResource = shopCompResource.addResource('loginAdmin')
+    const loginShopperResource = shopCompResource.addResource('loginShopper')
+    const registerShopperResource = shopCompResource.addResource('registerShopper')
+    const removeChainResource = shopCompResource.addResource('removeChain')
+    const removeFromReceiptResource = shopCompResource.addResource('removeFromReceipt')
+    const removeStoreResource = shopCompResource.addResource('removeStore')
+    const reviewActivityResource = shopCompResource.addResource('reviewActivity')
+    const reviewHistoryResource = shopCompResource.addResource('reviewHistory')
+    const showAdminDashboardResource = shopCompResource.addResource('showAdminDashboard')
+    const showShopperDashboardResource = shopCompResource.addResource('showShopperDashboard')
   
 
     // https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/aws-apigateway/README.md
@@ -301,7 +297,18 @@ export class ApplicationStack extends cdk.Stack {
     })
     reportOptionsShoppingListResource.addMethod('POST', new apigw.LambdaIntegration(reportOptionsShoppingList_fn, integration_parameters), response_parameters)
 
+    // Add a POST method to the '/shopComp/reviewActivity' resource
+    const reviewActivity_fn = new lambdaNodejs.NodejsFunction(this, 'ReviewActivityFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'reviewActivity.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'reviewActivity')),
+      vpc: vpc,                                                             // Reference the VPC defined above
+      securityGroups: [securityGroup],                                      // Associate the security group
+      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+    })
+    reviewActivityResource.addMethod('POST', new apigw.LambdaIntegration(reviewActivity_fn, integration_parameters), response_parameters)
 
+    
     // Add a POST method to the '/shopComp/reviewHistory' resource
     const reviewHistory_fn = new lambdaNodejs.NodejsFunction(this, 'ReviewHistoryFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
@@ -312,7 +319,7 @@ export class ApplicationStack extends cdk.Stack {
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
     })
     reviewHistoryResource.addMethod('POST', new apigw.LambdaIntegration(reviewHistory_fn, integration_parameters), response_parameters)
-    
+   
 
     // Add a POST method to the '/shopComp/showAdminDashboard' resource
     const showAdminDashboard_fn = new lambdaNodejs.NodejsFunction(this, 'ShowAdminDashboardFunction', {
