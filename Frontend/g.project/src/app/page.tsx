@@ -19,6 +19,9 @@ export default function Home() {
   const [redraw, forceRedraw] = React.useState(0);
   const [adminToken, setAdminToken] = React.useState<string | null>(null);
 
+  const [shopperView, setShopperView] = React.useState("dashboard");
+  // can be: "dashboard" | "receipts" | "shoppingList" | "history"
+
   /** Called when admin logs in */
   const handleLoginSuccess = (token: string) => {
     setAdminToken(token);
@@ -36,80 +39,120 @@ export default function Home() {
   }
 
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <ShopperReceiptView
-          model={model}
-          instance={instance}
-          sync={sync}
-        />
-        {/* <div> 
-          {!model.shopper?.loginToken && !adminToken ? (
-            // No shopper logged in AND no admin logged in
-            <div>
-              <h1>{model.shopper && "Welcome back " + model.shopper?.name}</h1>
-              <br />
+  <div className={styles.page}>
+    <div>
+      {/* LOGIN / REGISTER SCREEN */}
+      {!model.shopper?.loginToken && !adminToken ? (
+        <div>
+          <h1>{model.shopper && "Welcome back " + model.shopper?.name}</h1>
+          <br />
 
-              <RegisterShopper
+          <RegisterShopper
+            model={model}
+            instance={instance}
+            andRefreshDisplay={andRefreshDisplay}
+          />
+          <br />
+
+          <LoginShopper
+            model={model}
+            instance={instance}
+            andRefreshDisplay={andRefreshDisplay}
+          />
+
+          <LoginAdmin
+            instance={instance}
+            andRefreshDisplay={andRefreshDisplay}
+            onLoginSuccess={handleLoginSuccess}
+          />
+        </div>
+      ) : null}
+
+      {/* SHOPPER VIEW */}
+      {model.shopper?.loginToken && !adminToken && (
+        <>
+          {/* Navigation Buttons */}
+          <div>
+            <button className={styles.navButtonStyle} onClick={() => setShopperView("dashboard")}>
+              Dashboard
+            </button>
+            <button className={styles.navButtonStyle} onClick={() => setShopperView("receipts")}>
+              Receipts
+            </button>
+            <button className={styles.navButtonStyle} onClick={() => setShopperView("shoppingList")}>
+              Shopping List
+            </button>
+            <button className={styles.navButtonStyle} onClick={() => setShopperView("history")}>
+              History
+            </button>
+          </div>
+
+          {/* Page Content */}
+          <div className={styles.main}>
+            {shopperView === "dashboard" && (
+              <div>
+                <h1>{"Welcome back " + model.shopper?.name}</h1>
+
+                <AddChain
+                  instance={instance}
+                  andRefreshDisplay={andRefreshDisplay}
+                  loginToken={model.getLoginToken()}
+                />
+
+                <AddStore
+                  instance={instance}
+                  andRefreshDisplay={andRefreshDisplay}
+                  loginToken={model.getLoginToken()}
+                />
+              </div>
+            )}
+
+            {shopperView === "receipts" && (
+              <ShopperReceiptView
                 model={model}
                 instance={instance}
-                andRefreshDisplay={andRefreshDisplay}
+                sync={sync}
               />
-              <br />
+            )}
 
-              <LoginShopper
-                model={model}
-                instance={instance}
-                andRefreshDisplay={andRefreshDisplay}
-              />
+            {shopperView === "shoppingList" && (
+              <div>
+                <h2>Shopping List Page</h2>
+              </div>
+            )}
 
-              <LoginAdmin
-                instance={instance}
-                andRefreshDisplay={andRefreshDisplay}
-                onLoginSuccess={handleLoginSuccess}
-              />
-            </div>
-          ) : (
-            <div>
-              {!adminToken ? (
-                // Shopper dashboard
-                <div>
-                  <h1>This is the shopper dashboard</h1>
+            {shopperView === "history" && (
+              <div>
+                <h2>Purchase History Page</h2>
+              </div>
+            )}
+          </div>
+        </>
+      )}
 
-                  <AddChain
-                    instance={instance}
-                    andRefreshDisplay={andRefreshDisplay}
-                    loginToken={model.getLoginToken()}
-                  />
+      {/* ADMIN DASHBOARD VIEW */}
+      {adminToken && (
+        <div>
+          <AdminDashboard
+            instance={instance}
+            adminToken={adminToken}
+            refreshKey={redraw}
+          />
 
-                  <AddStore
-                    instance={instance}
-                    andRefreshDisplay={andRefreshDisplay}
-                    loginToken={model.getLoginToken()}
-                  />
-                </div>
-              ) : (
-                // Admin dashboard
-                <div>
-                  <AdminDashboard instance={instance} adminToken={adminToken} refreshKey={redraw} />
+          <RemoveChain
+            instance={instance}
+            andRefreshDisplay={andRefreshDisplay}
+            adminToken={adminToken}
+          />
 
-                  <RemoveChain
-                    instance={instance}
-                    andRefreshDisplay={andRefreshDisplay}
-                    adminToken={adminToken}
-                  />
-
-                  <RemoveStore
-                    instance={instance}
-                    andRefreshDisplay={andRefreshDisplay}
-                    adminToken={adminToken}
-                  />
-                </div>
-              )}
-            </div>
-          )}
-        </div> */}
-      </main>
+          <RemoveStore
+            instance={instance}
+            andRefreshDisplay={andRefreshDisplay}
+            adminToken={adminToken}
+          />
+        </div>
+      )}
     </div>
-  );
-}
+  </div>
+)}
+    
