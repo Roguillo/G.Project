@@ -87,17 +87,33 @@ export class Receipt {
         this.items = items
     }
 
-    addItem(item: Item){
+    addItem(item: Item) {
         this.items.push(item)
     }
 
-    rmItem(item: Item){
+    rmItem(item: Item) {
         this.items = this.items.filter(items => items !== item)
     }
 
-    rmItemByID(ID:string){
+    rmItemByID(ID:string) {
         this.items = this.items.filter(item => item.itemID !== ID)
         console.log(this.items)
+    }
+
+    editItem(oldItemIDs : string[], category : string, itemIDs : string[], name : string, quantity : number, price : number) {
+        let itemID : string;
+        
+        for(let i = 0; i < oldItemIDs.length; i++) {
+            this.rmItemByID(oldItemIDs[i]);
+        }
+
+        if(oldItemIDs.length > 0) {
+            for(let i = 0; i < quantity; i++) {
+                itemID = itemIDs[i];
+                this.addItem(new Item(category, itemID, name, this.receiptID));
+                this.items[this.items.length - 1].setPrice(price);
+            }
+        }   
     }
 
     setDate(date: Date) {
@@ -126,8 +142,8 @@ export class Item {
     receiptID : string;
     store     : Store | undefined;
 
-    constructor( cateogry : string, itemID : string, name : string, receiptID : string) {
-        this.category  = cateogry;
+    constructor( category : string, itemID : string, name : string, receiptID : string) {
+        this.category  = category;
         this.itemID    = itemID;
         this.name      = name;
         this.receiptID = receiptID;
