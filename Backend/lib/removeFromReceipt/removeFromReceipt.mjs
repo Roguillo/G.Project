@@ -42,18 +42,37 @@ var pool = mysql.createPool({
 //     })
 //   }
 
-    // get item name
-  let getItemName = (itemID) => {
+  //   // get item name
+  // let getItemName = (itemID) => {
+  //   return new Promise((resolve, reject) => {
+  //     const query = "SELECT name FROM Items WHERE itemID = ?"
+  //     pool.query(query, [itemID], (error, rows) => {
+  //       if (error) {
+  //         reject(new Error("Database error: " + error.sqlMessage))
+  //       } else if (rows.length === 0)
+  //         {
+  //           resolve(false)
+  //       } else {
+  //         resolve(rows[0]["name"])
+  //       } 
+  //     })
+  //   })
+  // }
+
+  //get itemID from name and receiptID
+  let getItemID = (name, receiptID) => {
     return new Promise((resolve, reject) => {
-      const query = "SELECT name FROM Items WHERE itemID = ?"
-      pool.query(query, [itemID], (error, rows) => {
+      const query = "SELECT itemID FROM Items WHERE name = ? AND receiptID = ?"
+      pool.query(query, [name, receiptID], (error, rows) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
         } else if (rows.length === 0)
           {
             resolve(false)
         } else {
-          resolve(rows[0]["name"])
+          // take the first item that has this name 
+          // (if the user wants to get rid of multiple of the same item they have to execute this Lambda fn the desired amount of times)
+          resolve(rows[0]["itemID"])
         } 
       })
     })
@@ -76,9 +95,11 @@ var pool = mysql.createPool({
 
     /*
    payload: 
-  { 
-    "itemID" : "itemIDXXXX", 
-    "loginToken" : "loginToken" 
+  {  
+    "receiptID" : "receiptIDXXXX",
+    "name" : "itemName",
+    "loginToken" : "loginToken"
+
   } 
 
    */
@@ -91,26 +112,28 @@ export const handler = async (event) => {
     const isLoggedIn = await(LoginTokenExists(loginToken))
     if(!isLoggedIn) throw(new Error("Shopper is not logged in")); // throw error for shopper not logged in
 
-    const itemID = event.itemID
+    const receiptID = event.receiptID
+    const name = event.name
+    const itemID = await(getItemID(name, receiptID))
+    if(!itemID) throw(new Error("Item does not exist"))
+  
 
     // const receiptID = await(getReceiptID(itemID))
     // if(!receiptID) throw(new Error("Item is not attached to a receipt"))
 
-    const name = await(getItemName(itemID))
-    if(!name) throw(new Error("Item has no name"))
+    // const name = await(getItemName(itemID))
+    // if(!name) throw(new Error("Item has no name"))
    
     // delete item
     // await(rmItemFromReceipt(itemID, receiptID))
     await(rmItemFromReceipt(itemID))
 
-    //used as response body
-    let info = {
-      "name" : name,
-      "itemID" : itemID
-    }
 
     response_code =  200;
-    response_body = { info };
+    response_body = { 
+      "name" : name,
+      "itemID" : itemID
+     };
   }
 
   catch(error){
@@ -124,4 +147,3 @@ export const handler = async (event) => {
   };
   return response;
 };
-
