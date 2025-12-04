@@ -4,6 +4,7 @@ function RegisterShopper({model, instance, andRefreshDisplay}: {model: any, inst
     const [apiMessage, changeApiMessage] = React.useState()
 
     function registerShopper() {
+        andRefreshDisplay()
 
         const inputElementName = document.getElementById("new-shopper-name") as HTMLInputElement
         const inputElementUsername = document.getElementById("new-shopper-username") as HTMLInputElement
