@@ -1,0 +1,105 @@
+import mysql from 'mysql2'
+import {config} from './config.mjs'
+
+/**
+ * event is JSON of the form:
+  
+  { 
+    "loginToken" : "loginToken"
+  }
+  
+ */
+
+var pool = mysql.createPool({
+  host: config.host,
+  user: config.user,
+  password: config.password,
+  database: config.database
+})
+
+export const handler = async (event) => {
+  let result
+  let code
+
+  // Checks if login token is valid and returns shopperID associated with it
+  let verifyToken = (token) => {
+    return new Promise((resolve, reject) => {
+      const selectQuery = "SELECT shopperID FROM LoginTokens WHERE loginToken = ?"
+      pool.query(selectQuery, [token], (error, rows) => {
+        if (error) {
+          reject(new Error("Database error: " + error.sqlMessage))
+        } else if (rows.length == 0) {
+          reject(new Error("Invalid token"))
+        } else {
+          resolve(rows[0].shopperID)
+        }
+      })
+    })
+  }
+
+  // Gets a list of receipts linked to a shopperID
+  let getReceipts = (shopperID) => {
+    return new Promise((resolve, reject) => {
+      const selectQuery = "SELECT receiptID FROM Receipts WHERE shopperID = ?"
+      pool.query(selectQuery, [shopperID], (error, rows) => {
+        if (error) {
+          reject(new Error("Database error: " + error.sqlMessage))
+        } else {
+          resolve(rows)
+        }
+      })
+    })
+  }
+
+  // Gets a list of items linked to a receiptID
+  let getItem = (receipt) => {
+    return new Promise((resolve, reject) => {
+      const selectQuery = "SELECT name, category, price FROM Items WHERE receiptID = ?"
+      pool.query(selectQuery, [receipt], (error, rows) => {
+        if (error) {
+          reject(new Error("Database error: " + error.sqlMessage))
+        } else if (rows.length == 0) {
+          resolve([])
+        } else {
+          resolve(rows)
+        }
+      })
+    })
+  }
+
+
+  try {
+    const token = event.loginToken
+
+    const shopperID = await verifyToken(token)
+
+    const receipt = await getReceipts(shopperID)
+
+    // Uses the list of receipts and formats each receiptID to have a list of items it contains
+    const receiptData = await Promise.all(
+      receipt.map(async (receipt) => {
+        const item = await getItem(receipt.receiptID)
+        return {
+          receiptID: receipt.receiptID,
+          items: item
+        }
+      })
+    )
+
+    code = 200
+    result = {
+      receiptData: receiptData
+    }
+
+  } catch (error){
+    result = "SQL error:" + error
+    code = 400
+  }
+
+  const response = {
+    statusCode: code,
+    body: JSON.stringify(result),
+  }
+
+  return response
+}

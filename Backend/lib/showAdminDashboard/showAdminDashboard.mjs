@@ -71,7 +71,7 @@ export const handler = async (event) => {
 
       return {
         chainID: chain.chainID,
-        chainName: chain.chainName,
+        chainName: chain.name,
         url: chain.url,
         stores: chainStores,
         totalSales: chain.sales
