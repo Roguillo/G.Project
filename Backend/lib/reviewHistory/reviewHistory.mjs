@@ -40,7 +40,7 @@ export const handler = async (event) => {
   // Gets a list of receipts linked to a shopperID
   let getReceipts = (shopperID) => {
     return new Promise((resolve, reject) => {
-      const selectQuery = "SELECT receiptID FROM Receipts WHERE shopperID = ?"
+      const selectQuery = "SELECT receiptID, chainID, storeID, date FROM Receipts WHERE shopperID = ?"
       pool.query(selectQuery, [shopperID], (error, rows) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
@@ -54,7 +54,7 @@ export const handler = async (event) => {
   // Gets a list of items linked to a receiptID
   let getItem = (receipt) => {
     return new Promise((resolve, reject) => {
-      const selectQuery = "SELECT name, category, price FROM Items WHERE receiptID = ?"
+      const selectQuery = "SELECT itemID, name, category, price FROM Items WHERE receiptID = ?"
       pool.query(selectQuery, [receipt], (error, rows) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
@@ -80,7 +80,7 @@ export const handler = async (event) => {
       receipt.map(async (receipt) => {
         const item = await getItem(receipt.receiptID)
         return {
-          receiptID: receipt.receiptID,
+          receiptID: receipt.receiptID, date: receipt.date, chainID: receipt.chainID, storeID: receipt.storeID,
           items: item
         }
       })
