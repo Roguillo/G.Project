@@ -1,5 +1,5 @@
-import   React                          from 'react'
-import { Chain, Model, Shopper, Store } from '../../Model'
+import   React      from 'react';
+import { Shopper } from '../../Model';
 
 
 
@@ -36,7 +36,16 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     const month = today.getMonth   () + 1;
     const year  = today.getFullYear();
 
-    
+    // current receipt
+    const currentReceipt = model.receipts[model.receipts.length - 1];
+
+    // submission message
+    let submission_message;
+    if(currentReceipt) {
+        submission_message = currentReceipt.submitted ?
+                                "*Receipt Submitted*"                                 :
+                                "";
+    }
 
     // create receipt controller
     async function CreateReceiptController() {
@@ -100,7 +109,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
         await instance.post('/addToReceipt', {
                 "loginToken" : model.shopper.loginToken,
-                "receiptID"  : model.receipts[model.receipts.length - 1].receiptID, // latest receipt
+                "receiptID"  : currentReceipt.receiptID, // latest receipt
                 "name"       : itemName,
                 "category"   : itemCategory, 
                 "price"      : itemPrice,
@@ -129,11 +138,11 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 itemCategory,
                 APIMessage.itemID[i-1],
                 itemName,
-                model.receipts[model.receipts.length - 1].receiptID
+                currentReceipt.receiptID
             );
 
-            model.receipts[model.receipts.length - 1].
-            items[model.receipts[model.receipts.length - 1].items.length - 1].
+            currentReceipt.
+            items[currentReceipt.items.length - 1].
             setPrice(itemPrice);
         }
 
@@ -148,7 +157,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
         await instance.post('/removeFromReceipt', {
                 "loginToken" : model.shopper.loginToken,
-                "receiptID"  : model.receipts[model.receipts.length - 1].receiptID, // latest receipt
+                "receiptID"  : currentReceipt.receiptID, // latest receipt
                 "name" : itemName
             })
             .then((response : any) => {
@@ -192,7 +201,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         await instance.post('/editItemOnReceipt',
                 {
                     "loginToken" : model.shopper.loginToken,
-                    "receiptID"  : model.receipts[model.receipts.length - 1].receiptID,
+                    "receiptID"  : currentReceipt.receiptID,
                     "refName"    : name,
                     "name"       : newName, 
                     "category"   : newCategory,
@@ -237,6 +246,41 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     }
 
 
+    async function submitReceipt() {
+        // await instance.post('/submitReceipt',
+        //         {
+        //             "loginToken" : model.shopper.loginToken,
+        //             "receiptID"  : currentReceipt.receiptID,
+        //             "day"        : day,
+        //             "month"      : month,
+        //             "year"       : year
+        //         }
+        //     )
+        //     .then((response : any) => {
+        //         APIMessage = (typeof    (response.data.body) === 'string') ?
+        //                      (JSON.parse(response.data.body)             ) :
+        //                      (           response.data.body              );
+                
+        //         if (APIMessage.error != undefined) {
+        //             updateAPIMessage(APIMessage.error);
+        //             return;
+
+        //         } else {
+        //             updateAPIMessage(APIMessage      );
+        //         }
+        //     }
+        // );
+
+        const receipt      = model.receipts[model.receipts.length-1];
+        receipt.submitted  = true;
+
+        sync();
+
+        const confetti = (await import('canvas-confetti')).default;
+        confetti();
+    }
+
+
     // make another function for remove item from receipt and export it
 
     /**
@@ -251,85 +295,105 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
     // ChatGPT for GUI --> prompt: "make it pretty:\n\n <html portion of code>" (for the code we already had)
     return (
-    <div style={{ padding: '16px', fontFamily: 'sans-serif', maxWidth: '600px' }}>
+        <div
+            style={{
+                padding: 16,
+                fontFamily: 'sans-serif',
+                maxWidth: 600,
+                margin: '0 auto',
+            }}
+        >
 
-    {/* Create Receipt */}
-    <section style={{ marginBottom: '20px' }}>
-        <h3>Create Receipt</h3>
-        <div style={{ display: 'flex', gap: '8px' }}>
-            <input id="store-ID" placeholder="Store ID" />
-            <input id="chain-ID" placeholder="Chain ID" />
-            <button onClick={CreateReceiptController}>Create Receipt</button>
-        </div>
-    </section>
+            {/* Create Receipt */}
+            <section style={{ marginBottom: 24 }}>
+                <h3>Create Receipt</h3>
+                <div style={{ display: 'flex', gap: 8 }}>
+                    <input id="store-ID" placeholder="Store ID" />
+                    <input id="chain-ID" placeholder="Chain ID" />
+                    <button onClick={CreateReceiptController}>Create Receipt</button>
+                </div>
+            </section>
 
-    {/* Add Item */}
-    <section style={{ marginBottom: '20px' }}>
-        <h3>Add Item</h3>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            <input id="new-item-name" placeholder="Name" />
-            <input id="new-item-category" placeholder="Category" />
-            <input id="new-item-price" placeholder="Price" />
-            <input id="new-item-quantity" placeholder="Quantity" />
-            <button onClick={addItemToReceipt}>Add Item</button>
-        </div>
-    </section>
+            {/* Add Item */}
+            <section style={{ marginBottom: 24 }}>
+                <h3>Add Item</h3>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    <input id="new-item-name" placeholder="Name" />
+                    <input id="new-item-category" placeholder="Category" />
+                    <input id="new-item-price" placeholder="Price" />
+                    <input id="new-item-quantity" placeholder="Quantity" />
+                    <button onClick={addItemToReceipt}>Add Item</button>
+                </div>
+            </section>
 
-    {/* Remove Item */}
-    <section style={{ marginBottom: '20px' }}>
-        <h3>Remove Item</h3>
-        <div style={{ display: 'flex', gap: '8px' }}>
-            <input id="rm-item-name" placeholder="Name" />
-            <button onClick={removeItemFromReceipt}>Remove Item</button>
-        </div>
-    </section>
+            {/* Remove Item */}
+            <section style={{ marginBottom: 24 }}>
+                <h3>Remove Item</h3>
+                <div style={{ display: 'flex', gap: 8 }}>
+                    <input id="rm-item-name" placeholder="Name" />
+                    <button onClick={removeItemFromReceipt}>Remove Item</button>
+                </div>
+            </section>
 
-    {/* Edit Item */}
-    <section style={{ marginBottom: '20px' }}>
-        <h3>Edit Item</h3>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            <input id="edit-item-name" placeholder="Current Name" />
-            <input id="edit-item-new_name" placeholder="New Name" />
-            <input id="edit-item-new_category" placeholder="New Category" />
-            <input id="edit-item-new_price" placeholder="New Price" />
-            <input id="edit-item-new_quantity" placeholder="New Quantity" />
-            <button onClick={editItemOnReceipt}>Edit Item</button>
-        </div>
-    </section>
+            {/* Edit Item */}
+            <section style={{ marginBottom: 24 }}>
+                <h3>Edit Item</h3>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    <input id="edit-item-name" placeholder="Current Name" />
+                    <input id="edit-item-new_name" placeholder="New Name" />
+                    <input id="edit-item-new_category" placeholder="New Category" />
+                    <input id="edit-item-new_price" placeholder="New Price" />
+                    <input id="edit-item-new_quantity" placeholder="New Quantity" />
+                    <button onClick={editItemOnReceipt}>Edit Item</button>
+                </div>
+            </section>
 
-    {/* Show Current Receipt Items */}
-    <section style={{ marginBottom: '20px' }}>
-        <h3>Current Receipt</h3>
+            {/* Submit Receipt */}
+            <section style={{ marginBottom: 24 }}>
+                <h3>Submit Receipt</h3>
+                <button onClick={submitReceipt}>Submit Receipt</button>
+                <div style={{ marginTop: 8 }}>{submission_message}</div>
+            </section>
 
-        <div>Date: {month}/{day}/{year}</div>
-        <div>
-            Chain: {model.receipts[model.receipts.length - 1]?.chainID ?? ''}
-        </div>
-        <div>
-            Store: {model.receipts[model.receipts.length - 1]?.storeID ?? ''}
-        </div>
+            {/* Show Current Receipt Items */}
+            <section style={{ marginBottom: 24 }}>
+                <h3>Current Receipt</h3>
 
-        <table border={1} cellPadding={8} cellSpacing={0} style={{ marginTop: '12px', width: '100%' }}>
-            <thead style={{ backgroundColor: '#eee' }}>
-                <tr>
-                    <th>Item Name</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                {model.receipts.length > 0 &&
-                    model.receipts[model.receipts.length - 1].items?.map((item : any, index : any) => (
-                        <tr key={item.ID ?? index}>
-                            <td>{item.name}</td>
-                            <td>{item.category}</td>
-                            <td>{item.price}</td>
+                <div>Date: {month}/{day}/{year}</div>
+                <div>Chain: {currentReceipt?.chainID ?? ''}</div>
+                <div>Store: {currentReceipt?.storeID ?? ''}</div>
+
+                <table
+                    border={1}
+                    cellPadding={8}
+                    cellSpacing={0}
+                    style={{
+                        marginTop: 16,
+                        width: '100%',
+                        borderCollapse: 'collapse',
+                    }}
+                >
+                    <thead style={{ backgroundColor: '#008080', color: 'white' }}>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
                         </tr>
-                    ))}
-            </tbody>
-        </table>
-    </section>
-</div>
+                    </thead>
+                    <tbody>
+                        {model.receipts.length > 0 &&
+                            currentReceipt.items?.map((item : any, index : any) => (
+                                <tr key={item.ID ?? index}>
+                                    <td>{item.name}</td>
+                                    <td>{item.category}</td>
+                                    <td>{item.price}</td>
+                                </tr>
+                            ))}
+                    </tbody>
+                </table>
+            </section>
 
+        </div>
     );
+
 }

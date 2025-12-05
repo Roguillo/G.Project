@@ -69,11 +69,12 @@ export class Shopper {
 }
 
 export class Receipt {
-    chainID  : string;
-    date     : Date | undefined;
-    items    : Item[];
-    receiptID: string;
-    storeID  : string;
+    chainID   : string;
+    date      : Date | undefined;
+    items     : Item[];
+    receiptID : string;
+    storeID   : string;
+    submitted : boolean;
 
     constructor(chainID: string, date : Date, receiptID: string, storeID: string) {
         this.chainID   = chainID;
@@ -81,6 +82,7 @@ export class Receipt {
         this.items     = [];
         this.receiptID = receiptID;
         this.storeID   = storeID;
+        this.submitted = false;
     }
 
     setItems(items: Item[]) {
