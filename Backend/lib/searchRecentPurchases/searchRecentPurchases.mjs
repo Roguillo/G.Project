@@ -6,7 +6,7 @@ import {config} from './config.mjs'
   
   { 
     "loginToken" : "loginToken",
-    "daysPrior": XXX
+    "searchField": "searchField"
   }
   
  */
@@ -38,11 +38,11 @@ export const handler = async (event) => {
     })
   }
 
-  // Gets a list of receipts linked to a shopperID
-  let getReceipts = (shopperID, date) => {
+  let getMatchingItems = (shopperID, searchField) => {
     return new Promise((resolve, reject) => {
-      const selectQuery = "SELECT receiptID FROM Receipts WHERE shopperID = ? AND date >= ?"
-      pool.query(selectQuery, [shopperID, date], (error, rows) => {
+      // Found at https://www.w3schools.com/mysql/mysql_join_inner.asp
+      const selectQuery = "SELECT item.name, item.category, item.price, receipt.date FROM Items AS item INNER JOIN Receipts AS receipt ON receipt.receiptID = item.receiptID WHERE receipt.shopperID = ? AND item.name = ?";
+      pool.query(selectQuery, [shopperID, searchField], (error, rows) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
         } else {
@@ -52,88 +52,19 @@ export const handler = async (event) => {
     })
   }
 
-  // Gets a list of items linked to a receiptID
-  let getItem = (receipt) => {
-    return new Promise((resolve, reject) => {
-      const selectQuery = "SELECT name, category, price FROM Items WHERE receiptID = ?"
-      pool.query(selectQuery, [receipt], (error, rows) => {
-        if (error) {
-          reject(new Error("Database error: " + error.sqlMessage))
-        } else if (rows.length == 0) {
-          resolve([])
-        } else {
-          resolve(rows)
-        }
-      })
-    })
-  }
-
-  // Takes desired days prior to current date and returns it in yyyy-mm-dd format
-  let convertDate = (daysPrior) => {
-    const monthData = new Array(0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334)
-    const dateObj = new Date()  // Found at https://www.w3schools.com/js/js_date_methods.asp
-    let targetDate = dateObj.getFullYear() * 365 + monthData[dateObj.getMonth()] + dateObj.getDay() - daysPrior
-
-    let returnDay
-    let returnMonth
-    let returnYear
-
-    // Calculate year
-    returnYear = Math.floor(targetDate / 365)
-    targetDate = targetDate % 365
-    if (targetDate == 0) {
-      returnYear -= 1
-      targetDate += 365
-    }
-
-    // Calculate month
-    for (let i = monthData.length-1; i >= 0; i--) {
-      if (targetDate > monthData[i]) {
-        returnMonth = i+1
-        break
-      }
-    }
-    targetDate = targetDate - monthData[returnMonth-1]
-
-    // Calculate day
-    returnDay = targetDate
-
-    // Ensures yyyy-mm-dd format (e.g. 2025-3-1 => 2025-03-01)
-    if (returnMonth < 10) {
-      returnMonth = "0" + returnMonth
-    }
-    if (returnDay < 10) {
-      returnDay = "0" + returnDay
-    }
-
-    const formattedDate = returnYear + "-" + returnMonth + "-" + returnDay
-
-    return formattedDate
-  }
 
   try {
     const token = event.loginToken
+    const searchField = event.searchField
 
     const shopperID = await verifyToken(token)
 
-    const date = convertDate(event.daysPrior)
-
-    const receipt = await getReceipts(shopperID, date)
-
-    // Uses the list of receipts and formats each receiptID to have a list of items it contains
-    const receiptData = await Promise.all(
-      receipt.map(async (receipt) => {
-        const item = await getItem(receipt.receiptID)
-        return {
-          receiptID: receipt.receiptID,
-          items: item
-        }
-      })
-    )
+    const items = await getMatchingItems(shopperID, searchField)
+    console.log(items)
 
     code = 200
     result = {
-      receiptData: receiptData
+      itemData: items
     }
 
   } catch (error){
