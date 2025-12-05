@@ -41,18 +41,30 @@ export class ApplicationStack extends cdk.Stack {
       },
     })
 
+    
+    
+    
+    
+    
+
+
     // Create a resource (e.g., '/calc')
     const shopCompResource = api_endpoint.root.addResource('shopComp')
     const addChainResource = shopCompResource.addResource('addChain')
+    const addItemShoppingListResource = shopCompResource.addResource('addItemShoppingList')
     const addStoreToChainResource = shopCompResource.addResource('addStoreToChain')
     const addToReceiptResource = shopCompResource.addResource('addToReceipt')
     const createReceiptResource = shopCompResource.addResource('createReceipt')
+    const createShoppingListResource = shopCompResource.addResource('createShoppingList')
+    const editItemOnReceiptResource = shopCompResource.addResource('editItemOnReceipt')
+    const listStoreChainsResource = shopCompResource.addResource('listStoreChains')
     const loginAdminResource = shopCompResource.addResource('loginAdmin')
     const loginShopperResource = shopCompResource.addResource('loginShopper')
     const registerShopperResource = shopCompResource.addResource('registerShopper')
     const removeChainResource = shopCompResource.addResource('removeChain')
     const removeFromReceiptResource = shopCompResource.addResource('removeFromReceipt')
     const removeStoreResource = shopCompResource.addResource('removeStore')
+    const reportOptionsShoppingListResource = shopCompResource.addResource('reportOptionsShoppingList')
     const reviewActivityResource = shopCompResource.addResource('reviewActivity')
     const reviewHistoryResource = shopCompResource.addResource('reviewHistory')
     const searchRecentPurchasesResource = shopCompResource.addResource('searchRecentPurchases')
@@ -133,7 +145,7 @@ export class ApplicationStack extends cdk.Stack {
     addChainResource.addMethod('POST', new apigw.LambdaIntegration(addChain_fn, integration_parameters), response_parameters)
 
 
-    // Add a POST method to the '/shopComp/addItemToShoppingList' resource
+    // Add a POST method to the '/shopComp/addItemShoppingList' resource
     const addItemShoppingList_fn = new lambdaNodejs.NodejsFunction(this, 'AddItemShoppingListFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'addItemShoppingList.handler',
@@ -287,7 +299,7 @@ export class ApplicationStack extends cdk.Stack {
     removeStoreResource.addMethod('POST', new apigw.LambdaIntegration(removeStore_fn, integration_parameters), response_parameters)
 
 
-    // Add a POST method to the '/shopComp/reportOptionsForShoppingList' resource
+    // Add a POST method to the '/shopComp/reportOptionsShoppingList' resource
     const reportOptionsShoppingList_fn = new lambdaNodejs.NodejsFunction(this, 'ReportOptionsShoppingListFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'reportOptionsShoppingList.handler',
