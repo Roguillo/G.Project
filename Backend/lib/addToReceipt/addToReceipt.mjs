@@ -109,15 +109,13 @@ export const handler = async (event) => {
       itemIDs.push(itemID)
    }
 
-    let itemInfo = {
-    "itemID" : itemIDs,
-    "name" : name,  
-    "category" : category, 
-    "price" : price,
-    }
-
     response_code =  200;
-    response_body = { itemInfo };
+    response_body = { 
+      "itemID" : itemIDs,
+      "name" : name,  
+      "category" : category, 
+      "price" : price
+     };
   }
 
   catch(error){
