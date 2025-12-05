@@ -105,46 +105,49 @@ function ReviewActivity({model, instance, andRefreshDisplay}: {model: any, insta
 }
 
 function SearchRecentPurchases({model, instance, andRefreshDisplay}: {model: any, instance: any, andRefreshDisplay: any}) {
-    const [apiMessage, changeApiMessage] = React.useState()
+    const [apiMessage, changeApiMessage] = React.useState<string>()
+    const [itemData, changeItemData] = React.useState([])
 
-    function loginShopper() {
+    function searchRecentPurchases() {
 
-        const inputElementUsername = document.getElementById("shopper-username") as HTMLInputElement
-        const inputElementPassword = document.getElementById("shopper-password") as HTMLInputElement
+        const inputSearchField = document.getElementById("search-field") as HTMLInputElement
 
-        const username = inputElementUsername.value
-        const password = inputElementPassword.value
-        let name: string
-        let loginToken:string
+        const searchField = inputSearchField.value
 
-        instance.post('/loginShopper', {
-                "username": username,
-                "password": password
+        instance.post('/searchRecentPurchases', {
+                "loginToken": "test-token1234",
+                "searchField": searchField
             })
             .then((response: any) => {
-                let message = JSON.parse(response.data.body)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
-                if (message.error != undefined) {
-                    changeApiMessage(message.error)
-                    andRefreshDisplay()
+                let message = JSON.parse(response.data.body)
+                console.log(message.itemData)
+                if (response.data.statusCode == 400) {
+                    changeApiMessage("Not logged into account")
                 } else {
-                    model.loginShopper(message.name, username, password, message.loginToken)
-                    changeApiMessage(message.body)
-                    andRefreshDisplay()
+                    if (message.itemData.length == 0) {
+                        changeApiMessage("No purchased items with specified name")
+                    } else {
+                        changeApiMessage(undefined)
+                        changeItemData(message.itemData)
+                    }
                 }
             })
+
+        // in case any parent React code needs to know about this change, call the passed-in function
+        andRefreshDisplay()
     }
 
     return (
         <div>
-          <h2>Login to Account</h2>
-          <b>Username: </b><input id="shopper-username" placeholder="Username" data-testid="shopper-username"></input>
-          <button onClick={() => {loginShopper()}}>Login to Account</button>
-
-          <p><b>Password: </b><input id="shopper-password" placeholder="Password" data-testid="shopper-password"></input></p>
-
-          <br></br>
-          {apiMessage}
-          
+          <h2>Search Recent Purchases</h2>
+          <b>Item Name: </b><input id="search-field" placeholder="Item Name" data-testid="search-field"></input>
+          <button onClick={() => {searchRecentPurchases()}}>Search Item</button><br></br>
+          {apiMessage}<br></br>
+          <ul>
+            {itemData.map((item: any) => (
+              <li key={item.itemID}>{"Name: " + item.name + "  | Category: " + item.category + "  | Price: " + item.price + "  | Date: " + item.date.slice(0, 10)}</li>
+            ))}
+          </ul>
         </div>
     )
 }

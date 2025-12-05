@@ -8,7 +8,7 @@ import { ShopperReceiptView } from '../boundary/shopper/shopperReceiptView';
 import { AdminDashboard, RemoveStore, RemoveChain } from '../boundary/adminDashboard';
 import { LoginAdmin } from '../boundary/loginPage';
 import { RegisterShopper, LoginShopper } from '../boundary/shopper/shopperRegister';
-import { ReviewActivity, ReviewHistory } from '../boundary/shopper/shopperHistoryView';
+import { ReviewActivity, ReviewHistory, SearchRecentPurchases } from '../boundary/shopper/shopperHistoryView';
 import { AddChain, AddStore } from '../boundary/shopper/shopperDashboard';
 import { Model } from '../Model';
 
@@ -47,6 +47,7 @@ export default function Home() {
         <div>
           <ReviewHistory model={model} instance={instance} andRefreshDisplay={andRefreshDisplay}></ReviewHistory><br></br>
           <ReviewActivity model={model} instance={instance} andRefreshDisplay={andRefreshDisplay}></ReviewActivity>
+          <SearchRecentPurchases model={model} instance={instance} andRefreshDisplay={andRefreshDisplay}></SearchRecentPurchases>
 
           {/* <h1>{model.shopper && "Welcome back " + model.shopper?.name}</h1>
           <br />
