@@ -13,7 +13,7 @@ function ReviewHistory({model, instance, andRefreshDisplay}: {model: any, instan
             })
             .then((response: any) => {
                 changeReceiptData(JSON.parse(response.data.body).receiptData)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
-                console.log(receiptData[15].items)
+                console.log(receiptData)
             })
 
         // in case any parent React code needs to know about this change, call the passed-in function
@@ -26,10 +26,10 @@ function ReviewHistory({model, instance, andRefreshDisplay}: {model: any, instan
           <button onClick={() => {reviewHistory()}}>Review History</button><br></br>
           <ul>
             {receiptData.map((receipt: any) => (
-              <li key={receipt.receiptID}>{"Receipt ID: " + receipt.receiptID}
+              <li key={receipt.receiptID}>{"Date: " + receipt.date.slice(0, 10) + "  | Chain: " + receipt.chainID + "  | Store: " + receipt.storeID}
                 <ul>
                     {receipt.items.map((item: any) => (
-                        <li key={item.name}>{"- Item Name: " +item.name}</li>
+                        <li key={item.itemID}>{"Item: " + item.name + "  | Category: " + item.category + "  | Price: " + item.price}</li>
                     ))}
                 </ul>
               </li>
