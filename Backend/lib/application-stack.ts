@@ -63,6 +63,7 @@ export class ApplicationStack extends cdk.Stack {
     const registerShopperResource = shopCompResource.addResource('registerShopper')
     const removeChainResource = shopCompResource.addResource('removeChain')
     const removeFromReceiptResource = shopCompResource.addResource('removeFromReceipt')
+    const removeFromShoppingListResource = shopCompResource.addResource('removeFromShoppingList')
     const removeStoreResource = shopCompResource.addResource('removeStore')
     const reportOptionsShoppingListResource = shopCompResource.addResource('reportOptionsShoppingList')
     const reviewActivityResource = shopCompResource.addResource('reviewActivity')
@@ -286,6 +287,17 @@ export class ApplicationStack extends cdk.Stack {
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
     })
     removeFromReceiptResource.addMethod('POST', new apigw.LambdaIntegration(removeFromReceipt_fn, integration_parameters), response_parameters)
+
+    // Add a POST method to the '/shopComp/removeFromReceipt' resource
+    const removeFromShoppingList_fn = new lambdaNodejs.NodejsFunction(this, 'RemoveFromShoppingListFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'removeFromShoppingList.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'removeFromShoppingList')),
+      vpc: vpc,                                                             // Reference the VPC defined above
+      securityGroups: [securityGroup],                                      // Associate the security group
+      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+    })
+    removeFromShoppingListResource.addMethod('POST', new apigw.LambdaIntegration(removeFromShoppingList_fn, integration_parameters), response_parameters)
 
     // Add a POST method to the '/shopComp/removeStore' resource
     const removeStore_fn = new lambdaNodejs.NodejsFunction(this, 'RemoveStoreFunction', {
