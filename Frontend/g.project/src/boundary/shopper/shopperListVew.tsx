@@ -112,7 +112,45 @@ export function AddItemShoppingList({model, shoppingList, setShoppingList, insta
       <b>Item Name: </b><input id="item-name-to-add" placeholder="Item Name" data-testid="item-name-to-add"></input>
       <b>Item Category: </b><input id="item-category-to-add" placeholder="Item Category" data-testid="item-category-to-add"></input>
       <button onClick={() => {addItemShoppingList()}}>Add Item</button>
-      {apiMessage}
+    </div>
+    )
+}
+
+export function ReportOptionsShoppingList({model, shoppingList, setShoppingList, instance, andRefreshDisplay}: {model: any, shoppingList:any, setShoppingList:any, instance: any, andRefreshDisplay: any}) {
+    const [apiMessage, changeApiMessage] = React.useState("");
+
+    async function reportOptionsShoppingList(){
+        const response = await instance.post('/reportOptionsShoppingList', {
+            shoppingListName: shoppingList.name,
+            loginToken: model.getLoginToken()
+        })
+
+        const message = JSON.parse(response.data.body);
+        console.log(message);
+
+        if (message.error != undefined) {
+            changeApiMessage(message.error);
+        } else{
+            const optionList =
+            message.options?.flatMap((group: { options: any; }) => group.options) ?? [];
+
+            const formatted = optionList
+                .map((opt: any) => {
+                    const storeName = opt.store?.[0]?.name ?? "Unknown Store";
+                    return `${opt.itemName} (${opt.itemCategory}) — ${storeName} — $${opt.price}`;
+                })
+                .join("\n");
+
+            changeApiMessage(formatted);
+        }
+
+        andRefreshDisplay()
+    }
+
+    return(
+    <div>
+      <button onClick={() => {reportOptionsShoppingList()}}>Report Options For Purchase</button>
+      <pre>{apiMessage}</pre>
     </div>
     )
 }
