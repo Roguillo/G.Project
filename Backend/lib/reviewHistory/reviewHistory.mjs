@@ -40,7 +40,7 @@ export const handler = async (event) => {
   // Gets a list of receipts linked to a shopperID
   let getReceipts = (shopperID) => {
     return new Promise((resolve, reject) => {
-      const selectQuery = "SELECT receiptID, chainID, storeID, date FROM Receipts WHERE shopperID = ?"
+      const selectQuery = "SELECT receiptID, chainID, storeID, date FROM Receipts WHERE shopperID = ? ORDER BY date DESC"
       pool.query(selectQuery, [shopperID], (error, rows) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
