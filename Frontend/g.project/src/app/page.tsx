@@ -4,15 +4,16 @@ import styles from './page.module.css';
 
 import { instance } from './aws';
 import { ShopperReceiptView } from '../boundary/shopper/shopperReceiptView';
-
+import { AddItemShoppingList, CreateShoppingList } from '../boundary/shopper/shopperListVew';
 import { AdminDashboard, RemoveStore, RemoveChain } from '../boundary/adminDashboard';
 import { LoginAdmin } from '../boundary/loginPage';
 import { RegisterShopper, LoginShopper } from '../boundary/shopper/shopperRegister';
 import { AddChain, AddStore } from '../boundary/shopper/shopperDashboard';
-import { Model } from '../Model';
+import { Model, ShoppingList } from '../Model';
 
 export default function Home() {
   const [model, updateModel] = React.useState(new Model());
+  const [shoppingList, setShoppingList] = React.useState({ name: "", items: [] });
   const [shopper, updateShopper] = React.useState(model.shopper);
   const [view, updateView] = React.useState(0);
 
@@ -117,7 +118,20 @@ export default function Home() {
 
             {shopperView === "shoppingList" && (
               <div>
-                <h2>Shopping List Page</h2>
+                <CreateShoppingList
+                  model={model}
+                  shoppingList={shoppingList}
+                  setShoppingList={setShoppingList}
+                  instance={instance}
+                  andRefreshDisplay={andRefreshDisplay}
+                />
+                <AddItemShoppingList
+                  model={model}
+                  shoppingList={shoppingList}
+                  setShoppingList={setShoppingList}
+                  instance={instance}
+                  andRefreshDisplay={andRefreshDisplay}
+                />
               </div>
             )}
 
