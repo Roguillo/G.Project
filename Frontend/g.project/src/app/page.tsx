@@ -8,6 +8,7 @@ import { ShopperReceiptView } from '../boundary/shopper/shopperReceiptView';
 import { AdminDashboard, RemoveStore, RemoveChain } from '../boundary/adminDashboard';
 import { LoginAdmin } from '../boundary/loginPage';
 import { RegisterShopper, LoginShopper } from '../boundary/shopper/shopperRegister';
+import { ReviewHistory } from '../boundary/shopper/shopperHistoryView';
 import { AddChain, AddStore } from '../boundary/shopper/shopperDashboard';
 import { Model } from '../Model';
 
@@ -44,7 +45,11 @@ export default function Home() {
       {/* LOGIN / REGISTER SCREEN */}
       {!model.shopper?.loginToken && !adminToken ? (
         <div>
-          <h1>{model.shopper && "Welcome back " + model.shopper?.name}</h1>
+
+          <ReviewHistory model={model} instance={instance} andRefreshDisplay={andRefreshDisplay}></ReviewHistory>
+
+
+          {/* <h1>{model.shopper && "Welcome back " + model.shopper?.name}</h1>
           <br />
 
           <RegisterShopper
@@ -64,7 +69,7 @@ export default function Home() {
             instance={instance}
             andRefreshDisplay={andRefreshDisplay}
             onLoginSuccess={handleLoginSuccess}
-          />
+          /> */}
         </div>
       ) : null}
 
