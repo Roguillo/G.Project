@@ -276,8 +276,22 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
         sync();
 
-        const confetti = (await import('canvas-confetti')).default;
-        confetti();
+        let confetti = (await import('canvas-confetti')).default;
+
+        // var triangle = confetti.shapeFromPath({ path: 'M0 10 L5 0 L10 10z' });
+        // var color = "#ffffff"
+        // var scalar = 2
+        // var pineapple = confetti.shapeFromText({ text: '🎉', scalar, color});
+
+        confetti({
+            particleCount: 50000,
+            spread: 360,
+            startVelocity: 10,
+            decay: 0.995,
+            gravity: 0.9,
+            // colors: ["ffffff"],
+            // shapes: [pineapple], scalar
+        });
     }
 
 
