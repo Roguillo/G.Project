@@ -8,7 +8,7 @@ function ReviewHistory({model, instance, andRefreshDisplay}: {model: any, instan
         andRefreshDisplay()
 
         instance.post('/reviewHistory', {
-                "loginToken": "test-token1234"
+                "loginToken": model.getLoginToken()
             })
             .then((response: any) => {
                 let message = JSON.parse(response.data.body)
@@ -62,11 +62,12 @@ function ReviewActivity({model, instance, andRefreshDisplay}: {model: any, insta
         }
 
         instance.post('/reviewActivity', {
-                "loginToken": "test-token1234",
+                "loginToken": model.getLoginToken(),
                 "daysPrior": daysPrior
             })
             .then((response: any) => {
                 let message = JSON.parse(response.data.body)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
+                console.log(message)
                 if (response.data.statusCode == 400) {
                     changeApiMessage("Not logged into account")
                 } else {
@@ -115,7 +116,7 @@ function SearchRecentPurchases({model, instance, andRefreshDisplay}: {model: any
         const searchField = inputSearchField.value
 
         instance.post('/searchRecentPurchases', {
-                "loginToken": "test-token1234",
+                "loginToken": model.getLoginToken(),
                 "searchField": searchField
             })
             .then((response: any) => {

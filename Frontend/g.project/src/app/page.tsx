@@ -45,11 +45,7 @@ export default function Home() {
       {/* LOGIN / REGISTER SCREEN */}
       {!model.shopper?.loginToken && !adminToken ? (
         <div>
-          <ReviewHistory model={model} instance={instance} andRefreshDisplay={andRefreshDisplay}></ReviewHistory><br></br>
-          <ReviewActivity model={model} instance={instance} andRefreshDisplay={andRefreshDisplay}></ReviewActivity>
-          <SearchRecentPurchases model={model} instance={instance} andRefreshDisplay={andRefreshDisplay}></SearchRecentPurchases>
-
-          {/* <h1>{model.shopper && "Welcome back " + model.shopper?.name}</h1>
+          <h1>{model.shopper && "Welcome back " + model.shopper?.name}</h1>
           <br />
 
           <RegisterShopper
@@ -69,7 +65,7 @@ export default function Home() {
             instance={instance}
             andRefreshDisplay={andRefreshDisplay}
             onLoginSuccess={handleLoginSuccess}
-          /> */}
+          />
         </div>
       ) : null}
 
@@ -128,7 +124,9 @@ export default function Home() {
 
             {shopperView === "history" && (
               <div>
-                <h2>Purchase History Page</h2>
+                <ReviewHistory model={model} instance={instance} andRefreshDisplay={andRefreshDisplay}></ReviewHistory><br></br>
+                <ReviewActivity model={model} instance={instance} andRefreshDisplay={andRefreshDisplay}></ReviewActivity><br></br>
+                <SearchRecentPurchases model={model} instance={instance} andRefreshDisplay={andRefreshDisplay}></SearchRecentPurchases>
               </div>
             )}
           </div>
