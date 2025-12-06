@@ -42,9 +42,9 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     // submission message
     let submission_message;
     if(currentReceipt) {
-        submission_message = currentReceipt.submitted ?
-                                "*Receipt Submitted*"                                 :
-                                "";
+        submission_message =   currentReceipt.submitted ?
+                             "*Receipt Submitted*"      :
+                             "";
     }
 
     // create receipt controller
@@ -246,6 +246,43 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     }
 
 
+    async function analyzeReceiptImage() {
+        const imageElement = document.getElementById("image") as HTMLInputElement;
+        const image = imageElement.files![0];
+
+        const imageURL = await(new Promise<string>((resolve, reject) => {
+            const reader   = new FileReader();
+            reader.onload  = () => resolve(reader.result as string);
+            reader.onerror = () => reject (reader.error           );
+            reader.readAsDataURL(image);
+        }));
+
+        // POST to backend using the same .then() style
+        await instance.post('/analyzeReceiptImage',
+            {
+                "loginToken"  : model.shopper.loginToken,
+                "receiptID"   : currentReceipt.receiptID,
+                "imageDataUrl": imageURL
+            })
+            .then((response: any) => {
+                APIMessage = (typeof    (response.data.body) === 'string') ?
+                             (JSON.parse(response.data.body)             ) :
+                             (           response.data.body              );
+
+                if (APIMessage.error != undefined) {
+                    updateAPIMessage(APIMessage.error);
+                    return;
+
+                } else {
+                    updateAPIMessage(APIMessage);
+                }
+            });
+
+        sync();
+    }
+
+
+
     async function submitReceipt() {
         // await instance.post('/submitReceipt',
         //         {
@@ -276,22 +313,8 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
         sync();
 
-        let confetti = (await import('canvas-confetti')).default;
-
-        // var triangle = confetti.shapeFromPath({ path: 'M0 10 L5 0 L10 10z' });
-        // var color = "#ffffff"
-        // var scalar = 2
-        // var pineapple = confetti.shapeFromText({ text: '🎉', scalar, color});
-
-        confetti({
-            particleCount: 50000,
-            spread: 360,
-            startVelocity: 10,
-            decay: 0.995,
-            gravity: 0.9,
-            // colors: ["ffffff"],
-            // shapes: [pineapple], scalar
-        });
+        let confetti       = (await import('canvas-confetti')).default;
+        confetti();
     }
 
 
@@ -328,13 +351,22 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 </div>
             </section>
 
+            {/* Analyze Receipt Image */}
+            <section style={{ marginBottom: 24 }}>
+                <h3>Analyze Receipt Image</h3>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <input id="image" type="file" accept="image/*" />
+                    <button onClick={analyzeReceiptImage}>Analyze Receipt Image</button>
+                </div>
+            </section>
+
             {/* Add Item */}
             <section style={{ marginBottom: 24 }}>
                 <h3>Add Item</h3>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    <input id="new-item-name" placeholder="Name" />
+                    <input id="new-item-name"     placeholder="Name"     />
                     <input id="new-item-category" placeholder="Category" />
-                    <input id="new-item-price" placeholder="Price" />
+                    <input id="new-item-price"    placeholder="Price"    />
                     <input id="new-item-quantity" placeholder="Quantity" />
                     <button onClick={addItemToReceipt}>Add Item</button>
                 </div>
@@ -353,10 +385,10 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             <section style={{ marginBottom: 24 }}>
                 <h3>Edit Item</h3>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    <input id="edit-item-name" placeholder="Current Name" />
-                    <input id="edit-item-new_name" placeholder="New Name" />
+                    <input id="edit-item-name"         placeholder="Current Name" />
+                    <input id="edit-item-new_name"     placeholder="New Name"     />
                     <input id="edit-item-new_category" placeholder="New Category" />
-                    <input id="edit-item-new_price" placeholder="New Price" />
+                    <input id="edit-item-new_price"    placeholder="New Price"    />
                     <input id="edit-item-new_quantity" placeholder="New Quantity" />
                     <button onClick={editItemOnReceipt}>Edit Item</button>
                 </div>
