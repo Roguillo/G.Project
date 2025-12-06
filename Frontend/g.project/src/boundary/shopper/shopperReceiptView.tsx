@@ -1,5 +1,5 @@
 import   React      from 'react';
-import { Shopper } from '../../Model';
+import { Shopper, Item } from '../../Model';
 
 
 
@@ -259,11 +259,12 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
         // POST to backend using the same .then() style
         await instance.post('/analyzeReceiptImage',
-            {
-                "loginToken"  : model.shopper.loginToken,
-                "receiptID"   : currentReceipt.receiptID,
-                "imageDataUrl": imageURL
-            })
+                {
+                    "loginToken"  : model.shopper.loginToken,
+                    "receiptID"   : currentReceipt.receiptID,
+                    "imageDataUrl": imageURL
+                }
+            )
             .then((response: any) => {
                 APIMessage = (typeof    (response.data.body) === 'string') ?
                              (JSON.parse(response.data.body)             ) :
@@ -276,7 +277,17 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 } else {
                     updateAPIMessage(APIMessage);
                 }
-            });
+            }
+        );
+
+        let itemsFromAPI = APIMessage.items;
+        let itemBuffer   = new Item("", "", "", "");
+
+        for(let i = 0; i < itemsFromAPI.length; i++) {
+            itemBuffer.name     = itemsFromAPI[i].itemName;
+            itemBuffer.category = itemsFromAPI   .itemCategory;
+            itemBuffer.price    = itemsFromAPI[i].itemPrice;
+        }
 
         sync();
     }
