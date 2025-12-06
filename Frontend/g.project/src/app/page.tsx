@@ -8,6 +8,7 @@ import { AddItemShoppingList, CreateShoppingList, ReportOptionsShoppingList } fr
 import { AdminDashboard, RemoveStore, RemoveChain } from '../boundary/adminDashboard';
 import { LoginAdmin } from '../boundary/loginPage';
 import { RegisterShopper, LoginShopper } from '../boundary/shopper/shopperRegister';
+import { ReviewActivity, ReviewHistory, SearchRecentPurchases } from '../boundary/shopper/shopperHistoryView';
 import { AddChain, AddStore } from '../boundary/shopper/shopperDashboard';
 import { Model } from '../Model';
 
@@ -144,7 +145,9 @@ export default function Home() {
 
             {shopperView === "history" && (
               <div>
-                <h2>Purchase History Page</h2>
+                <ReviewHistory model={model} instance={instance} andRefreshDisplay={andRefreshDisplay}></ReviewHistory><br></br>
+                <ReviewActivity model={model} instance={instance} andRefreshDisplay={andRefreshDisplay}></ReviewActivity><br></br>
+                <SearchRecentPurchases model={model} instance={instance} andRefreshDisplay={andRefreshDisplay}></SearchRecentPurchases>
               </div>
             )}
           </div>
