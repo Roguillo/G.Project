@@ -89,7 +89,7 @@ function LoginShopper({instance, andRefreshDisplay}: {instance: any, andRefreshD
 
           <br></br>
           {apiMessage}
-          
+
         </div>
     )
 }

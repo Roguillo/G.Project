@@ -1,25 +1,25 @@
-import React from 'react';
+// import React from 'react';
 
 
 
-function LoginPage({ /* maybe a sync/update function to update React variables? */ }: { /* sync: any */ }) {
-  //const [..., ...]        = React.useState(...);
-  //...
+// function LoginPage({ /* maybe a sync/update function to update React variables? */ }: { /* sync: any */ }) {
+//   //const [..., ...]        = React.useState(...);
+//   //...
 
-  function UseCaseController() {
-      const thingElement = document.getElementById(`name of thing`) as HTMLInputElement;
-      const thing        = thingElement.value;
+//   function UseCaseController() {
+//       const thingElement = document.getElementById(`name of thing`) as HTMLInputElement;
+//       const thing        = thingElement.value;
 
-      // stuff to do with thing
+//       // stuff to do with thing
 
-      //sync() or update() maybe
-  }
+//       //sync() or update() maybe
+//   }
 
-  // other controllers as needed
+//   // other controllers as needed
 
   
-  return (
-    // HTML shenanigans + buttons and other inputs
-  );
+//   return (
+//     // HTML shenanigans + buttons and other inputs
+//   );
 
-} export { LoginPage }
+// } export { LoginPage }

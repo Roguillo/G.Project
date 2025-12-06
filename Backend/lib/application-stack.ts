@@ -54,6 +54,7 @@ export class ApplicationStack extends cdk.Stack {
     const addItemShoppingListResource = shopCompResource.addResource('addItemShoppingList')
     const addStoreToChainResource = shopCompResource.addResource('addStoreToChain')
     const addToReceiptResource = shopCompResource.addResource('addToReceipt')
+    const analyzeReceiptImageResource = shopCompResource.addResource('analyzeReceiptImage')
     const createReceiptResource = shopCompResource.addResource('createReceipt')
     const createShoppingListResource = shopCompResource.addResource('createShoppingList')
     const editItemOnReceiptResource = shopCompResource.addResource('editItemOnReceipt')
@@ -180,6 +181,16 @@ export class ApplicationStack extends cdk.Stack {
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
     })
     addToReceiptResource.addMethod('POST', new apigw.LambdaIntegration(addToReceipt_fn, integration_parameters), response_parameters)
+
+
+    // Add a POST method to the '/shopComp/analyzeReceiptImage' resource
+    const analyzeReceiptImage_fn = new lambdaNodejs.NodejsFunction(this, 'AnalyzeReceiptImageFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'analyzeReceiptImage.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'analyzeReceiptImage')),
+      timeout: Duration.seconds(15),                                         // Example timeout, adjust as needed
+    })
+    analyzeReceiptImageResource.addMethod('POST', new apigw.LambdaIntegration(analyzeReceiptImage_fn, integration_parameters), response_parameters)
 
 
     // Add a POST method to the '/shopComp/createReceipt' resource
