@@ -120,6 +120,8 @@ export function ReportOptionsShoppingList({model, shoppingList, setShoppingList,
     const [apiMessage, changeApiMessage] = React.useState("");
 
     async function reportOptionsShoppingList(){
+        andRefreshDisplay()
+        
         const response = await instance.post('/reportOptionsShoppingList', {
             shoppingListName: shoppingList.name,
             loginToken: model.getLoginToken()
@@ -136,8 +138,13 @@ export function ReportOptionsShoppingList({model, shoppingList, setShoppingList,
 
             const formatted = optionList
                 .map((opt: any) => {
-                    const storeName = opt.store?.[0]?.name ?? "Unknown Store";
-                    return `${opt.itemName} (${opt.itemCategory}) — ${storeName} — $${opt.price}`;
+                    
+                    if (opt.missing || !opt.store || opt.store.length === 0) {
+                        return `${opt.itemName} — Item does not exist in database`;
+                    }
+
+                    const storeName = opt.store[0].name ?? "Unknown Store";
+                    return `${opt.itemName} (${opt.itemCategory}) — Store Name: ${storeName} — $${opt.price}`;
                 })
                 .join("\n");
 

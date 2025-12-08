@@ -8,7 +8,7 @@ import { AddItemShoppingList, CreateShoppingList, ReportOptionsShoppingList } fr
 import { AdminDashboard, RemoveStore, RemoveChain } from '../boundary/adminDashboard';
 import { LoginAdmin } from '../boundary/loginPage';
 import { RegisterShopper, LoginShopper } from '../boundary/shopper/shopperRegister';
-import { AddChain, AddStore } from '../boundary/shopper/shopperDashboard';
+import { AddChain, AddStore, ListStoreChains } from '../boundary/shopper/shopperDashboard';
 import { Model } from '../Model';
 
 export default function Home() {
@@ -101,6 +101,12 @@ export default function Home() {
                 />
 
                 <AddStore
+                  instance={instance}
+                  andRefreshDisplay={andRefreshDisplay}
+                  loginToken={model.getLoginToken()}
+                />
+
+                <ListStoreChains
                   instance={instance}
                   andRefreshDisplay={andRefreshDisplay}
                   loginToken={model.getLoginToken()}

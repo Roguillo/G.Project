@@ -84,3 +84,61 @@ export function AddChain({instance, andRefreshDisplay, loginToken}: {instance: a
     </div>
   )
 }
+
+export function ListStoreChains({instance, andRefreshDisplay, loginToken}: {instance: any, andRefreshDisplay: any, loginToken: any}){
+const [error, setError] = React.useState("");
+const [chains, setChains] = React.useState<any[]>([]);
+  
+  async function listStoreChains() {
+
+      const response = await instance.post('/listStoreChains', {
+        loginToken: loginToken
+      });
+
+      const message = JSON.parse(response.data.body);
+      console.log(message);
+
+      if (message.error != undefined) {
+        setError(message.error);
+        setChains([]);
+      } else {
+        setError("");
+        setChains(message);
+      }
+
+    andRefreshDisplay();
+  }
+
+  return(
+    <div>
+      <button onClick={listStoreChains}>List Store Chains</button>
+
+      {error && <div>{error}</div>}
+
+      {!error && chains.map((chain) => (
+        <div key={chain.chainID}>
+          <strong>{chain.chainName}</strong><br />
+          URL: {chain.chainUrl}<br />
+
+          <div>
+            <strong>Stores:</strong>
+
+            {chain.stores.length === 0 ? (
+              <div>
+                No stores in this chain.
+              </div>
+            ) : (
+              <ul>
+                {chain.stores.map((store: any) => (
+                  <li key={store.storeID}>
+                    {store.name} — {store.address} - Sales: ${store.sales}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
