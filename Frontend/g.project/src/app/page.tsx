@@ -9,7 +9,9 @@ import { AdminDashboard, RemoveStore, RemoveChain } from '../boundary/adminDashb
 import { LoginAdmin } from '../boundary/loginPage';
 import { RegisterShopper, LoginShopper } from '../boundary/shopper/shopperRegister';
 import { AddChain, AddStore, ListStoreChains } from '../boundary/shopper/shopperDashboard';
+import { ReviewActivity, ReviewHistory, SearchRecentPurchases } from '../boundary/shopper/shopperHistoryView';
 import { Model } from '../Model';
+
 
 export default function Home() {
   const [model, updateModel] = React.useState(new Model());
@@ -150,7 +152,9 @@ export default function Home() {
 
             {shopperView === "history" && (
               <div>
-                <h2>Purchase History Page</h2>
+                <ReviewHistory model={model} instance={instance} andRefreshDisplay={andRefreshDisplay}></ReviewHistory><br></br>
+                <ReviewActivity model={model} instance={instance} andRefreshDisplay={andRefreshDisplay}></ReviewActivity><br></br>
+                <SearchRecentPurchases model={model} instance={instance} andRefreshDisplay={andRefreshDisplay}></SearchRecentPurchases>
               </div>
             )}
           </div>

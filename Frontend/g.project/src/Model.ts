@@ -27,7 +27,6 @@ export class Model {
 
     loginShopper(name: string, username: string, password: string, loginToken: string) {
         this.shopper = new Shopper(name, username, password, loginToken)
-
     }
 
     getLoginToken() {
