@@ -2,6 +2,7 @@ import React from 'react'
 
 export function CreateShoppingList({model, shoppingList, setShoppingList, instance, andRefreshDisplay}: {model: any, shoppingList:any, setShoppingList:any, instance: any, andRefreshDisplay: any}) {
     type ShoppingListMessage = {
+        id?: string,
         listName?: string;
         items?: string[];
         error?: string;
@@ -27,10 +28,12 @@ export function CreateShoppingList({model, shoppingList, setShoppingList, instan
             changeApiMessage({ error: message.error });
         } else {
             changeApiMessage({
+                id: message.shoppingListID,
                 listName: message.shoppingListName,
                 items: message.items
             }); 
             setShoppingList({
+                id: message.shoppingListID,
                 name: message.shoppingListName,
                 items: message.items || []
             })
@@ -86,6 +89,7 @@ export function AddItemShoppingList({model, shoppingList, setShoppingList, insta
 
         const response = await instance.post('/addItemShoppingList', {
             loginToken: model.getLoginToken(),
+            shoppingListID: shoppingList.id,
             listName: shoppingList.name,
             itemName: itemName,
             itemCategory: itemCategory
@@ -124,6 +128,7 @@ export function ReportOptionsShoppingList({model, shoppingList, setShoppingList,
         
         const response = await instance.post('/reportOptionsShoppingList', {
             shoppingListName: shoppingList.name,
+            shoppingListID: shoppingList.id,
             loginToken: model.getLoginToken()
         })
 

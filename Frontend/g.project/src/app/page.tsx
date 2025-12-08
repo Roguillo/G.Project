@@ -15,7 +15,7 @@ import { Model } from '../Model';
 
 export default function Home() {
   const [model, updateModel] = React.useState(new Model());
-  const [shoppingList, setShoppingList] = React.useState({ name: "", items: [] });
+  const [shoppingList, setShoppingList] = React.useState({ id: "", name: "", items: [] });
   const [shopper, updateShopper] = React.useState(model.shopper);
   const [view, updateView] = React.useState(0);
 
