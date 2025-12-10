@@ -120,6 +120,49 @@ export function AddItemShoppingList({model, shoppingList, setShoppingList, insta
     )
 }
 
+export function RemoveItemShoppingList({model, shoppingList, setShoppingList, instance, andRefreshDisplay}: {model: any, shoppingList:any, setShoppingList:any, instance: any, andRefreshDisplay: any}) {
+    const [apiMessage, changeApiMessage] = React.useState("");
+
+    async function removeItemShoppingList() {
+        andRefreshDisplay()
+
+        const inputElementItemName = document.getElementById("item-name-to-delete") as HTMLInputElement
+        const itemName = inputElementItemName.value
+
+
+        const response = await instance.post('/removeFromShoppingList', {
+            loginToken: model.getLoginToken(),
+            shoppingListID: shoppingList.id,
+            listName: shoppingList.name,
+            itemName: itemName,
+        });
+
+        const message = JSON.parse(response.data.body);
+        console.log(message);
+
+        if (message.error != undefined) {
+            changeApiMessage(message.error);
+        } else {
+            changeApiMessage("Item Removed"); 
+            setShoppingList((prev: any) => ({
+            ...prev,
+            items: message.items
+        }));
+        }
+
+        andRefreshDisplay()
+    }
+
+    return(
+    <div>
+      <b>Item Name: </b><input id="item-name-to-delete" placeholder="Item Name" data-testid="item-name-to-delete"></input>
+      
+      <button onClick={() => {removeItemShoppingList()}}>Remove Item</button>
+      {apiMessage}
+    </div>
+    )
+}
+
 export function ReportOptionsShoppingList({model, shoppingList, setShoppingList, instance, andRefreshDisplay}: {model: any, shoppingList:any, setShoppingList:any, instance: any, andRefreshDisplay: any}) {
     const [apiMessage, changeApiMessage] = React.useState("");
 

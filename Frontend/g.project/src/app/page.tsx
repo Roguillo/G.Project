@@ -4,7 +4,7 @@ import styles from './page.module.css';
 
 import { instance } from './aws';
 import { ShopperReceiptView } from '../boundary/shopper/shopperReceiptView';
-import { AddItemShoppingList, CreateShoppingList, ReportOptionsShoppingList } from '../boundary/shopper/shopperListVew';
+import { AddItemShoppingList, RemoveItemShoppingList, CreateShoppingList, ReportOptionsShoppingList } from '../boundary/shopper/shopperListVew';
 import { AdminDashboard, RemoveStore, RemoveChain } from '../boundary/adminDashboard';
 import { LoginAdmin } from '../boundary/loginPage';
 import { RegisterShopper, LoginShopper } from '../boundary/shopper/shopperRegister';
@@ -134,6 +134,13 @@ export default function Home() {
                   andRefreshDisplay={andRefreshDisplay}
                 />
                 <AddItemShoppingList
+                  model={model}
+                  shoppingList={shoppingList}
+                  setShoppingList={setShoppingList}
+                  instance={instance}
+                  andRefreshDisplay={andRefreshDisplay}
+                />
+                <RemoveItemShoppingList
                   model={model}
                   shoppingList={shoppingList}
                   setShoppingList={setShoppingList}
