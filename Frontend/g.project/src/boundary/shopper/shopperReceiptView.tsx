@@ -7,28 +7,29 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                                    { model : any, instance: any, sync: any }) {
     // possible fields for JSON
     type APIresponse = {
-        category ? : string;
-        error    ? : string;
-        itemID   ? : string | string[];
-        msg      ? : string;
-        name     ? : string;
-        price    ? : string;
-        quantity ? : string;
-        receiptID? : string;
-        shopperID? : string;
+        category     ? : string;
+        error        ? : string;
+        itemsFromAPI ? : string[];
+        itemID       ? : string | string[];
+        msg          ? : string;
+        name         ? : string;
+        price        ? : string;
+        quantity     ? : string;
+        receiptID    ? : string;
+        shopperID    ? : string;
     }
-    
 
     // react state variables
-    const [rAPIMessage, updateAPIMessage] = React.useState<APIresponse>();
-    // API response message variable
-    let APIMessage :   any;
+    const [rAPIMessage, updateAPIMessage]      = React.useState<APIresponse>();
+    const [rLoadingText, updateLoadingText]    = React.useState("");
+    const [analyzedItems, updateAnalyzedItems] = React.useState<Item[]>([]);
 
+    // API response message variable
+    let APIMessage : any;
 
     // for testing
     if(!model.shopper)             model.shopper            = new Shopper("", "", "", "");
     if(!model.shopper?.loginToken) model.shopper.loginToken = "test-token1234";
-    
 
     // get date
     const today = new Date         ();
@@ -52,40 +53,38 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         // get login token from model
         const loginToken = model.shopper?.loginToken;
 
-
         // get store and chain IDs from shopper
         const StoreIDElement = document      .getElementById("store-ID") as HTMLInputElement;
         const ChainIDElement = document      .getElementById("chain-ID") as HTMLInputElement;
         const StoreID        = StoreIDElement.value;
         const ChainID        = ChainIDElement.value;
 
+        await instance.post('/createReceipt',
+            {  
+                "loginToken" : loginToken,
+                "storeID"    : StoreID,
+                "chainID"    : ChainID,
+                "date"       :   
+                    {  
+                        "day"   : day,  
+                        "month" : month,  
+                        "year"  : year 
+                    }  
+            }
+            )
+            .then((response : any) => {
+                APIMessage = (typeof    (response.data.body) === 'string') ?
+                                (JSON.parse(response.data.body)             ) :
+                                (           response.data.body              );
+                
+                if (APIMessage.error != undefined) {
+                    updateAPIMessage(APIMessage.error);
+                    return;
 
-        await instance.post('/createReceipt', 
-                {  
-                    "loginToken" : loginToken,
-                    "storeID"    : StoreID,
-                    "chainID"    : ChainID,
-                    "date"       :   
-                        {  
-                            "day"   : day,  
-                            "month" : month,  
-                            "year"  : year 
-                        }  
+                } else {
+                    updateAPIMessage(APIMessage);
+                
                 }
-                )
-                .then((response : any) => {
-                    APIMessage = (typeof    (response.data.body) === 'string') ?
-                                 (JSON.parse(response.data.body)             ) :
-                                 (           response.data.body              );
-                    
-                    if (APIMessage.error != undefined) {
-                        updateAPIMessage(APIMessage.error);
-                        return;
-
-                    } else {
-                        updateAPIMessage(APIMessage);
-                    
-                    }
         });
 
         //update the local model
@@ -94,8 +93,9 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         sync();
     }
 
-
     async function addItemToReceipt() {
+        if(!currentReceipt) return;
+
         const inputElementItemName     = document.getElementById("new-item-name"    ) as HTMLInputElement;
         const inputElementItemCategory = document.getElementById("new-item-category") as HTMLInputElement;
         const inputElementItemPrice    = document.getElementById("new-item-price"   ) as HTMLInputElement;
@@ -108,28 +108,25 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     
 
         await instance.post('/addToReceipt', {
-                "loginToken" : model.shopper.loginToken,
-                "receiptID"  : currentReceipt.receiptID, // latest receipt
-                "name"       : itemName,
-                "category"   : itemCategory, 
-                "price"      : itemPrice,
-                "quantity"   : itemQuantity
-            })
-            .then((response : any) => {
-                // APIMessage = (typeof    (response.data.body) === 'string') ?
-                //                 (JSON.parse(response.data.body)             ) :
-                //                 (           response.data.body              );
-                APIMessage = JSON.parse(response.data.body);
+            "loginToken" : model.shopper.loginToken,
+            "receiptID"  : currentReceipt.receiptID, // latest receipt
+            "name"       : itemName,
+            "category"   : itemCategory, 
+            "price"      : itemPrice,
+            "quantity"   : itemQuantity
+        })
+        .then((response : any) => {
+            APIMessage = JSON.parse(response.data.body);
 
-                if (APIMessage.error != undefined) {
-                    updateAPIMessage(APIMessage.error);
-                    return;
+            if (APIMessage.error != undefined) {
+                updateAPIMessage(APIMessage.error);
+                return;
 
-                } else {
-                    updateAPIMessage(APIMessage);
-                
-                }
-            });
+            } else {
+                updateAPIMessage(APIMessage);
+            
+            }
+        });
 
 
         //add each item + set price for each item
@@ -150,15 +147,30 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         sync();
     }
 
+    function removeAnalyzedByName(name: string) {
+        const itemToRemove = analyzedItems.find(item => item.name === name);
+        if (!itemToRemove) return;
+
+        updateAnalyzedItems(items => items.filter(item => item.itemID !== itemToRemove.itemID));
+        currentReceipt.items = currentReceipt.items.filter(item => item.itemID !== itemToRemove.itemID);
+    }
 
     async function removeItemFromReceipt() {
-        const inputElementItemName     = document.getElementById("rm-item-name") as HTMLInputElement;
-        const itemName     = inputElementItemName.value;
+        if(!currentReceipt) return;
+
+        const inputElementItemName = document.getElementById("rm-item-name") as HTMLInputElement;
+        const itemName             = inputElementItemName.value;
+
+        if(analyzedItems.find(item => item.name === itemName)) {
+            removeAnalyzedByName(itemName);
+            sync();
+            return;
+        }
 
         await instance.post('/removeFromReceipt', {
                 "loginToken" : model.shopper.loginToken,
                 "receiptID"  : currentReceipt.receiptID, // latest receipt
-                "name" : itemName
+                "name"       : itemName
             })
             .then((response : any) => {
                 APIMessage = (typeof    (response.data.body) === 'string') ?
@@ -177,8 +189,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
         console.log(APIMessage);
         //remove the item from the receipt
-        const receipt = model.receipts[model.receipts.length-1];
-        receipt.rmItemByID(APIMessage.itemID);
+        currentReceipt.rmItemByID(APIMessage.itemID);
 
         //update
         sync();
@@ -186,6 +197,8 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
 
     async function editItemOnReceipt() {
+        if(!currentReceipt) return;
+
         const nameElement        = document.getElementById("edit-item-name")         as HTMLInputElement;
         const newNameElement     = document.getElementById("edit-item-new_name")     as HTMLInputElement;
         const newCategoryElement = document.getElementById("edit-item-new_category") as HTMLInputElement;
@@ -193,10 +206,39 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         const newQuantityElement = document.getElementById("edit-item-new_quantity") as HTMLInputElement;
 
         const name               =            nameElement       .value;
-        const newName            =            newNameElement    .value;
+        let   newName            =            newNameElement    .value;
+        if(!newName) newName     =            name;
         const newCategory        =            newCategoryElement.value;
         const newPrice           = parseFloat(newPriceElement   .value);
         const newQuantity        = parseInt  (newQuantityElement.value);
+
+        if (analyzedItems.find(item => item.name === name)) {
+            const others         = analyzedItems.filter(item => item.name !== name);
+            updateAnalyzedItems(others);
+            currentReceipt.items = currentReceipt.items.filter((item: { name: string; }) => item.name !== name);
+
+            const updatedItems: Item[] = [];
+
+            for (let i = 0; i < newQuantity; i++) {
+                const item = new Item(
+                     newCategory,
+                    "itemID" + crypto.randomUUID(),
+                     newName,
+                     currentReceipt.receiptID
+                );
+                item        .setPrice(newPrice);
+                updatedItems.push(item);
+            }
+
+            updateAnalyzedItems(items => [...items, ...updatedItems]);
+            for (let i = 0; i < updatedItems.length; i++) {
+                currentReceipt.items.push(updatedItems[i]);
+            }
+
+            sync();
+            return;
+        }
+
 
         await instance.post('/editItemOnReceipt',
                 {
@@ -219,7 +261,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                     return;
 
                 } else {
-                    updateAPIMessage(APIMessage      );
+                    updateAPIMessage(APIMessage);
                 }
             }
         );
@@ -238,9 +280,8 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
        
         const oldItemIDs = APIMessage.oldItemIDs;
         const itemIDs    = APIMessage.itemIDs;
-        const receipt    = model.receipts[model.receipts.length-1];
 
-        receipt.editItem(oldItemIDs, newCategory, itemIDs, newName, newQuantity, newPrice);
+        currentReceipt.editItem(oldItemIDs, newCategory, itemIDs, newName, newQuantity, newPrice);
 
         sync();
     }
@@ -248,27 +289,79 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
     async function analyzeReceiptImage() {
         const imageElement = document.getElementById("image") as HTMLInputElement;
-        const image = imageElement.files![0];
+        const image        = imageElement.files![0];
+        if(!image || !currentReceipt) return;
 
-        const imageURL = await(new Promise<string>((resolve, reject) => {
+        updateLoadingText("ChatGPT is thinking");
+
+        const imageURL = await new Promise<string>((resolve, reject) => {
             const reader   = new FileReader();
             reader.onload  = () => resolve(reader.result as string);
-            reader.onerror = () => reject (reader.error           );
+            reader.onerror = () => reject(reader.error);
             reader.readAsDataURL(image);
-        }));
+        });
 
-        // POST to backend using the same .then() style
-        await instance.post('/analyzeReceiptImage',
-                {
-                    "loginToken"  : model.shopper.loginToken,
-                    "receiptID"   : currentReceipt.receiptID,
-                    "imageDataUrl": imageURL
-                }
-            )
-            .then((response: any) => {
-                APIMessage = (typeof    (response.data.body) === 'string') ?
-                             (JSON.parse(response.data.body)             ) :
-                             (           response.data.body              );
+        await instance.post('/analyzeReceiptImage', {
+            image     : imageURL,
+            loginToken: model.shopper.loginToken,
+            receiptID : currentReceipt.receiptID
+
+        }).then((response: any) => {
+            const APIMessage = (typeof    (response.data.body === 'string')) ?
+                               (JSON.parse(response.data.body             )) :
+                               (           response.data.body              );
+
+            if (APIMessage.error) {
+                updateAPIMessage({ error: APIMessage.error });
+                console.log(APIMessage);
+                return;
+            }
+
+            console.log(APIMessage);
+
+            const summary = (typeof    (APIMessage.summary) === "string") ?
+                            (JSON.parse(APIMessage.summary)             ) :
+                            (           APIMessage.summary              );
+            updateAPIMessage(summary);
+
+            const itemsFromAPI = summary.items || [];
+
+            itemsFromAPI.forEach((item: any) => {
+                const itemBuffer = new Item(
+                     item.itemCategory,
+                    "itemID" + crypto.randomUUID(),
+                     item.itemName,
+                     currentReceipt.receiptID
+                );
+
+                currentReceipt.items                                 .push(itemBuffer);
+                currentReceipt.items[currentReceipt.items.length - 1].setPrice(item.itemPrice);
+
+                analyzedItems                                        .push(itemBuffer);
+                analyzedItems[analyzedItems.length - 1]              .setPrice(item.itemPrice);
+            });
+
+            updateLoadingText("");
+            sync();
+        });
+    }
+
+    
+
+    async function submitReceipt() {
+        if(!currentReceipt) return;
+
+        for(let i = 0; i < analyzedItems.length; i++) {
+            await instance.post('/addToReceipt', {
+                "loginToken" : model.shopper.loginToken,
+                "receiptID"  : currentReceipt.receiptID, // latest receipt
+                "name"       : analyzedItems[i].name,
+                "category"   : analyzedItems[i].category, 
+                "price"      : analyzedItems[i].price,
+                "quantity"   : 1
+            })
+            .then((response : any) => {
+                APIMessage = JSON.parse(response.data.body);
 
                 if (APIMessage.error != undefined) {
                     updateAPIMessage(APIMessage.error);
@@ -276,55 +369,16 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
                 } else {
                     updateAPIMessage(APIMessage);
+                
                 }
-            }
-        );
-
-        let itemsFromAPI = APIMessage.items;
-        let itemBuffer   = new Item("", "", "", "");
-
-        for(let i = 0; i < itemsFromAPI.length; i++) {
-            itemBuffer.name     = itemsFromAPI[i].itemName;
-            itemBuffer.category = itemsFromAPI   .itemCategory;
-            itemBuffer.price    = itemsFromAPI[i].itemPrice;
+            });
         }
 
-        sync();
-    }
-
-
-
-    async function submitReceipt() {
-        // await instance.post('/submitReceipt',
-        //         {
-        //             "loginToken" : model.shopper.loginToken,
-        //             "receiptID"  : currentReceipt.receiptID,
-        //             "day"        : day,
-        //             "month"      : month,
-        //             "year"       : year
-        //         }
-        //     )
-        //     .then((response : any) => {
-        //         APIMessage = (typeof    (response.data.body) === 'string') ?
-        //                      (JSON.parse(response.data.body)             ) :
-        //                      (           response.data.body              );
-                
-        //         if (APIMessage.error != undefined) {
-        //             updateAPIMessage(APIMessage.error);
-        //             return;
-
-        //         } else {
-        //             updateAPIMessage(APIMessage      );
-        //         }
-        //     }
-        // );
-
-        const receipt      = model.receipts[model.receipts.length-1];
-        receipt.submitted  = true;
+        currentReceipt.submitted  = true;
 
         sync();
 
-        let confetti       = (await import('canvas-confetti')).default;
+        let confetti              = (await import('canvas-confetti')).default;
         confetti();
     }
 
@@ -367,7 +421,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 <h3>Analyze Receipt Image</h3>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                     <input id="image" type="file" accept="image/*" />
-                    <button onClick={analyzeReceiptImage}>Analyze Receipt Image</button>
+                    <button onClick={analyzeReceiptImage}>Analyze Receipt Image</button> {rLoadingText}
                 </div>
             </section>
 
@@ -375,9 +429,9 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             <section style={{ marginBottom: 24 }}>
                 <h3>Add Item</h3>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    <input id="new-item-name"     placeholder="Name"     />
+                    <input id="new-item-name" placeholder="Name" />
                     <input id="new-item-category" placeholder="Category" />
-                    <input id="new-item-price"    placeholder="Price"    />
+                    <input id="new-item-price" placeholder="Price" />
                     <input id="new-item-quantity" placeholder="Quantity" />
                     <button onClick={addItemToReceipt}>Add Item</button>
                 </div>
@@ -396,10 +450,10 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             <section style={{ marginBottom: 24 }}>
                 <h3>Edit Item</h3>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    <input id="edit-item-name"         placeholder="Current Name" />
-                    <input id="edit-item-new_name"     placeholder="New Name"     />
+                    <input id="edit-item-name" placeholder="Current Name" />
+                    <input id="edit-item-new_name" placeholder="New Name" />
                     <input id="edit-item-new_category" placeholder="New Category" />
-                    <input id="edit-item-new_price"    placeholder="New Price"    />
+                    <input id="edit-item-new_price" placeholder="New Price" />
                     <input id="edit-item-new_quantity" placeholder="New Quantity" />
                     <button onClick={editItemOnReceipt}>Edit Item</button>
                 </div>
@@ -428,6 +482,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                         marginTop: 16,
                         width: '100%',
                         borderCollapse: 'collapse',
+                        textAlign: 'left',
                     }}
                 >
                     <thead style={{ backgroundColor: '#008080', color: 'white' }}>
@@ -438,19 +493,17 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                         </tr>
                     </thead>
                     <tbody>
-                        {model.receipts.length > 0 &&
-                            currentReceipt.items?.map((item : any, index : any) => (
-                                <tr key={item.ID ?? index}>
-                                    <td>{item.name}</td>
-                                    <td>{item.category}</td>
-                                    <td>{item.price}</td>
-                                </tr>
-                            ))}
+                        {currentReceipt?.items?.map((item: any, index: number) => (
+                            <tr key={item.ID ?? index}>
+                                <td>{item.name}</td>
+                                <td>{item.category}</td>
+                                <td>{isNaN(item.price) ? '0' : item.price}</td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </section>
 
         </div>
     );
-
 }
