@@ -1,3 +1,6 @@
+import { log } from "console"
+
+
 export enum currentView{
     login,
     shopperDash,
@@ -27,6 +30,27 @@ export class Model {
 
     loginShopper(name: string, username: string, password: string, loginToken: string) {
         this.shopper = new Shopper(name, username, password, loginToken)
+
+    }
+
+    makeReceipt(chainID : string, date : Date, receiptID : string, storeID : string){
+        let newRcpt = new Receipt(chainID, date, receiptID, storeID);
+        this.receipts.push(newRcpt);
+    }
+
+
+    pickReceipt(receiptID:any){
+        if(this.receipts === undefined) return(null);
+
+        //ChatGPT query: "what function should I use to pick a specific item out of an array in javascript? 
+        // I have an array of receipt objects, and I need to pick one out by its receiptID field. 
+        // Every receipt has a unique id"
+        else return(this.receipts.find(receipt => receipt.receiptID === receiptID));
+    }
+
+    addItemToReceipt(category : string, itemID : string, name : string, receiptID : string) {
+        this.receipts[this.receipts.length - 1].addItem(new Item(category, itemID, name, receiptID)
+        );
     }
 
     getLoginToken() {
@@ -71,30 +95,53 @@ export class Shopper {
 }
 
 export class Receipt {
-    chainID  : string;
-    date     : Date | undefined;
-    items    : Item[];
-    receiptID: string;
-    storeID  : string;
+    chainID       : string;
+    date          : Date | undefined;
+    items         : Item[];
+    receiptID     : string;
+    storeID       : string;
+    submitted     : boolean;
 
     constructor(chainID: string, date : Date, receiptID: string, storeID: string) {
-        this.chainID   = chainID;
-        this.date      = date;
-        this.items     = [];
-        this.receiptID = receiptID;
-        this.storeID   = storeID;
+        this.chainID       = chainID;
+        this.date          = date;
+        this.items         = [];
+        this.receiptID     = receiptID;
+        this.storeID       = storeID;
+        this.submitted     = false;
     }
 
     setItems(items: Item[]) {
         this.items = items
     }
 
-    addItem(item: Item){
+    addItem(item: Item) {
         this.items.push(item)
     }
 
-    rmItem(item: Item){
+    rmItem(item: Item) {
         this.items = this.items.filter(items => items !== item)
+    }
+
+    rmItemByID(ID:string) {
+        this.items = this.items.filter(item => item.itemID !== ID)
+        console.log(this.items)
+    }
+
+    editItem(oldItemIDs : string[], category : string, itemIDs : string[], name : string, quantity : number, price : number) {
+        let itemID : string;
+        
+        for(let i = 0; i < oldItemIDs.length; i++) {
+            this.rmItemByID(oldItemIDs[i]);
+        }
+
+        if(oldItemIDs.length > 0) {
+            for(let i = 0; i < quantity; i++) {
+                itemID = itemIDs[i];
+                this.addItem(new Item(category, itemID, name, this.receiptID));
+                this.items[this.items.length - 1].setPrice(price);
+            }
+        }   
     }
 
     setDate(date: Date) {

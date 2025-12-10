@@ -92,7 +92,7 @@ function LoginShopper({model, instance, andRefreshDisplay}: {model: any, instanc
 
           <br></br>
           {apiMessage}
-          
+
         </div>
     )
 }

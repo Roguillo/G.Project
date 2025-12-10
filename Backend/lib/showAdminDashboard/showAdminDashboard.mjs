@@ -18,7 +18,7 @@ export const handler = async (event) => {
   let result
   let code
   try{
-    const token = event.adminToken
+    const token = event.adminToken;
 
     //could not find token
     if (!token) {
