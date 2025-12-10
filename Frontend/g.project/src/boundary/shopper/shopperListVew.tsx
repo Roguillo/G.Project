@@ -187,11 +187,17 @@ export function ReportOptionsShoppingList({model, shoppingList, setShoppingList,
             const formatted = optionList
                 .map((opt: any) => {
                     
-                    if (opt.missing || !opt.store || opt.store.length === 0) {
+                    if (opt.missing) {
                         return `${opt.itemName} — Item does not exist in database`;
                     }
 
-                    const storeName = opt.store[0].name ?? "Unknown Store";
+                    let storeName
+                    if(!opt.store || opt.store.length === 0){
+                        storeName = "Unknown Store"
+                    } else{
+                        storeName = opt.store[0].name
+                    }
+                    
                     return `${opt.itemName} (${opt.itemCategory}) — Store Name: ${storeName} — $${opt.price}`;
                 })
                 .join("\n");
