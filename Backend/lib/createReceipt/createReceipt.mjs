@@ -17,8 +17,8 @@ var pool = mysql.createPool(
 /*
 {  
   "loginToken" : "loginTokenXXXX", 
-  "storeID"    : "storeIDXXXX",  
-  "chainID"    : "chainIDXXXX",  
+  "storeName"  : "name of store",  
+  "chainName"  : "name of chain",  
   "date"       :   
       {  
           "day"   : XXX,  
@@ -27,6 +27,42 @@ var pool = mysql.createPool(
       }  
 }
 */
+
+
+  // to get storeID to help fill out item
+  let getStoreID = (name) => {
+    return new Promise((resolve, reject) => {
+      const query = "SELECT storeID FROM Stores WHERE name = ?"
+      pool.query(query, name, (error, rows) => {
+        if (error) {
+          reject(new Error("Database error: " + error.sqlMessage))
+        } else if (rows === 0)
+          {
+            resolve(false)
+        } else {
+          resolve(rows[0]["storeID"])
+        } 
+      })
+    })
+  }
+
+
+  // to get storeID to help fill out item
+  let getChainID = (name) => {
+    return new Promise((resolve, reject) => {
+      const query = "SELECT chainID FROM Chains WHERE name = ?"
+      pool.query(query, name, (error, rows) => {
+        if (error) {
+          reject(new Error("Database error: " + error.sqlMessage))
+        } else if (rows === 0)
+          {
+            resolve(false)
+        } else {
+          resolve(rows[0]["chainID"])
+        }
+      })
+    })
+  }
 
 
 
@@ -53,11 +89,11 @@ export const handler = async (event) => {
   }
 
   // take in receipt fields and create one
-  let createReceipt = (day, month, year, receiptID, shopperID, storeID, chainID) => {
+  let createReceipt = (date, receiptID, shopperID, storeID, chainID) => {
     return new Promise((resolve, reject) => {
-      const query = "INSERT INTO Receipts (day, month, year, receiptID, shopperID, storeID, chainID) VALUES (?, ?, ?, ?, ?, ?, ?)";
+      const query = "INSERT INTO Receipts (date, receiptID, shopperID, storeID, chainID) VALUES (?, ?, ?, ?, ?)";
 
-      pool.query(query, [day, month, year, receiptID, shopperID, storeID, chainID], (error, rows) => {
+      pool.query(query, [date, receiptID, shopperID, storeID, chainID], (error, rows) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage));
 
@@ -74,21 +110,37 @@ export const handler = async (event) => {
     const day       = event.date.day;
     const month     = event.date.month;
     const year      = event.date.year;
-    const storeID   = event.storeID;
-    const chainID   = event.chainID;
+    let date = "";
+    if (day < 10 && month < 10) {
+      date      = year + "-0" + month + "-0" + day;
+    } else if (day < 10) {
+      date      = year + "-" + month + "-0" + day;
+    } else if (month < 10) {
+      date      = year + "-0" + month + "-" + day;
+    } else {
+      date      = year + "-" + month + "-" + day;
+    }
+    const storeID   = await getStoreID(event.storeName);
+    if(!storeID) throw(new Error("Store does not exist"));
+    const chainID   = await getChainID(event.chainName);
+    if(!chainID) throw(new Error("Chain does not exist"));
     const shopperID = await(LoginTokenGetExists(event.loginToken.trim())); // get shopperID if logged in
     if(!shopperID) throw(new Error("Shopper is not logged in"));        // throw error for shopper not logged in
     const receiptID = "receiptID" + crypto.randomUUID();            // generate unique receipt ID
 
+    console.log("date: " + date);
+
     // actually create receipt
-    await(createReceipt(day, month, year, receiptID, shopperID, storeID, chainID));
+    await(createReceipt(date, receiptID, shopperID, storeID, chainID));
 
     // good
     response_code =  200;
     response_body =
       { msg      : "Receipt created",
         receiptID: receiptID,
-        shopperID: shopperID
+        shopperID: shopperID,
+        chainID  : chainID,
+        storeID  : storeID
       };
 
   } catch (error) {
