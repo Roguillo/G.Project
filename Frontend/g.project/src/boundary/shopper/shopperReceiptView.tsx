@@ -54,16 +54,16 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         const loginToken = model.shopper?.loginToken;
 
         // get store and chain IDs from shopper
-        const StoreIDElement = document      .getElementById("store-ID") as HTMLInputElement;
-        const ChainIDElement = document      .getElementById("chain-ID") as HTMLInputElement;
-        const StoreID        = StoreIDElement.value;
-        const ChainID        = ChainIDElement.value;
+        const StoreNameElement = document      .getElementById("store-name") as HTMLInputElement;
+        const ChainNameElement = document      .getElementById("chain-name") as HTMLInputElement;
+        const StoreName        = StoreNameElement.value;
+        const ChainName        = ChainNameElement.value;
 
         await instance.post('/createReceipt',
             {  
                 "loginToken" : loginToken,
-                "storeID"    : StoreID,
-                "chainID"    : ChainID,
+                "storeName"  : StoreName,
+                "chainName"  : ChainName,
                 "date"       :   
                     {  
                         "day"   : day,  
@@ -86,6 +86,9 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 
                 }
         });
+
+        const ChainID = APIMessage.chainID;
+        const StoreID = APIMessage.storeID;
 
         //update the local model
         model.makeReceipt(ChainID, today, APIMessage.receiptID, StoreID);
@@ -410,8 +413,8 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             <section style={{ marginBottom: 24 }}>
                 <h3>Create Receipt</h3>
                 <div style={{ display: 'flex', gap: 8 }}>
-                    <input id="store-ID" placeholder="Store ID" />
-                    <input id="chain-ID" placeholder="Chain ID" />
+                    <input id="store-name" placeholder="Store Name" />
+                    <input id="chain-name" placeholder="Chain Name" />
                     <button onClick={CreateReceiptController}>Create Receipt</button>
                 </div>
             </section>
