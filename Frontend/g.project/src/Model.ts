@@ -52,6 +52,32 @@ export class Model {
         this.receipts[this.receipts.length - 1].addItem(new Item(category, itemID, name, receiptID)
         );
     }
+
+    getLoginToken() {
+        return this.shopper?.loginToken
+    }
+    
+    makeReceipt(chainID: string, date : Date, receiptID: string, storeID: string){
+        let newRcpt = new Receipt(chainID, date, receiptID, storeID);
+        newRcpt.setDate(date)
+        this.receipts.push(newRcpt)
+    }
+
+
+    pickReceipt(receiptID:any){
+        if(this.receipts === undefined) return(null);
+
+        //ChatGPT query: "what function should I use to pick a specific item out of an array in javascript? 
+        // I have an array of receipt objects, and I need to pick one out by its receiptID field. 
+        // Every receipt has a unique id"
+        else return(this.receipts.find(receipt => receipt.receiptID === receiptID));
+    }
+
+    addItemToReceipt(category : string, itemID : string, name : string, receiptID : string) {
+        this.receipts[this.receipts.length - 1].addItem(new Item(
+            category, itemID, name, receiptID)
+        );
+    }
 }
 
 export class Shopper {
@@ -144,8 +170,8 @@ export class Item {
     receiptID : string;
     store     : Store | undefined;
 
-    constructor( category : string, itemID : string, name : string, receiptID : string) {
-        this.category  = category;
+    constructor( cateogry : string, itemID : string, name : string, receiptID : string) {
+        this.category  = cateogry;
         this.itemID    = itemID;
         this.name      = name;
         this.receiptID = receiptID;
