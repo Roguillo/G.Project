@@ -62,6 +62,7 @@ export default function Home() {
             instance={instance}
             andRefreshDisplay={andRefreshDisplay}
           />
+          <br />
 
           <LoginAdmin
             instance={instance}
@@ -94,25 +95,25 @@ export default function Home() {
           <div className={styles.main}>
             {shopperView === "dashboard" && (
               <div>
-                <h1>{"Welcome back " + model.shopper?.name}</h1>
+                <h1>{"Welcome back " + model.shopper?.name}</h1><br />
 
                 <AddChain
                   instance={instance}
                   andRefreshDisplay={andRefreshDisplay}
                   loginToken={model.getLoginToken()}
-                />
+                /><br />
 
                 <AddStore
                   instance={instance}
                   andRefreshDisplay={andRefreshDisplay}
                   loginToken={model.getLoginToken()}
-                />
+                /><br />
 
                 <ListStoreChains
                   instance={instance}
                   andRefreshDisplay={andRefreshDisplay}
                   loginToken={model.getLoginToken()}
-                />
+                /><br />
               </div>
             )}
 
@@ -132,21 +133,21 @@ export default function Home() {
                   setShoppingList={setShoppingList}
                   instance={instance}
                   andRefreshDisplay={andRefreshDisplay}
-                />
+                /><br />
                 <AddItemShoppingList
                   model={model}
                   shoppingList={shoppingList}
                   setShoppingList={setShoppingList}
                   instance={instance}
                   andRefreshDisplay={andRefreshDisplay}
-                />
+                /><br />
                 <RemoveItemShoppingList
                   model={model}
                   shoppingList={shoppingList}
                   setShoppingList={setShoppingList}
                   instance={instance}
                   andRefreshDisplay={andRefreshDisplay}
-                />
+                /><br />
                 <ReportOptionsShoppingList
                   model={model}
                   shoppingList={shoppingList}
@@ -175,7 +176,7 @@ export default function Home() {
             instance={instance}
             adminToken={adminToken}
             refreshKey={redraw}
-          />
+          /><br />
 
           <RemoveChain
             instance={instance}

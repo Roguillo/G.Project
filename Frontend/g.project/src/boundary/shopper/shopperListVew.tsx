@@ -71,7 +71,7 @@ export function CreateShoppingList({model, shoppingList, setShoppingList, instan
         {apiMessage?.error && (
         <div>{apiMessage.error}</div>
         )}
-        </div>
+    </div>
     )
 }
 
@@ -113,8 +113,8 @@ export function AddItemShoppingList({model, shoppingList, setShoppingList, insta
 
     return(
     <div>
-      <b>Item Name: </b><input id="item-name-to-add" placeholder="Item Name" data-testid="item-name-to-add"></input>
-      <b>Item Category: </b><input id="item-category-to-add" placeholder="Item Category" data-testid="item-category-to-add"></input>
+      <b>Item Name: </b><input id="item-name-to-add" placeholder="Item Name" data-testid="item-name-to-add"></input><br />
+      <b>Item Category: </b><input id="item-category-to-add" placeholder="Item Category" data-testid="item-category-to-add"></input><br />
       <button onClick={() => {addItemShoppingList()}}>Add Item</button>
     </div>
     )
