@@ -24,7 +24,7 @@ export const handler = async (event) => {
               text:
                 'Summarize this receipt image as valid raw JSON: ' +
                 '{"storeName":"store","date":{"day":DD,"month":MM,"year":YYYY},' +
-                '"items":[{"itemName":"name","itemCategory":"category or null","itemPrice":0.0},...]}' +
+                '"items":[{"itemName":"name","itemCategory":"specified category or estimated category","itemPrice":0.0},...]}' +
                 ' and respond ONLY with the JSON object, no extra text, ' +
                 'no code fences, no labels, no quotes around the JSON itself.'
             },
