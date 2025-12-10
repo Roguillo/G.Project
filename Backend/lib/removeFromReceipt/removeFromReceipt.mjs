@@ -78,6 +78,49 @@ var pool = mysql.createPool({
     })
   }
 
+  let getItemPrice = (itemID) => {
+    return new Promise((resolve, reject) => {
+      const query = "SELECT price FROM Items WHERE itemID = ?"
+      pool.query(query, [itemID], (error, rows) => {
+        if (error) {
+          reject(new Error("Database error: " + error.sqlMessage))
+        } else if (rows.length === 0)
+          {
+            resolve(false)
+        } else {
+          resolve(rows[0]["price"])
+        }
+      })
+    })
+  }
+
+let updateStoreSales = (receiptID, price) =>{
+  return new Promise((resolve, reject) => {
+    const query = "UPDATE Stores SET sales = sales - ? WHERE storeID = (SELECT storeID FROM Receipts WHERE receiptID = ?)"
+    pool.query(query, [price, receiptID], (error, rows) => {
+      if (error) {
+        reject(new Error("Database error: " + error.sqlMessage));
+      } else {
+        resolve(true);
+      }
+    });
+ })
+}
+
+ let updateChainSales = (receiptID, price) =>{
+  return new Promise((resolve, reject) => {
+    const query = "UPDATE Chains SET sales = sales - ? WHERE chainID = (SELECT chainID FROM Receipts WHERE receiptID = ?)"
+    pool.query(query, [price, receiptID], (error, rows) => {
+      if (error) {
+        reject(new Error("Database error: " + error.sqlMessage));
+      } else {
+        resolve(true);
+      }
+    });
+ })
+}
+
+
   let rmItemFromReceipt = (itemID) =>{
 
     return new Promise((resolve, reject) => {
@@ -117,6 +160,9 @@ export const handler = async (event) => {
     const itemID = await(getItemID(name, receiptID))
     if(!itemID) throw(new Error("Item does not exist"))
   
+    const price = await(getItemPrice(itemID))
+    if(!price) throw(new Error("Item does not have a price"))
+
 
     // const receiptID = await(getReceiptID(itemID))
     // if(!receiptID) throw(new Error("Item is not attached to a receipt"))
@@ -125,8 +171,9 @@ export const handler = async (event) => {
     // if(!name) throw(new Error("Item has no name"))
    
     // delete item
-    // await(rmItemFromReceipt(itemID, receiptID))
     await(rmItemFromReceipt(itemID))
+    await(updateStoreSales(receiptID, price))
+    await(updateChainSales(receiptID, price))
 
 
     response_code =  200;
