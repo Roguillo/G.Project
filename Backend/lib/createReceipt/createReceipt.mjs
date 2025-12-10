@@ -53,11 +53,11 @@ export const handler = async (event) => {
   }
 
   // take in receipt fields and create one
-  let createReceipt = (day, month, year, receiptID, shopperID, storeID, chainID) => {
+  let createReceipt = (date, receiptID, shopperID, storeID, chainID) => {
     return new Promise((resolve, reject) => {
-      const query = "INSERT INTO Receipts (day, month, year, receiptID, shopperID, storeID, chainID) VALUES (?, ?, ?, ?, ?, ?, ?)";
+      const query = "INSERT INTO Receipts (date, receiptID, shopperID, storeID, chainID) VALUES (?, ?, ?, ?, ?)";
 
-      pool.query(query, [day, month, year, receiptID, shopperID, storeID, chainID], (error, rows) => {
+      pool.query(query, [date, receiptID, shopperID, storeID, chainID], (error, rows) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage));
 
@@ -74,14 +74,26 @@ export const handler = async (event) => {
     const day       = event.date.day;
     const month     = event.date.month;
     const year      = event.date.year;
+    let date = "";
+    if (day < 10 && month < 10) {
+      date      = year + "-0" + month + "-0" + day;
+    } else if (day < 10) {
+      date      = year + "-" + month + "-0" + day;
+    } else if (month < 10) {
+      date      = year + "-0" + month + "-" + day;
+    } else {
+      date      = year + "-" + month + "-" + day;
+    }
     const storeID   = event.storeID;
     const chainID   = event.chainID;
     const shopperID = await(LoginTokenGetExists(event.loginToken.trim())); // get shopperID if logged in
     if(!shopperID) throw(new Error("Shopper is not logged in"));        // throw error for shopper not logged in
     const receiptID = "receiptID" + crypto.randomUUID();            // generate unique receipt ID
 
+    console.log("date: " + date);
+
     // actually create receipt
-    await(createReceipt(day, month, year, receiptID, shopperID, storeID, chainID));
+    await(createReceipt(date, receiptID, shopperID, storeID, chainID));
 
     // good
     response_code =  200;
