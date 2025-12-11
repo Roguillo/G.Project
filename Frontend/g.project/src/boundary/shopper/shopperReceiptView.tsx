@@ -152,7 +152,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         if (!itemToRemove) return;
 
         updateAnalyzedItems(items => items.filter(item => item.itemID !== itemToRemove.itemID));
-        currentReceipt.items = currentReceipt.items.filter(item => item.itemID !== itemToRemove.itemID);
+        currentReceipt.items = currentReceipt.items.filter((item: { itemID: string; }) => item.itemID !== itemToRemove.itemID);
     }
 
     async function removeItemFromReceipt() {
