@@ -1,5 +1,5 @@
 import   React      from 'react';
-import { Shopper, Item } from '../../Model';
+import { Shopper, Item, Receipt } from '../../Model';
 
 
 
@@ -20,9 +20,9 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     }
 
     // react state variables
-    const [rAPIMessage, updateAPIMessage]      = React.useState<APIresponse>();
-    const [rLoadingText, updateLoadingText]    = React.useState("");
-    const [analyzedItems, updateAnalyzedItems] = React.useState<Item[]>([]);
+    const [rAPIMessage    , updateAPIMessage    ] = React.useState<APIresponse>();
+    const [rLoadingText   , updateLoadingText   ] = React.useState("");
+    const [analyzedItems  , updateAnalyzedItems ] = React.useState<Item[]>([]);
 
     // API response message variable
     let APIMessage : any;
@@ -38,7 +38,9 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     const year  = today.getFullYear();
 
     // current receipt
-    const currentReceipt = model.receipts[model.receipts.length - 1];
+    let currentReceipt = (model.receipts[model.receipts.length - 1]) ?
+                         (model.receipts[model.receipts.length - 1]) :
+                         new Receipt("", new Date(), "", "");
 
     // submission message
     let submission_message;
@@ -58,6 +60,8 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         const ChainNameElement = document      .getElementById("chain-name") as HTMLInputElement;
         const StoreName        = StoreNameElement.value;
         const ChainName        = ChainNameElement.value;
+        
+        if(!StoreName || !ChainName) return;
 
         await instance.post('/createReceipt',
             {  
@@ -92,7 +96,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
         //update the local model
         model.makeReceipt(ChainID, today, APIMessage.receiptID, StoreID);
-        
+        currentReceipt.submitted = false;
         sync();
     }
 
@@ -105,9 +109,13 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         const inputElementItemQuantity = document.getElementById("new-item-quantity") as HTMLInputElement;
 
         const itemName     = inputElementItemName.value;
+        if(!itemName) return;
         const itemCategory = inputElementItemCategory.value;
+        if(!itemCategory) return;
         const itemPrice    = inputElementItemPrice.value;
+        if(!itemPrice) return;
         const itemQuantity = parseInt(inputElementItemQuantity.value);
+        if(!itemQuantity) return;
     
 
         await instance.post('/addToReceipt', {
@@ -163,6 +171,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
         const inputElementItemName = document.getElementById("rm-item-name") as HTMLInputElement;
         const itemName             = inputElementItemName.value;
+        if(!itemName) return;
 
         if(analyzedItems.find(item => item.name === itemName)) {
             removeAnalyzedByName(itemName);
@@ -209,6 +218,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         const newQuantityElement = document.getElementById("edit-item-new_quantity") as HTMLInputElement;
 
         const name               =            nameElement       .value;
+        if(!name) return;
         let   newName            =            newNameElement    .value;
         if(!newName) newName     =            name;
         const newCategory        =            newCategoryElement.value;
@@ -352,7 +362,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     
 
     async function submitReceipt() {
-        if(!currentReceipt) return;
+        if(!currentReceipt || (currentReceipt.items.length === 0)) return;
 
         for(let i = 0; i < analyzedItems.length; i++) {
             await instance.post('/addToReceipt', {
@@ -384,9 +394,6 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         let confetti              = (await import('canvas-confetti')).default;
         confetti();
     }
-
-
-    // make another function for remove item from receipt and export it
 
     /**
      * ok ideas
@@ -471,42 +478,41 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
             {/* Show Current Receipt Items */}
             <section style={{ marginBottom: 24 }}>
-                <h3>Current Receipt</h3>
+            <h3>Current Receipt</h3>
+            <div>Date: {!currentReceipt.submitted ? `${month}/${day}/${year}` : ""}</div>
+            <div>Chain: {!currentReceipt.submitted ? currentReceipt?.chainID ?? "" : ""}</div>
+            <div>Store: {!currentReceipt.submitted ? currentReceipt?.storeID ?? "" : ""}</div>
 
-                <div>Date: {month}/{day}/{year}</div>
-                <div>Chain: {currentReceipt?.chainID ?? ''}</div>
-                <div>Store: {currentReceipt?.storeID ?? ''}</div>
-
-                <table
-                    border={1}
-                    cellPadding={8}
-                    cellSpacing={0}
-                    style={{
-                        marginTop: 16,
-                        width: '100%',
-                        borderCollapse: 'collapse',
-                        textAlign: 'left',
-                    }}
-                >
-                    <thead style={{ backgroundColor: '#008080', color: 'white' }}>
-                        <tr>
-                            <th>Item Name</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentReceipt?.items?.map((item: any, index: number) => (
-                            <tr key={item.ID ?? index}>
-                                <td>{item.name}</td>
-                                <td>{item.category}</td>
-                                <td>{isNaN(item.price) ? '0' : item.price}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            <table
+                border={1}
+                cellPadding={8}
+                cellSpacing={0}
+                style={{
+                marginTop: 16,
+                width: "100%",
+                borderCollapse: "collapse",
+                textAlign: "left",
+                }}
+            >
+                <thead style={{ backgroundColor: "#008080", color: "white" }}>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                </tr>
+                </thead>
+                <tbody>
+                {!currentReceipt.submitted &&
+                    currentReceipt?.items?.map((item: any, index: number) => (
+                    <tr key={item.ID ?? index}>
+                        <td>{item.name}</td>
+                        <td>{item.category}</td>
+                        <td>{isNaN(item.price) ? "0" : item.price}</td>
+                    </tr>
+                    ))}
+                </tbody>
+            </table>
             </section>
-
-        </div>
+     </div>
     );
 }
