@@ -21,8 +21,10 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
     // react state variables
     const [rAPIMessage    , updateAPIMessage    ] = React.useState<APIresponse>();
+    const [rSubmission    , updateSubmission    ] = React.useState("");
     const [rLoadingText   , updateLoadingText   ] = React.useState("");
     const [analyzedItems  , updateAnalyzedItems ] = React.useState<Item[]>([]);
+    const [rSubmitted     , updateSubmitted     ] = React.useState(false);
 
     // API response message variable
     let APIMessage : any;
@@ -41,14 +43,6 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     let currentReceipt = (model.receipts[model.receipts.length - 1]) ?
                          (model.receipts[model.receipts.length - 1]) :
                          new Receipt("", new Date(), "", "");
-
-    // submission message
-    let submission_message;
-    if(currentReceipt) {
-        submission_message =   currentReceipt.submitted ?
-                             "*Receipt Submitted*"      :
-                             "";
-    }
 
     // create receipt controller
     async function CreateReceiptController() {
@@ -82,12 +76,11 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                                 (           response.data.body              );
                 
                 if (APIMessage.error != undefined) {
-                    updateAPIMessage(APIMessage.error);
+                    updateAPIMessage(APIMessage.error); console.log(APIMessage.error);
                     return;
 
                 } else {
-                    updateAPIMessage(APIMessage);
-                
+                    updateAPIMessage(APIMessage); console.log(APIMessage);
                 }
         });
 
@@ -97,6 +90,8 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         //update the local model
         model.makeReceipt(ChainID, today, APIMessage.receiptID, StoreID);
         currentReceipt.submitted = false;
+        updateSubmitted(currentReceipt.submitted);
+        updateSubmission("");
         sync();
     }
 
@@ -130,11 +125,11 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             APIMessage = JSON.parse(response.data.body);
 
             if (APIMessage.error != undefined) {
-                updateAPIMessage(APIMessage.error);
+                updateAPIMessage(APIMessage.error); console.log(APIMessage.error);
                 return;
 
             } else {
-                updateAPIMessage(APIMessage);
+                updateAPIMessage(APIMessage); console.log(APIMessage);
             
             }
         });
@@ -190,7 +185,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                              (           response.data.body              );
                 
                 if (APIMessage.error != undefined) {
-                    updateAPIMessage(APIMessage.error);
+                    updateAPIMessage(APIMessage.error); console.log(APIMessage.error);
                     return;
 
                 } else {
@@ -270,11 +265,11 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                              (           response.data.body              );
                 
                 if (APIMessage.error != undefined) {
-                    updateAPIMessage(APIMessage.error);
+                    updateAPIMessage(APIMessage.error); console.log(APIMessage.error);
                     return;
 
                 } else {
-                    updateAPIMessage(APIMessage);
+                    updateAPIMessage(APIMessage); console.log(APIMessage);
                 }
             }
         );
@@ -305,7 +300,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         const image        = imageElement.files![0];
         if(!image || !currentReceipt) return;
 
-        updateLoadingText("ChatGPT is thinking");
+        updateLoadingText("*ChatGPT is thinking*");
 
         const imageURL = await new Promise<string>((resolve, reject) => {
             const reader   = new FileReader();
@@ -339,28 +334,27 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
             const itemsFromAPI = summary.items || [];
 
-            itemsFromAPI.forEach((item: any) => {
+            const newItems = itemsFromAPI.map((item: any) => {
                 const itemBuffer = new Item(
-                     item.itemCategory,
+                    item.itemCategory,
                     "itemID" + crypto.randomUUID(),
-                     item.itemName,
-                     currentReceipt.receiptID
+                    item.itemName,
+                    currentReceipt.receiptID
                 );
 
-                currentReceipt.items                                 .push(itemBuffer);
-                currentReceipt.items[currentReceipt.items.length - 1].setPrice(item.itemPrice);
+                itemBuffer          .setPrice(item.itemPrice);
+                currentReceipt.items.push(itemBuffer);
 
-                analyzedItems                                        .push(itemBuffer);
-                analyzedItems[analyzedItems.length - 1]              .setPrice(item.itemPrice);
+                return itemBuffer;
             });
 
+            updateAnalyzedItems(prev => [...prev, ...newItems]);
             updateLoadingText("");
             sync();
         });
     }
 
     
-
     async function submitReceipt() {
         if(!currentReceipt || (currentReceipt.items.length === 0)) return;
 
@@ -377,17 +371,20 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 APIMessage = JSON.parse(response.data.body);
 
                 if (APIMessage.error != undefined) {
-                    updateAPIMessage(APIMessage.error);
+                    updateAPIMessage(APIMessage.error); console.log(APIMessage.error);
                     return;
 
                 } else {
-                    updateAPIMessage(APIMessage);
+                    updateAPIMessage(APIMessage); console.log(APIMessage);
                 
                 }
             });
         }
 
         currentReceipt.submitted  = true;
+        updateSubmitted(currentReceipt.submitted);
+        updateSubmission("*Receipt submitted*");
+        updateAnalyzedItems([]);
 
         sync();
 
@@ -473,15 +470,15 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             <section style={{ marginBottom: 24 }}>
                 <h3>Submit Receipt</h3>
                 <button onClick={submitReceipt}>Submit Receipt</button>
-                <div style={{ marginTop: 8 }}>{submission_message}</div>
+                <div style={{ marginTop: 8 }}>{rSubmission}</div>
             </section>
 
             {/* Show Current Receipt Items */}
             <section style={{ marginBottom: 24 }}>
             <h3>Current Receipt</h3>
-            <div>Date: {!currentReceipt.submitted ? `${month}/${day}/${year}` : ""}</div>
-            <div>Chain: {!currentReceipt.submitted ? currentReceipt?.chainID ?? "" : ""}</div>
-            <div>Store: {!currentReceipt.submitted ? currentReceipt?.storeID ?? "" : ""}</div>
+            <div>Date: {!rSubmitted ? `${month}/${day}/${year}` : ""}</div>
+            <div>Chain: {!rSubmitted ? currentReceipt?.chainID ?? "" : ""}</div>
+            <div>Store: {!rSubmitted ? currentReceipt?.storeID ?? "" : ""}</div>
 
             <table
                 border={1}
@@ -502,7 +499,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 </tr>
                 </thead>
                 <tbody>
-                {!currentReceipt.submitted &&
+                {!rSubmitted &&
                     currentReceipt?.items?.map((item: any, index: number) => (
                     <tr key={item.ID ?? index}>
                         <td>{item.name}</td>
