@@ -37,7 +37,7 @@ function LoginAdmin({instance, andRefreshDisplay, onLoginSuccess}: {instance: an
 
           <p><b>Password: </b><input id="admin-password" placeholder="Password" data-testid="admin-password"></input></p>
 
-          <button onClick={() => {loginAdmin()}}>Login</button>
+          <button onClick={() => {loginAdmin()}}>Login as Admin</button>
 
           <br></br>
           {apiMessage}

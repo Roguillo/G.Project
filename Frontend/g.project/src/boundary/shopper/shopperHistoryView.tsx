@@ -92,12 +92,12 @@ function ReviewActivity({model, instance, andRefreshDisplay}: {model: any, insta
           {apiMessage}<br></br>
           <ul>
             {receiptData.map((receipt: any) => (
-              <li key={receipt.receiptID}>{"Date: " + receipt.date.slice(0, 10) + "  | Chain: " + receipt.chainID + "  | Store: " + receipt.storeID}
+              <li key={receipt.receiptID}>{"Receipt from " + receipt.date.slice(0, 10) + " at chain \"" + receipt.chainID + "\" and store \"" + receipt.storeID + "\""}
                 <ul>
                     {receipt.items.map((item: any) => (
                         <li key={item.itemID}>{"Item: " + item.name + "  | Category: " + item.category + "  | Price: " + item.price}</li>
                     ))}
-                </ul>
+                </ul><br />
               </li>
             ))}
           </ul>

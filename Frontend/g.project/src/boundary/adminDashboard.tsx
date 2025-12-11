@@ -43,9 +43,9 @@ export function AdminDashboard({instance, refreshKey, adminToken}: {instance: an
     <div>
       <h2>Admin Dashboard</h2>
 
-      <p>Total Shoppers:</p> {dashboard.totalShoppers}
-      <p>Total Stores:</p> {dashboard.totalStores}
-      <p>Total Sales:</p> ${dashboard.totalSales.toFixed(2)}
+      <p>Total Shoppers:</p> <p>{dashboard.totalShoppers}</p><br />
+      <p>Total Stores:</p> <p>{dashboard.totalStores}</p><br />
+      <p>Total Sales:</p> <p>${dashboard.totalSales.toFixed(2)}</p><br />
 
     <p>Chains:</p>
     <ul>
@@ -54,7 +54,7 @@ export function AdminDashboard({instance, refreshKey, adminToken}: {instance: an
           Name: {chain.chainName} , Stores: {chain.stores}, Sales: ${chain.totalSales.toFixed(2)}
         </li>
       ))}
-    </ul>
+    </ul><br />
 
     <p>Stores:</p>
     <ul>

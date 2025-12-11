@@ -71,7 +71,7 @@ export function CreateShoppingList({model, shoppingList, setShoppingList, instan
         {apiMessage?.error && (
         <div>{apiMessage.error}</div>
         )}
-        </div>
+    </div>
     )
 }
 

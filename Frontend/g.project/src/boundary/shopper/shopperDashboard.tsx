@@ -35,9 +35,9 @@ export function AddStore({instance, andRefreshDisplay, loginToken}: {instance: a
 
   return(
     <div>
-      <b>Chain Name: </b><input id="store-chain-to-add" placeholder="Chain Name" data-testid="store-chain-to-add"></input>
-      <b>Store Name: </b><input id="store-name-to-add" placeholder="Store Name" data-testid="store-name-to-add"></input>
-      <b>Store Address: </b><input id="store-address-to-add" placeholder="Store Address" data-testid="store-address-to-add"></input>
+      <b>Chain Name: </b><input id="store-chain-to-add" placeholder="Chain Name" data-testid="store-chain-to-add"></input><br />
+      <b>Store Name: </b><input id="store-name-to-add" placeholder="Store Name" data-testid="store-name-to-add"></input><br />
+      <b>Store Address: </b><input id="store-address-to-add" placeholder="Store Address" data-testid="store-address-to-add"></input><br />
       <button onClick={() => {addStore()}}>Add Store</button>
       {apiMessage}
 
@@ -75,8 +75,8 @@ export function AddChain({instance, andRefreshDisplay, loginToken}: {instance: a
 
   return(
     <div>
-      <b>Chain Name: </b><input id="chain-name-to-add" placeholder="Chain Name" data-testid="chain-name-to-add"></input>
-      <b>Chain Url: </b><input id="chain-url-to-add" placeholder="Chain Url" data-testid="chain-url-to-add"></input>
+      <b>Chain Name: </b><input id="chain-name-to-add" placeholder="Chain Name" data-testid="chain-name-to-add"></input><br />
+      <b>Chain URL: </b><input id="chain-url-to-add" placeholder="Chain URL" data-testid="chain-url-to-add"></input><br />
 
       <button onClick={() => {addChain()}}>Add Chain</button>
       {apiMessage}
@@ -136,7 +136,7 @@ const [chains, setChains] = React.useState<any[]>([]);
                 ))}
               </ul>
             )}
-          </div>
+          </div><br />
         </div>
       ))}
     </div>
