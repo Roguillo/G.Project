@@ -194,7 +194,7 @@ export function ReportOptionsShoppingList({model, shoppingList, setShoppingList,
                         storeName = opt.store[0].name
                     }
                     
-                    return `${opt.itemName} (${opt.itemCategory}) — Store Name: ${storeName} — $${opt.price}`;
+                    return `${opt.itemName} (${opt.itemCategory}) — Store Name: ${storeName} — Address: ${opt.store[0].address} — $${opt.price}`;
                 })
                 .join("\n");
 
