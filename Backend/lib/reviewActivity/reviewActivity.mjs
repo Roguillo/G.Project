@@ -138,10 +138,11 @@ export const handler = async (event) => {
               receiptID: receipt.receiptID,
               date: receipt.date,
               chainName: receipt.name,
-              chainID: receipt.chainID,
+              // chainID: receipt.chainID,
               storeName: receipt.name,
-              storeID: receipt.storeID,
-              items: items
+              // storeID: receipt.storeID,
+              items: items,
+              totalCost: items.reduce((total, item) => total + parseFloat(item.price), 0)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
             }
           })
         )
