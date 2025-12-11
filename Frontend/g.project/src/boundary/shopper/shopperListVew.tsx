@@ -83,16 +83,12 @@ export function AddItemShoppingList({model, shoppingList, setShoppingList, insta
 
         const inputElementItemName = document.getElementById("item-name-to-add") as HTMLInputElement
         const itemName = inputElementItemName.value
-        const inputElementItemCategory = document.getElementById("item-category-to-add") as HTMLInputElement
-        const itemCategory = inputElementItemCategory.value
-
 
         const response = await instance.post('/addItemShoppingList', {
             loginToken: model.getLoginToken(),
             shoppingListID: shoppingList.id,
             listName: shoppingList.name,
-            itemName: itemName,
-            itemCategory: itemCategory
+            itemName: itemName
         });
 
         const message = JSON.parse(response.data.body);
@@ -113,9 +109,9 @@ export function AddItemShoppingList({model, shoppingList, setShoppingList, insta
 
     return(
     <div>
-      <b>Item Name: </b><input id="item-name-to-add" placeholder="Item Name" data-testid="item-name-to-add"></input><br />
-      <b>Item Category: </b><input id="item-category-to-add" placeholder="Item Category" data-testid="item-category-to-add"></input><br />
+      <b>Item Name: </b><input id="item-name-to-add" placeholder="Item Name" data-testid="item-name-to-add"></input>
       <button onClick={() => {addItemShoppingList()}}>Add Item</button>
+      {apiMessage}
     </div>
     )
 }
