@@ -28,6 +28,8 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     const [rDay           , updateDay            ] = React.useState             (" ");
     const [rMonth         , updateMonth          ] = React.useState             (" ");
     const [rYear          , updateYear           ] = React.useState             (" ");
+    const [rStoreName     , updateStoreName      ] = React.useState             (" ");
+    const [rChainName     , updateChainName      ] = React.useState             (" ");
 
     // API response message variable
     let APIMessage : any;
@@ -97,8 +99,11 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 }
         });
 
-        const ChainID = APIMessage.chainID;
-        const StoreID = APIMessage.storeID;
+        const ChainID   = APIMessage.chainID;       
+        const StoreID   = APIMessage.storeID;
+
+        updateStoreName(APIMessage.storeName);
+        updateChainName(APIMessage.chainName);
 
         //update the local model
         model.makeReceipt(ChainID, new Date(day, month, year), APIMessage.receiptID, StoreID);
@@ -516,8 +521,8 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 {!rSubmitted && (
                     <>
                         <div>Date: {`${rMonth}/${rDay}/${rYear}`}</div>
-                        <div>Chain: {currentReceipt?.chainID ?? ""}</div>
-                        <div>Store: {currentReceipt?.storeID ?? ""}</div>
+                        <div>Chain: {rChainName}</div>
+                        <div>Store: {rStoreName}</div>
                     </>
                 )}
 
