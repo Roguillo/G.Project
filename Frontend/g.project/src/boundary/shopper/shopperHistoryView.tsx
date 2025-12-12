@@ -12,6 +12,7 @@ function ReviewHistory({model, instance, andRefreshDisplay}: {model: any, instan
             })
             .then((response: any) => {
                 let message = JSON.parse(response.data.body)
+                console.log(message)
                 if (response.data.statusCode == 400) {
                     changeApiMessage("Not logged into account")
                 } else {
@@ -31,10 +32,10 @@ function ReviewHistory({model, instance, andRefreshDisplay}: {model: any, instan
           <ul>
             {receiptData.map((receipt: any) => (
               <li key={receipt.receiptID}>
-                <b>{"Date: " + receipt.date.slice(0, 10) + "  | Chain: " + receipt.chainID + "  | Store: " + receipt.storeID}</b>
+                <b>{"Receipt purchased from " + receipt.chainName + " at " + receipt.storeName + " (" + receipt.address + ") on " + receipt.date.slice(0, 10) + " | Total: $" + receipt.totalCost}</b>
                 <ul>
                     {receipt.items.map((item: any) => (
-                        <li key={item.itemID}>{"Item: " + item.name + "  | Category: " + item.category + "  | Price: " + item.price}</li>
+                        <li key={item.itemID}>{"Item: " + item.name + " (" + item.category + ") | Price: " + item.price}</li>
                     ))}
                 </ul><br/>
               </li>
