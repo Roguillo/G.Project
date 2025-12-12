@@ -15,10 +15,9 @@ var pool = mysql.createPool(
 //event
 /*
 {  
-  "loginToken" : "loginTokenXXXX", 
-  "storeName"  : "name of store",  
-  "chainName"  : "name of chain",  
-  "date"       :   
+  "loginToken"   : "loginTokenXXXX", 
+  "storeAddress" : "address of store", 
+  "date"         :   
       {  
           "day"   : XXX,  
           "month" : XXX,  
@@ -50,33 +49,39 @@ export const handler = async (event) => {
     });
   }
 
-  // to get storeID to help fill out item
-  let getStoreID = (name) => {
+  // to get storeID
+  let getStoreID = (storeAddress) => {
     return new Promise((resolve, reject) => {
-      const query = "SELECT storeID FROM Stores WHERE name = ?"
-      pool.query(query, [name], (error, rows, fields) => {
+      const query = "SELECT storeID FROM Stores WHERE address = ?";
+
+      pool.query(query, [storeAddress], (error, rows, fields) => {
         if (error) {
-          reject(new Error("Database error: " + error.sqlMessage))
+          reject(new Error("Database error: " + error.sqlMessage));
+
         } else if (rows.length === 0) {
-          resolve(false)
+          resolve(false);
+
         } else {
-          resolve(rows[0]["storeID"])
+          resolve(rows[0]["storeID"]);
         } 
-      })
-    })
+      });
+    });
   }
 
-  // to get storeID to help fill out item
-  let getChainID = (name) => {
+  // to get chainID
+  let getChainID = (storeID) => {
     return new Promise((resolve, reject) => {
-      const query = "SELECT chainID FROM Chains WHERE name = ?"
-      pool.query(query, [name], (error, rows) => {
+      const query = "SELECT chainID FROM Stores WHERE storeID = ?";
+
+      pool.query(query, [storeID], (error, rows) => {
         if (error) {
-          reject(new Error("Database error: " + error.sqlMessage))
+          reject(new Error("Database error: " + error.sqlMessage));
+
         } else if (rows.length === 0) {
-          resolve(false)
+          resolve(false);
+
         } else {
-          resolve(rows[0]["chainID"])
+          resolve(rows[0]["chainID"]);
         }
       })
     })
@@ -114,11 +119,11 @@ export const handler = async (event) => {
     if(!shopperID) throw(new Error("Shopper is not logged in"));        // throw error for shopper not logged in
     console.log("shopperID: " + shopperID)
 
-    const storeID   = await getStoreID(event.storeName);
+    const storeID   = await getStoreID(event.storeAddress);
     if(!storeID) throw(new Error("Store does not exist"));
     console.log("storeID: " + storeID)
 
-    const chainID   = await getChainID(event.chainName);
+    const chainID   = await getChainID(storeID);
     if(!chainID) throw(new Error("Chain does not exist"));
     console.log("chainID: " + chainID)
 

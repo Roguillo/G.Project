@@ -45,7 +45,8 @@ let LoginTokenExists = (token) => {
         
         pool.query(query, [token], (error, rows, fields) => {
             if (error) reject (new Error("Database error: " + error.sqlMessage));
-            else       resolve(rows && rows.length > 0);
+            else       resolve(rows.length > 0);
+
         });
     });
 }
@@ -86,6 +87,54 @@ let getItemID = (name, receiptID) => {
 
             } else {
                 resolve(rows[0]["itemID"]);
+            } 
+        });
+    });
+}
+
+/**
+ * @param   name      :   name of item
+ * @param   receiptID :   receipt ID given in event
+ * 
+ * @returns           :   gets category for first matching item
+ */
+let getItemCategory = (name, receiptID) => {
+    return new Promise((resolve, reject) => {
+        const query = "SELECT category FROM Items WHERE name = ? AND receiptID = ?"
+        
+        pool.query(query, [name, receiptID], (error, rows, fields) => {
+            if (error) {
+                reject(new Error("Database error: " + error.sqlMessage));
+
+            } else if (rows.length === 0) {
+                resolve(null);
+
+            } else {
+                resolve(rows[0]["category"]);
+            } 
+        });
+    });
+}
+
+/**
+ * @param   name      :   name of item
+ * @param   receiptID :   receipt ID given in event
+ * 
+ * @returns           :   gets price for first matching item
+ */
+let getItemPrice = (name, receiptID) => {
+    return new Promise((resolve, reject) => {
+        const query = "SELECT price FROM Items WHERE name = ? AND receiptID = ?"
+        
+        pool.query(query, [name, receiptID], (error, rows, fields) => {
+            if (error) {
+                reject(new Error("Database error: " + error.sqlMessage));
+
+            } else if (rows.length === 0) {
+                resolve(null);
+
+            } else {
+                resolve(rows[0]["price"]);
             } 
         });
     });
@@ -139,30 +188,35 @@ export const handler = async(event) => {
     let response_code, response_body;
     
     try {
-        const loginToken = event.loginToken;
-        const receiptID  = event.receiptID;
-        const refName    = event.refName;
-        const name       = event.name;
-        const category   = event.category;
-        const price      = event.price;
+        const loginToken              = event.loginToken;
+        const receiptID               = event.receiptID;
+        const refName                 = event.refName;
+
+        let   name                    = event.name;
+        if(!name) name                = refName;
+
+        let   category                = event.category;
+        if(category == "") category   = await(getItemCategory(refName, receiptID));
+
+        let   price                   = event.price;
+        if(price == null)    price    = await(getItemPrice   (refName, receiptID));
 
         // check whether logged in
-        const isLoggedIn = await LoginTokenExists(loginToken);
+        const isLoggedIn              = await LoginTokenExists(loginToken);
         if(!isLoggedIn)  throw new Error("Shopper is not logged in");
 
         // get store ID
-        const storeID    = await getStoreID(receiptID);
+        const storeID                 = await getStoreID(receiptID);
         if(!storeID)     throw new Error("Receipt isn't attached to a store");
 
         // check that quantity is valid
-        const quantity   = event.quantity;
+        const quantity                = event.quantity;
         if(quantity < 1) throw new Error("Can't edit 0 or negative items");
         
 
         let ID, oldItemIDs = [], itemIDs = [];
 
-        while(await(getItemID(refName, receiptID))) {
-            ID = await(getItemID(refName, receiptID));
+        while(ID = await(getItemID(refName, receiptID))) {
             oldItemIDs.push(ID);
             await(removeItemFromReceipt(ID));
         }
@@ -174,8 +228,6 @@ export const handler = async(event) => {
                 itemIDs.push(ID);
             }
         }
-
-
 
         response_code = 200;
         response_body = {
