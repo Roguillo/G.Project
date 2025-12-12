@@ -1,5 +1,5 @@
 import   React      from 'react';
-import { Shopper, Item, Receipt } from '../../Model';
+import { Shopper, Item, Receipt, ModelDate } from '../../Model';
 
 
 
@@ -25,9 +25,9 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     const [rLoadingText   , updateLoadingText    ] = React.useState             ("");
     const [rAnalyzedItems , updaterAnalyzedItems ] = React.useState<Item[]>     ([]);
     const [rSubmitted     , updateSubmitted      ] = React.useState             (false);
-    const [rDay           , updateDay            ] = React.useState             (" ");
-    const [rMonth         , updateMonth          ] = React.useState             (" ");
-    const [rYear          , updateYear           ] = React.useState             (" ");
+    const [rDay           , updateDay            ] = React.useState<number>     ();
+    const [rMonth         , updateMonth          ] = React.useState<number>     ();
+    const [rYear          , updateYear           ] = React.useState<number>     ();
     const [rStoreName     , updateStoreName      ] = React.useState             (" ");
     const [rChainName     , updateChainName      ] = React.useState             (" ");
 
@@ -41,7 +41,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     // current receipt
     let currentReceipt = (model.receipts[model.receipts.length - 1]) ?
                          (model.receipts[model.receipts.length - 1]) :
-              new Receipt("", new Date(), "", ""                   ); /* I know there's an error, but the naming is the same as the default 'Date' object,
+              new Receipt("", new ModelDate(0, 0, 0), "", ""            ); /* I know there's an error, but the naming is the same as the default 'Date' object,
                                                                        * and I don't want to mess up other functions/use cases that use the model's Date
                                                                        */
 

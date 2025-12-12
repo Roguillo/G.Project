@@ -52,9 +52,9 @@ export class Model {
         this.shoppingLists.push(newSL)
     }
 
-    makeReceipt(chainID: string, date : Date, receiptID: string, storeID: string){
+    makeReceipt(chainID: string, date : ModelDate, receiptID: string, storeID: string){
         let newRcpt = new Receipt(chainID, date, receiptID, storeID);
-        newRcpt.setDate(date)
+        newRcpt.setModelDate(date)
         this.receipts.push(newRcpt)
     }
 
@@ -81,13 +81,13 @@ export class Shopper {
 
 export class Receipt {
     chainID       : string;
-    date          : Date | undefined;
+    date          : ModelDate | undefined;
     items         : Item[];
     receiptID     : string;
     storeID       : string;
     submitted     : boolean;
 
-    constructor(chainID: string, date : Date, receiptID: string, storeID: string) {
+    constructor(chainID: string, date : ModelDate, receiptID: string, storeID: string) {
         this.chainID       = chainID;
         this.date          = date;
         this.items         = [];
@@ -129,12 +129,12 @@ export class Receipt {
         }   
     }
 
-    setDate(date: Date) {
+    setModelDate(date: ModelDate) {
         this.date = date
     }
 }
 
-export class Date {
+export class ModelDate {
     day: number
     month: number
     year: number
