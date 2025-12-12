@@ -70,15 +70,18 @@ export function AdminDashboard({instance, refreshKey, adminToken}: {instance: an
 }
 
 export function RemoveStore({instance, andRefreshDisplay, adminToken}: {instance: any, andRefreshDisplay: any, adminToken: any}){
-  const [apiMessage, changeApiMessage] = React.useState()
+  const [apiMessage, changeApiMessage] = React.useState("")
   
   async function removeStore() {
 
       const inputElementName = document.getElementById("store-name") as HTMLInputElement
       const storeName = inputElementName.value
+      const inputElementAddress = document.getElementById("store-address") as HTMLInputElement
+      const storeAddress = inputElementAddress.value
     
       const response = await instance.post('/removeStore', {
         storeName: storeName,
+        address: storeAddress,
         adminToken: adminToken
       });
 
@@ -88,7 +91,7 @@ export function RemoveStore({instance, andRefreshDisplay, adminToken}: {instance
       if (message.error != undefined) {
         changeApiMessage(message.error);
       } else {
-        changeApiMessage(message);  
+        changeApiMessage("Store Removed");  
       }
 
     andRefreshDisplay();
@@ -97,15 +100,17 @@ export function RemoveStore({instance, andRefreshDisplay, adminToken}: {instance
   return(
     <div>
       <b>Store Name: </b><input id="store-name" placeholder="Store Name" data-testid="store-name"></input>
+      <b>Store Address: </b><input id="store-address" placeholder="Store Address" data-testid="store-address"></input>
       <button onClick={() => {removeStore()}}>Remove Store</button>
-
+      {apiMessage}
+    
     </div>
   )
 }
 
 
 export function RemoveChain({instance, andRefreshDisplay, adminToken}: {instance: any, andRefreshDisplay: any, adminToken: any}){
-  const [apiMessage, changeApiMessage] = React.useState()
+  const [apiMessage, changeApiMessage] = React.useState("")
   
   async function removeChain() {
 
@@ -123,7 +128,7 @@ export function RemoveChain({instance, andRefreshDisplay, adminToken}: {instance
       if (message.error != undefined) {
         changeApiMessage(message.error);
       } else {
-        changeApiMessage(message);  
+        changeApiMessage("Chain Removed");  
       }
 
     andRefreshDisplay();
@@ -133,6 +138,7 @@ export function RemoveChain({instance, andRefreshDisplay, adminToken}: {instance
     <div>
       <b>Chain Name: </b><input id="chain-name" placeholder="Chain Name" data-testid="chain-name"></input>
       <button onClick={() => {removeChain()}}>Remove Chain</button>
+      {apiMessage}
 
     </div>
   )

@@ -109,36 +109,45 @@ const [chains, setChains] = React.useState<any[]>([]);
     andRefreshDisplay();
   }
 
-  return(
+  return (
     <div>
       <button onClick={listStoreChains}>List Store Chains</button>
 
-      {error && <div>{error}</div>}
+      {error && <div style={{ color: "red" }}>{error}</div>}
 
-      {!error && chains.map((chain) => (
-        <div key={chain.chainID}>
-          <strong>{chain.chainName}</strong><br />
-          URL: {chain.chainUrl}<br />
+      {!error &&
+        chains.map((chain) => (
+          <div key={chain.chainID} style={{ marginBottom: "16px" }}>
+            <div>
+              <strong>{chain.chainName}</strong>
+            </div>
+            <div>
+              URL:{" "}
+              <a
+                href={chain.chainUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {chain.chainUrl}
+              </a>
+            </div>
 
-          <div>
-            <strong>Stores:</strong>
-
-            {chain.stores.length === 0 ? (
-              <div>
-                No stores in this chain.
-              </div>
-            ) : (
-              <ul>
-                {chain.stores.map((store: any) => (
-                  <li key={store.storeID}>
-                    {store.name} — {store.address} - Sales: ${store.sales}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div><br />
-        </div>
-      ))}
+            <div style={{ marginTop: "8px" }}>
+              <strong>Stores:</strong>
+              {chain.stores.length === 0 ? (
+                <div>No stores in this chain.</div>
+              ) : (
+                <ul>
+                  {chain.stores.map((store: any) => (
+                    <li key={store.storeID}>
+                      {store.name} — {store.address} — Sales: ${store.sales}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        ))}
     </div>
   );
 }
