@@ -80,7 +80,7 @@ export const handler = async (event) => {
       receipt.map(async (receipt) => {
         const items = await getItems(receipt.receiptID)
         return {
-          receiptID: receipt,
+          receipt: receipt,
           totalCost: items.reduce((total, item) => total + parseFloat(item.price), 0),
           items: items
         }
