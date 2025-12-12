@@ -36,7 +36,7 @@ let LoginTokenExists = (token) => {
   //we need to populate the model with shopping list info
   let getShoppingListItemNames = (shoppingListID) => {
     return new Promise((resolve, reject) => {
-      const query = "SELECT name FROM Items WHERE shoppingListID = ?"
+      const query = "SELECT * FROM Items WHERE shoppingListID = ?"
       pool.query(query, [shoppingListID], (error, rows) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
