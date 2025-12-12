@@ -1,10 +1,10 @@
 import   React      from 'react';
-import { Shopper, Item, Receipt, ModelDate } from '../../Model';
+import { Model, Shopper, Item, Receipt, ModelDate } from '../../Model';
 
 
 
 export function ShopperReceiptView({ model,       instance,      sync      } : 
-                                   { model : any, instance: any, sync: any }) {
+                                   { model : Model, instance: any, sync: any }) {
     // possible fields for JSON
     type APIresponse = {
         category     ? : string;
@@ -106,7 +106,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         updateChainName(APIMessage.chainName);
 
         //update the local model
-        model.makeReceipt(ChainID, new Date(day, month, year), APIMessage.receiptID, StoreID);
+        model.makeReceipt(ChainID, new ModelDate(day, month, year), APIMessage.receiptID, StoreID);
         currentReceipt.submitted = false;
         updateSubmitted(currentReceipt.submitted);
         updateSubmission("");
@@ -123,12 +123,12 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
         const itemName     = inputElementItemName.value;
         const itemCategory = inputElementItemCategory.value;
-        const itemPrice    = inputElementItemPrice.value;
+        const itemPrice    = parseInt(inputElementItemPrice.value);
         const itemQuantity = parseInt(inputElementItemQuantity.value);
     
 
         await instance.post('/addToReceipt', {
-            "loginToken" : model.shopper.loginToken,
+            "loginToken" : model.shopper!.loginToken,
             "receiptID"  : currentReceipt.receiptID, // latest receipt
             "name"       : itemName,
             "category"   : itemCategory, 
@@ -188,7 +188,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         }
 
         await instance.post('/removeFromReceipt', {
-                "loginToken" : model.shopper.loginToken,
+                "loginToken" : model.shopper!.loginToken,
                 "receiptID"  : currentReceipt.receiptID, // latest receipt
                 "name"       : itemName
             })
@@ -269,7 +269,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
         await instance.post('/editItemOnReceipt',
                 {
-                    "loginToken" : model.shopper.loginToken,
+                    "loginToken" : model.shopper!.loginToken,
                     "receiptID"  : currentReceipt.receiptID,
                     "refName"    : name,
                     "name"       : newName, 
@@ -341,7 +341,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
         await instance.post('/analyzeReceiptImage', {
             image     : imageURL,
-            loginToken: model.shopper.loginToken,
+            loginToken: model.shopper!.loginToken,
             receiptID : currentReceipt.receiptID
 
         }).then((response: any) => {
@@ -396,7 +396,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
         for(let i = 0; i < rAnalyzedItems.length; i++) {
             await instance.post('/addToReceipt', {
-                "loginToken" : model.shopper.loginToken,
+                "loginToken" : model.shopper!.loginToken,
                 "receiptID"  : currentReceipt.receiptID, // latest receipt
                 "name"       : rAnalyzedItems[i].name,
                 "category"   : rAnalyzedItems[i].category, 
