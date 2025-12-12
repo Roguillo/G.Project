@@ -12,7 +12,7 @@ function ReviewHistory({model, instance, andRefreshDisplay}: {model: any, instan
             })
             .then((response: any) => {
                 let message = JSON.parse(response.data.body)
-                console.log(message)
+                // console.log(message)
                 if (response.data.statusCode == 400) {
                     changeApiMessage("Not logged into account")
                 } else {
@@ -61,7 +61,7 @@ function ReviewActivity({model, instance, andRefreshDisplay}: {model: any, insta
             })
             .then((response: any) => {
                 let message = JSON.parse(response.data.body)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
-                console.log(message)
+                // console.log(message)
                 if (response.data.statusCode == 400) {
                     changeApiMessage("Not logged into account")
                 } else {
@@ -133,7 +133,7 @@ function SearchRecentPurchases({model, instance, andRefreshDisplay}: {model: any
             })
             .then((response: any) => {
                 let message = JSON.parse(response.data.body)
-                console.log(message.itemData)
+                // console.log(message.itemData)
                 if (response.data.statusCode == 400) {
                     changeApiMessage("Not logged into account")
                 } else {
