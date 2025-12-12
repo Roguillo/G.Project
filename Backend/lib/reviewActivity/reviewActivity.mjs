@@ -6,7 +6,8 @@ import {config} from './config.mjs'
   
   { 
     "loginToken" : "loginToken",
-    "activityPeriod": "activityPeriod"
+    "activityPeriod": "activityPeriod",
+    "reviewPeriod": XXX
   }
   
  */
@@ -77,11 +78,16 @@ export const handler = async (event) => {
     // Gets current date and formats it without hours, minutes, etc.
     var currDate = new Date()
     currDate.setUTCHours(0, 0, 0, 0)
+    var reviewPeriod = parseInt(event.reviewPeriod)
+
+    if (reviewPeriod < 1) {
+      throw new Error("Invalid review period")
+    }
 
     // Creates different start and end date 
     var startEndDates = []
     if (event.activityPeriod == "daily") {
-      for (let i = 1; i <= 7; i++) {
+      for (let i = 1; i <= reviewPeriod; i++) {
         let tempDate = new Date(currDate)
         tempDate.setDate(tempDate.getDate() - i + 1)
 
@@ -89,7 +95,7 @@ export const handler = async (event) => {
       }
 
     } else if (event.activityPeriod == "weekly") {
-      for (let i = 1; i <= 5; i++) {
+      for (let i = 1; i <= reviewPeriod; i++) {
         let tempStartDate = new Date(currDate)
         tempStartDate.setDate(tempStartDate.getDate() - i*7 + 1)
 
@@ -100,7 +106,7 @@ export const handler = async (event) => {
       }
 
     } else if (event.activityPeriod == "monthly") {
-      for (let i = 1; i <= 3; i++) {
+      for (let i = 1; i <= reviewPeriod; i++) {
         let tempStartDate = new Date(currDate)
         tempStartDate.setDate(tempStartDate.getDate() - i*30 + 1)
 
