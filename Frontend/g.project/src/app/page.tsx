@@ -130,6 +130,7 @@ export default function Home() {
 
             {shopperView === "shoppingList" && (
               <div>
+                <div className="createAndShow">
                 <CreateShoppingList
                   model={model}
                   shoppingList={shoppingList}
@@ -146,6 +147,7 @@ export default function Home() {
                   andRefreshDisplay={andRefreshDisplay}
                   changeState={changeState}
                 />
+                </div>
                 <CurrShoppingList
                   shoppingList={shoppingList}
                   andRefreshDisplay={andRefreshDisplay}
