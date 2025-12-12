@@ -72,6 +72,7 @@ export class ApplicationStack extends cdk.Stack {
     const searchRecentPurchasesResource = shopCompResource.addResource('searchRecentPurchases')
     const showAdminDashboardResource = shopCompResource.addResource('showAdminDashboard')
     const showShopperDashboardResource = shopCompResource.addResource('showShopperDashboard')
+    const showShoppingListResource = shopCompResource.addResource('showShoppingList')
   
 
     // https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/aws-apigateway/README.md
@@ -391,5 +392,16 @@ export class ApplicationStack extends cdk.Stack {
       timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
     })
     showShopperDashboardResource.addMethod('POST', new apigw.LambdaIntegration(showShopperDashboard_fn, integration_parameters), response_parameters)
+
+     // Add a POST method to the '/shopComp/showShoppingList' resource
+    const showShoppingList_fn = new lambdaNodejs.NodejsFunction(this, 'ShowShoppingListFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'showShoppingList.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'showShoppingList')),
+      vpc: vpc,                                                             // Reference the VPC defined above
+      securityGroups: [securityGroup],                                      // Associate the security group
+      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+    })
+    showShoppingListResource.addMethod('POST', new apigw.LambdaIntegration(showShoppingList_fn, integration_parameters), response_parameters)
   }
 }
