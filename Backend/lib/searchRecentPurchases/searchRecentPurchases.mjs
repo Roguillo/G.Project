@@ -41,8 +41,8 @@ export const handler = async (event) => {
   let getMatchingItems = (shopperID, searchField) => {
     searchField = "%" + searchField + "%" // Makes the query search for items that contain the search field
     return new Promise((resolve, reject) => {
-      // Found at https://www.w3schools.com/mysql/mysql_join_inner.asp
-      const selectQuery = "SELECT item.itemID, item.name, item.category, item.price, receipt.date FROM Items AS item INNER JOIN Receipts AS receipt ON receipt.receiptID = item.receiptID WHERE receipt.shopperID = ? AND item.name LIKE ? ORDER BY date DESC";
+      // Like found at https://www.w3schools.com/mysql/mysql_join_inner.asp
+      const selectQuery = "SELECT item.itemID, item.name, item.category, item.price, receipt.date, chain.name AS chainName, chain.chainID, store.name AS storeName, store.storeID, store.address FROM Items AS item INNER JOIN Receipts AS receipt INNER JOIN Chains AS chain INNER JOIN Stores AS store ON receipt.receiptID = item.receiptID AND receipt.chainID = chain.chainID AND receipt.storeID = store.storeID WHERE receipt.shopperID = ? AND item.name LIKE ? ORDER BY date DESC";
       pool.query(selectQuery, [shopperID, searchField], (error, rows) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
