@@ -65,29 +65,19 @@ export const handler = async (event) => {
       }
     }
 
-    //check if item category exists
-    let itemCategory = event.itemCategory
-    if(itemCategory == "") {
-      code = 400
-      result = ({"error" : "Invalid item category"})
-      return {
-        statusCode: code,
-        body: JSON.stringify(result)
-      }
-    }
 
     //add item to shopping list
     code = 200
-    let shoppingListID = lists[0].shoppingListID
+    let shoppingListID = event.shoppingListID
     const itemID = "itemID" + crypto.randomUUID()
     await pool.query(
-      'INSERT INTO Items (itemID, shoppingListID, name, category) VALUES (?, ?, ?, ?)',
-      [itemID, shoppingListID, itemName, itemCategory]
+      'INSERT INTO Items (itemID, shoppingListID, name) VALUES (?, ?, ?)',
+      [itemID, shoppingListID, itemName]
     );
     
     //get items in shopping list
     const [items] = await pool.query(
-      'SELECT itemID, name, category FROM Items WHERE shoppingListID = ?',
+      'SELECT itemID, name FROM Items WHERE shoppingListID = ?',
       [shoppingListID]
     );
 
