@@ -58,6 +58,8 @@ export const handler = async (event) => {
     const token = event.loginToken
     const searchField = event.searchField
 
+    if (searchField == "") { throw new Error("Search field cannot be empty") }
+
     const shopperID = await verifyToken(token)
 
     const items = await getMatchingItems(shopperID, searchField)
