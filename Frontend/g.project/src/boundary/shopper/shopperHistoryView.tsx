@@ -35,7 +35,7 @@ function ReviewHistory({model, instance, andRefreshDisplay}: {model: any, instan
                 <b>{"Receipt purchased from " + receipt.chainName + " at " + receipt.storeName + " (" + receipt.address + ") on " + receipt.date.slice(0, 10) + " | Total: $" + receipt.totalCost}</b>
                 <ul>
                     {receipt.items.map((item: any) => (
-                        <li key={item.itemID}>{"Item: " + item.name + " (" + item.category + ") | Price: " + item.price}</li>
+                        <li key={item.itemID}>{"Item: " + item.name + " (" + item.category + ") | $" + item.price}</li>
                     ))}
                 </ul><br/>
               </li>
@@ -99,11 +99,11 @@ function ReviewActivity({model, instance, andRefreshDisplay}: {model: any, insta
                     <ul>
                         {receiptData.receipts.map((receipt: any) => (
                         <li key={receipt.receiptID}>
-                            <b>{"Date: " + receipt.date.slice(0, 10) + "  | Chain: " + receipt.chainName + "  | Store: " + receipt.storeName}</b>
+                            <b>{"Receipt purchased from " + receipt.chainName + " at " + receipt.storeName + " (" + receipt.storeAddress + ") on " + receipt.date.slice(0, 10) + " | Total: $" + receipt.totalCost}</b>
                             <ul>
                                 {receipt.items.map((item: any) => (
                                     <li key={item.itemID}>
-                                        {"Item: " + item.name + "  | Category: " + item.category + "  | Price: " + item.price}
+                                        {"Item: " + item.name + " (" + item.category + ") | $" + item.price}
                                     </li>
                                 ))}
                             </ul><br/>
@@ -158,7 +158,7 @@ function SearchRecentPurchases({model, instance, andRefreshDisplay}: {model: any
           {apiMessage}<br></br>
           <ul>
             {itemData.map((item: any) => (
-              <li key={item.itemID}>{"Name: " + item.name + "  | Category: " + item.category + "  | Price: " + item.price + "  | Date: " + item.date.slice(0, 10)}</li>
+              <li key={item.itemID}>{"Item: " + item.name + " (" + item.category + ") | $" + item.price + " | Purchased from " + item.chainName + " at " + item.storeName + " (" + item.address + ") on " + item.date.slice(0, 10)}</li>
             ))}
           </ul>
         </div>
