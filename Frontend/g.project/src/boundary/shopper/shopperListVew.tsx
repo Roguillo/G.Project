@@ -250,12 +250,13 @@ export function ShowShoppingList({model, shoppingList, setShoppingList, instance
 
     return(
     <div>
+    <b> Choose a list: </b>
     <select id="shoppingLists">
     {model.shoppingLists.map((sl: any) => (
         <option key={sl.shoppingListID} value={sl.shoppingListID}>{sl.name}</option>
     ))}
     </select>
-      <button onClick={() => {ShowShoppingList()}}>Release the List</button>
+      <button onClick={() => {ShowShoppingList()}}>Show New List</button>
     </div>
     )
 }

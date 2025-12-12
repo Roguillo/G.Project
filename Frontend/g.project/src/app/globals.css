@@ -40,3 +40,8 @@ a {
     color-scheme: dark;
   }
 }
+
+.createAndShow {
+  display: flex;
+  gap: 10px;
+}
