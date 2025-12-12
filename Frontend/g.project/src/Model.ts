@@ -47,6 +47,11 @@ export class Model {
         return this.shopper?.loginToken
     }
     
+    makeSL(name:string, shoppingListID:string){
+        let newSL = new ShoppingList(name, shoppingListID);
+        this.shoppingLists.push(newSL)
+    }
+
     makeReceipt(chainID: string, date : Date, receiptID: string, storeID: string){
         let newRcpt = new Receipt(chainID, date, receiptID, storeID);
         newRcpt.setDate(date)
@@ -147,14 +152,19 @@ export class Item {
     itemID    : string;
     name      : string;
     price     : number | undefined;
-    receiptID : string;
+    receiptID : string | undefined;
+    shoppingListID : string | undefined;
     store     : Store | undefined;
 
-    constructor( cateogry : string, itemID : string, name : string, receiptID : string) {
-        this.category  = cateogry;
+    constructor( category : string, itemID : string, name : string, receiptID : string) {
+        this.category  = category;
         this.itemID    = itemID;
         this.name      = name;
         this.receiptID = receiptID;
+    }
+
+    setSLID(shoppingListID: string) {
+        this.shoppingListID = shoppingListID
     }
 
     setPrice(price: number) {
@@ -206,15 +216,21 @@ export class Store {
 
 export class ShoppingList {
     name: string
+    shoppingListID: string
     items: Item[]
 
-    constructor(name: string) {
+    constructor(name: string, shoppingListID: string) {
         this.name = name
+        this.shoppingListID = shoppingListID
         this.items = []
     }
 
     addItem(items: Item[]) {
         this.items = items
+    }
+
+    addNewItem(item: Item) {
+        this.items.push(item)
     }
 }
 

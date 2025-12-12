@@ -1,5 +1,6 @@
 import React from 'react'
 
+
 export function CreateShoppingList({model, shoppingList, setShoppingList, instance, andRefreshDisplay}: {model: any, shoppingList:any, setShoppingList:any, instance: any, andRefreshDisplay: any}) {
     type ShoppingListMessage = {
         id?: string,
@@ -39,6 +40,9 @@ export function CreateShoppingList({model, shoppingList, setShoppingList, instan
             })
         }
 
+        //update model
+        model.makeSL(listName, message.shoppingListID)
+
 
         andRefreshDisplay()
     }
@@ -57,7 +61,7 @@ export function CreateShoppingList({model, shoppingList, setShoppingList, instan
             <ul>
                 {shoppingList.items.map((item : any)=> (
                 <li key={item.itemID}>
-                {item.name} ({item.category})
+                {item.name}
                 </li>
             ))}
             </ul>
@@ -212,6 +216,80 @@ export function ReportOptionsShoppingList({model, shoppingList, setShoppingList,
     <div>
       <button onClick={() => {reportOptionsShoppingList()}}>Report Options For Purchase</button>
       <pre>{apiMessage}</pre>
+    </div>
+    )
+}
+
+export function ShowShoppingList({model, shoppingList, setShoppingList, instance, andRefreshDisplay}: {model: any, shoppingList:any, setShoppingList:any, instance: any, andRefreshDisplay: any}) {
+
+        type ShoppingListMessage = {
+        id?: string,
+        listName?: string;
+        items?: string[];
+        error?: string;
+    } | null;
+    const [apiMessage, changeApiMessage] = React.useState<ShoppingListMessage>();
+
+    async function ShowShoppingList(){
+        andRefreshDisplay()
+        const selectElementSLID = document.getElementById("shoppingLists") as HTMLInputElement
+            
+        const response = await instance.post('/showShoppingList', {
+            "shoppingListID" : selectElementSLID.value,
+            "loginToken" : model.getLoginToken()
+        })
+        .then((response: any) => {
+                let message = JSON.parse(response.data.body)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
+                console.log(message)
+                if (message.error != undefined) {
+                    changeApiMessage(message.error)
+                    andRefreshDisplay()
+                } else {
+
+                    //update current shopping list 
+                    setShoppingList({
+                        id : selectElementSLID.value,
+                        name: model.shoppingLists.find((sl: any) => sl.id === selectElementSLID.value).name,
+                        items: message.items
+                    })
+
+                    changeApiMessage(message.body)
+                    andRefreshDisplay()
+                }
+            })
+    }
+
+    return(
+    <div>
+    <select name="shoppingLists" id="shoppingLists">
+    {model.shoppingLists.map((sl: any) => (
+        <option key={sl.id} value={sl.id}>{sl.name}</option>
+    ))}
+    </select>
+      <button onClick={() => {ShowShoppingList()}}>Release the List</button>
+
+       {/* Display list name and items */}
+        {apiMessage && !apiMessage.error && (
+        <div>
+            <h3>{apiMessage.listName}</h3>
+            {model.shoppingList.items.length > 0 ? (
+            <ul>
+                {model.shoppingList.items.map((item : any)=> (
+                <li key={item.itemID}>
+                {item.name} ({item.category})
+                </li>
+            ))}
+            </ul>
+            ) : (
+            <p><i>No items yet</i></p>
+            )}
+        </div>
+        )}
+        {/* Display error */}
+        {apiMessage?.error && (
+        <div>{apiMessage.error}</div>
+        )}
+
     </div>
     )
 }
