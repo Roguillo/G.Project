@@ -1,6 +1,7 @@
 import React from 'react'
 
-export function CreateShoppingList({model, shoppingList, setShoppingList, instance, andRefreshDisplay}: {model: any, shoppingList:any, setShoppingList:any, instance: any, andRefreshDisplay: any}) {
+
+export function CreateShoppingList({model, shoppingList, setShoppingList, instance, andRefreshDisplay, changeState}: {model: any, shoppingList:any, setShoppingList:any, instance: any, andRefreshDisplay: any, changeState: any}) {
     type ShoppingListMessage = {
         id?: string,
         listName?: string;
@@ -22,7 +23,6 @@ export function CreateShoppingList({model, shoppingList, setShoppingList, instan
         });
 
         const message = JSON.parse(response.data.body);
-        console.log(message);
 
         if (message.error != undefined) {
             changeApiMessage({ error: message.error });
@@ -39,6 +39,11 @@ export function CreateShoppingList({model, shoppingList, setShoppingList, instan
             })
         }
 
+        //update model
+        model.makeSL(listName, message.shoppingListID)
+
+        //update shopping list selected boolean
+        changeState(true)
 
         andRefreshDisplay()
     }
@@ -208,6 +213,89 @@ export function ReportOptionsShoppingList({model, shoppingList, setShoppingList,
     <div>
       <button onClick={() => {reportOptionsShoppingList()}}>Report Options For Purchase</button>
       <pre>{apiMessage}</pre>
+    </div>
+    )
+}
+
+export function ShowShoppingList({model, shoppingList, setShoppingList, instance, andRefreshDisplay, changeState}: {model: any, shoppingList:any, setShoppingList:any, instance: any, andRefreshDisplay: any, changeState : any}) {
+
+        type ShoppingListMessage = {
+        id?: string,
+        listName?: string;
+        items?: string[];
+        error?: string;
+    } | null;
+    const [apiMessage, changeApiMessage] = React.useState<ShoppingListMessage>();
+
+    async function ShowShoppingList(){
+        andRefreshDisplay()
+        const selectElementSLID = document.getElementById("shoppingLists") as HTMLInputElement
+            
+        const response = await instance.post('/showShoppingList', {
+            "shoppingListID" : selectElementSLID.value,
+            "loginToken" : model.getLoginToken()
+        })
+        .then((response: any) => {
+                let message = JSON.parse(response.data.body)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
+
+                if (message.error != undefined) {
+                    changeApiMessage( {error: message.error} )
+                    andRefreshDisplay()
+                } else {
+
+                    //update current shopping list 
+                    setShoppingList({
+                        id : selectElementSLID.value,
+                        name: model.shoppingLists.find((sl: any) => sl.shoppingListID === selectElementSLID.value).name,
+                        //why did i name this SLItems smh it took me so long to debug the fact that I had a weird JSON key
+                        items: message.SLItems
+                    })
+
+                    //update shopping list selected boolean
+                    changeState(true)
+
+                    andRefreshDisplay()
+                }
+            })
+    }
+
+    return(
+    <div>
+    <select id="shoppingLists">
+    {model.shoppingLists.map((sl: any) => (
+        <option key={sl.shoppingListID} value={sl.shoppingListID}>{sl.name}</option>
+    ))}
+    </select>
+      <button onClick={() => {ShowShoppingList()}}>Release the List</button>
+    </div>
+    )
+}
+
+export function CurrShoppingList({shoppingList, andRefreshDisplay, flag}: {shoppingList:any, andRefreshDisplay: any, flag:boolean}){
+    return(
+    <div>
+        {/* Display list name and items */}
+        {flag ? (
+        <div>
+            <h3>{shoppingList.name}</h3>
+            {shoppingList.items.length > 0 ? (
+            <ul>
+                {shoppingList.items.map((item : any)=> (
+                <li key={item.itemID}>
+                {item.name}
+                </li>
+            ))}
+            </ul>
+            ) 
+            :
+            (
+            <p><i>No items yet</i></p>
+            )}
+        </div>
+        )
+        :
+        <p>no list selected</p>
+    }
     </div>
     )
 }

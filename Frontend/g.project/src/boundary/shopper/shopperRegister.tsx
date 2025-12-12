@@ -76,6 +76,10 @@ function LoginShopper({model, instance, andRefreshDisplay}: {model: any, instanc
                     andRefreshDisplay()
                 } else {
                     model.loginShopper(message.name, username, password, message.loginToken)
+                    //update the model's shopping lists
+                    for(let i = 0; i < message.shoppingListInfo.length; i++){
+                        model.makeSL(message.shoppingListInfo[i].name, message.shoppingListInfo[i].shoppingListID)
+                    }
                     changeApiMessage(message.body)
                     andRefreshDisplay()
                 }
