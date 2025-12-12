@@ -100,7 +100,7 @@ function ReviewActivity({model, instance, andRefreshDisplay}: {model: any, insta
             <ul>
                 {receiptData.map((receiptData: any) => (
                 <li key={receiptData.startDate}>
-                    <h3>{"From " + receiptData.startDate.slice(0, 10) + " to " + receiptData.endDate.slice(0, 10)}</h3>
+                    <h3>{"From " + receiptData.startDate.slice(0, 10) + " to " + receiptData.endDate.slice(0, 10) + " | Total Cost: $" + receiptData.timePeriodCost}</h3>
                     <b>{receiptData.receipts.length == 0 && "No receipts in this timeframe"}</b>
                     <ul>
                         {receiptData.receipts.map((receipt: any) => (
