@@ -158,7 +158,8 @@ export const handler = async (event) => {
         return {
           startDate: receipts.startDate,
           endDate: receipts.endDate,
-          receipts: receiptsItems
+          receipts: receiptsItems,
+          timePeriodCost: receiptsItems.reduce((total, receipt) => total + parseFloat(receipt.totalCost), 0).toFixed(2)
         }
       })
     )
