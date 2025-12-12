@@ -20,11 +20,14 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     }
 
     // react state variables
-    const [rAPIMessage    , updateAPIMessage    ] = React.useState<APIresponse>();
-    const [rSubmission    , updateSubmission    ] = React.useState("");
-    const [rLoadingText   , updateLoadingText   ] = React.useState("");
-    const [analyzedItems  , updateAnalyzedItems ] = React.useState<Item[]>([]);
-    const [rSubmitted     , updateSubmitted     ] = React.useState(false);
+    const [rAPIMessage    , updateAPIMessage     ] = React.useState<APIresponse>();
+    const [rSubmission    , updateSubmission     ] = React.useState             ("");
+    const [rLoadingText   , updateLoadingText    ] = React.useState             ("");
+    const [rAnalyzedItems , updaterAnalyzedItems ] = React.useState<Item[]>     ([]);
+    const [rSubmitted     , updateSubmitted      ] = React.useState             (false);
+    const [rDay           , updateDay            ] = React.useState             (" ");
+    const [rMonth         , updateMonth          ] = React.useState             (" ");
+    const [rYear          , updateYear           ] = React.useState             (" ");
 
     // API response message variable
     let APIMessage : any;
@@ -33,16 +36,12 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     if(!model.shopper)             model.shopper            = new Shopper("", "", "", "");
     if(!model.shopper?.loginToken) model.shopper.loginToken = "test-token1234";
 
-    // get date
-    const today = new Date         ();
-    const day   = today.getDate    ();
-    const month = today.getMonth   () + 1;
-    const year  = today.getFullYear();
-
     // current receipt
     let currentReceipt = (model.receipts[model.receipts.length - 1]) ?
                          (model.receipts[model.receipts.length - 1]) :
-                         new Receipt("", new Date(), "", "");
+              new Receipt("", new Date(), "", ""                   ); /* I know there's an error, but the naming is the same as the default 'Date' object,
+                                                                       * and I don't want to mess up other functions/use cases that use the model's Date
+                                                                       */
 
     // create receipt controller
     async function CreateReceiptController() {
@@ -50,19 +49,32 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         const loginToken = model.shopper?.loginToken;
 
         // get store and chain IDs from shopper
-        const StoreNameElement = document      .getElementById("store-name") as HTMLInputElement;
-        const ChainNameElement = document      .getElementById("chain-name") as HTMLInputElement;
-        const StoreName        = StoreNameElement.value;
-        const ChainName        = ChainNameElement.value;
-        
-        if(!StoreName || !ChainName) return;
+        const StoreAddressElement = document.getElementById("store-address") as HTMLInputElement;
+        const dayElement          = document.getElementById("day"          ) as HTMLInputElement;
+        const monthElement        = document.getElementById("month"        ) as HTMLInputElement;
+        const yearElement         = document.getElementById("year"         ) as HTMLInputElement;
+
+        const StoreAddress        = StoreAddressElement.value;
+        if(!StoreAddress) return;
+
+        const day                 = parseInt(dayElement.value);
+        if(!day         ) return;
+        updateDay(day);
+
+        const month               = parseInt(monthElement.value);
+        if(!month       ) return;
+        updateMonth(month);
+
+        const year                = parseInt(yearElement.value);
+        if(!year        ) return;
+        updateYear(year);
+
 
         await instance.post('/createReceipt',
             {  
-                "loginToken" : loginToken,
-                "storeName"  : StoreName,
-                "chainName"  : ChainName,
-                "date"       :   
+                "loginToken"   : loginToken,
+                "storeAddress" : StoreAddress,
+                "date"         :   
                     {  
                         "day"   : day,  
                         "month" : month,  
@@ -72,8 +84,8 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             )
             .then((response : any) => {
                 APIMessage = (typeof    (response.data.body) === 'string') ?
-                                (JSON.parse(response.data.body)             ) :
-                                (           response.data.body              );
+                             (JSON.parse(response.data.body)             ) :
+                             (           response.data.body              );
                 
                 if (APIMessage.error != undefined) {
                     updateAPIMessage(APIMessage.error); console.log(APIMessage.error);
@@ -88,7 +100,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         const StoreID = APIMessage.storeID;
 
         //update the local model
-        model.makeReceipt(ChainID, today, APIMessage.receiptID, StoreID);
+        model.makeReceipt(ChainID, new Date(day, month, year), APIMessage.receiptID, StoreID);
         currentReceipt.submitted = false;
         updateSubmitted(currentReceipt.submitted);
         updateSubmission("");
@@ -154,10 +166,10 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     }
 
     function removeAnalyzedByName(name: string) {
-        const itemToRemove = analyzedItems.find(item => item.name === name);
+        const itemToRemove = rAnalyzedItems.find(item => item.name === name);
         if (!itemToRemove) return;
 
-        updateAnalyzedItems(items => items.filter(item => item.itemID !== itemToRemove.itemID));
+        updaterAnalyzedItems(items => items.filter(item => item.itemID !== itemToRemove.itemID));
         currentReceipt.items = currentReceipt.items.filter(item => item.itemID !== itemToRemove.itemID);
     }
 
@@ -168,7 +180,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         const itemName             = inputElementItemName.value;
         if(!itemName) return;
 
-        if(analyzedItems.find(item => item.name === itemName)) {
+        if(rAnalyzedItems.find(item => item.name === itemName)) {
             removeAnalyzedByName(itemName);
             sync();
             return;
@@ -214,15 +226,21 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
         const name               =            nameElement       .value;
         if(!name) return;
-        let   newName            =            newNameElement    .value;
-        if(!newName) newName     =            name;
+
+        const newName            =            newNameElement    .value;
         const newCategory        =            newCategoryElement.value;
         const newPrice           = parseFloat(newPriceElement   .value);
-        const newQuantity        = parseInt  (newQuantityElement.value);
 
-        if (analyzedItems.find(item => item.name === name)) {
-            const others         = analyzedItems.filter(item => item.name !== name);
-            updateAnalyzedItems(others);
+        let   newQuantity        = parseInt  (newQuantityElement.value);
+        if(!newQuantity) {
+            const itemOfInterest = currentReceipt.items.filter(item => item.name === name);
+            newQuantity          = itemOfInterest.length;
+        }
+
+
+        if (rAnalyzedItems.find(item => item.name === name)) {
+            const others         = rAnalyzedItems.filter(item => item.name !== name);
+            updaterAnalyzedItems(others);
             currentReceipt.items = currentReceipt.items.filter((item: { name: string; }) => item.name !== name);
 
             const updatedItems: Item[] = [];
@@ -238,7 +256,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 updatedItems.push(item);
             }
 
-            updateAnalyzedItems(items => [...items, ...updatedItems]);
+            updaterAnalyzedItems(items => [...items, ...updatedItems]);
             for (let i = 0; i < updatedItems.length; i++) {
                 currentReceipt.items.push(updatedItems[i]);
             }
@@ -286,10 +304,21 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             } 
         */
        
-        const oldItemIDs = APIMessage.oldItemIDs;
-        const itemIDs    = APIMessage.itemIDs;
+        const receivedCategory   = APIMessage.category;
+        const receivedItemIDs    = APIMessage.itemIDs;
+        const receivedName       = APIMessage.name;
+        const receivedOldItemIDs = APIMessage.oldItemIDs;
+        const receivedPrice      = APIMessage.price;
+        const receivedQuantity   = APIMessage.quantity;
 
-        currentReceipt.editItem(oldItemIDs, newCategory, itemIDs, newName, newQuantity, newPrice);
+        currentReceipt.editItem(
+            receivedOldItemIDs,
+            receivedCategory,
+            receivedItemIDs,
+            receivedName,
+            receivedQuantity,
+            receivedPrice
+        );
 
         sync();
     }
@@ -348,7 +377,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 return itemBuffer;
             });
 
-            updateAnalyzedItems(prev => [...prev, ...newItems]);
+            updaterAnalyzedItems(prev => [...prev, ...newItems]);
             updateLoadingText("");
             sync();
         });
@@ -358,13 +387,13 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     async function submitReceipt() {
         if(!currentReceipt || (currentReceipt.items.length === 0)) return;
 
-        for(let i = 0; i < analyzedItems.length; i++) {
+        for(let i = 0; i < rAnalyzedItems.length; i++) {
             await instance.post('/addToReceipt', {
                 "loginToken" : model.shopper.loginToken,
                 "receiptID"  : currentReceipt.receiptID, // latest receipt
-                "name"       : analyzedItems[i].name,
-                "category"   : analyzedItems[i].category, 
-                "price"      : analyzedItems[i].price,
+                "name"       : rAnalyzedItems[i].name,
+                "category"   : rAnalyzedItems[i].category, 
+                "price"      : rAnalyzedItems[i].price,
                 "quantity"   : 1
             })
             .then((response : any) => {
@@ -384,7 +413,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         currentReceipt.submitted  = true;
         updateSubmitted(currentReceipt.submitted);
         updateSubmission("*Receipt submitted*");
-        updateAnalyzedItems([]);
+        updaterAnalyzedItems([]);
 
         sync();
 
@@ -407,109 +436,116 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         <div
             style={{
                 padding: 16,
-                fontFamily: 'sans-serif',
+                fontFamily: "sans-serif",
                 maxWidth: 600,
-                margin: '0 auto',
+                margin: "0 auto",
             }}
         >
-
             {/* Create Receipt */}
             <section style={{ marginBottom: 24 }}>
                 <h3>Create Receipt</h3>
-                <div style={{ display: 'flex', gap: 8 }}>
-                    <input id="store-name" placeholder="Store Name" />
-                    <input id="chain-name" placeholder="Chain Name" />
-                    <button onClick={CreateReceiptController}>Create Receipt</button>
+                <div style={{ display: "flex", gap: 8 }}>
+                    <input placeholder="Store Address" id="store-address" />
+                    <input placeholder="Day" id="day" />
+                    <input placeholder="Month" id="month" />
+                    <input placeholder="Year" id="year" />
+                    <button onClick={CreateReceiptController}>Create</button>
                 </div>
             </section>
 
             {/* Analyze Receipt Image */}
             <section style={{ marginBottom: 24 }}>
                 <h3>Analyze Receipt Image</h3>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <input id="image" type="file" accept="image/*" />
-                    <button onClick={analyzeReceiptImage}>Analyze Receipt Image</button> {rLoadingText}
+                    <button onClick={analyzeReceiptImage}>Analyze</button>
+                    {rLoadingText}
                 </div>
             </section>
 
             {/* Add Item */}
             <section style={{ marginBottom: 24 }}>
                 <h3>Add Item</h3>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    <input id="new-item-name" placeholder="Name" />
-                    <input id="new-item-category" placeholder="Category" />
-                    <input id="new-item-price" placeholder="Price" />
-                    <input id="new-item-quantity" placeholder="Quantity" />
-                    <button onClick={addItemToReceipt}>Add Item</button>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                    <input placeholder="Name" id="new-item-name" />
+                    <input placeholder="Category" id="new-item-category" />
+                    <input placeholder="Price" id="new-item-price" />
+                    <input placeholder="Quantity" id="new-item-quantity" />
+                    <button onClick={addItemToReceipt}>Add</button>
                 </div>
             </section>
 
             {/* Remove Item */}
             <section style={{ marginBottom: 24 }}>
                 <h3>Remove Item</h3>
-                <div style={{ display: 'flex', gap: 8 }}>
-                    <input id="rm-item-name" placeholder="Name" />
-                    <button onClick={removeItemFromReceipt}>Remove Item</button>
+                <div style={{ display: "flex", gap: 8 }}>
+                    <input placeholder="Name" id="rm-item-name" />
+                    <button onClick={removeItemFromReceipt}>Remove</button>
                 </div>
             </section>
 
             {/* Edit Item */}
             <section style={{ marginBottom: 24 }}>
                 <h3>Edit Item</h3>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    <input id="edit-item-name" placeholder="Current Name" />
-                    <input id="edit-item-new_name" placeholder="New Name" />
-                    <input id="edit-item-new_category" placeholder="New Category" />
-                    <input id="edit-item-new_price" placeholder="New Price" />
-                    <input id="edit-item-new_quantity" placeholder="New Quantity" />
-                    <button onClick={editItemOnReceipt}>Edit Item</button>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                    <input placeholder="Current Name" id="edit-item-name" />
+                    <input placeholder="New Name" id="edit-item-new_name" />
+                    <input placeholder="New Category" id="edit-item-new_category" />
+                    <input placeholder="New Price" id="edit-item-new_price" />
+                    <input placeholder="New Quantity" id="edit-item-new_quantity" />
+                    <button onClick={editItemOnReceipt}>Save</button>
                 </div>
             </section>
 
             {/* Submit Receipt */}
             <section style={{ marginBottom: 24 }}>
                 <h3>Submit Receipt</h3>
-                <button onClick={submitReceipt}>Submit Receipt</button>
+                <button onClick={submitReceipt}>Submit</button>
                 <div style={{ marginTop: 8 }}>{rSubmission}</div>
             </section>
 
-            {/* Show Current Receipt Items */}
+            {/* Current Receipt */}
             <section style={{ marginBottom: 24 }}>
-            <h3>Current Receipt</h3>
-            <div>Date: {!rSubmitted ? `${month}/${day}/${year}` : ""}</div>
-            <div>Chain: {!rSubmitted ? currentReceipt?.chainID ?? "" : ""}</div>
-            <div>Store: {!rSubmitted ? currentReceipt?.storeID ?? "" : ""}</div>
+                <h3>Current Receipt</h3>
 
-            <table
-                border={1}
-                cellPadding={8}
-                cellSpacing={0}
-                style={{
-                marginTop: 16,
-                width: "100%",
-                borderCollapse: "collapse",
-                textAlign: "left",
-                }}
-            >
-                <thead style={{ backgroundColor: "#008080", color: "white" }}>
-                <tr>
-                    <th>Item Name</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                </tr>
-                </thead>
-                <tbody>
-                {!rSubmitted &&
-                    currentReceipt?.items?.map((item: any, index: number) => (
-                    <tr key={item.ID ?? index}>
-                        <td>{item.name}</td>
-                        <td>{item.category}</td>
-                        <td>{isNaN(item.price) ? "0" : item.price}</td>
-                    </tr>
-                    ))}
-                </tbody>
-            </table>
+                {!rSubmitted && (
+                    <>
+                        <div>Date: {`${rMonth}/${rDay}/${rYear}`}</div>
+                        <div>Chain: {currentReceipt?.chainID ?? ""}</div>
+                        <div>Store: {currentReceipt?.storeID ?? ""}</div>
+                    </>
+                )}
+
+                <table
+                    border={1}
+                    cellPadding={8}
+                    cellSpacing={0}
+                    style={{
+                        marginTop: 16,
+                        width: "100%",
+                        borderCollapse: "collapse",
+                        textAlign: "left",
+                    }}
+                >
+                    <thead style={{ background: "#008080", color: "white" }}>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {!rSubmitted &&
+                            currentReceipt?.items?.map((item: any, i: number) => (
+                                <tr key={item.ID ?? i}>
+                                    <td>{item.name}</td>
+                                    <td>{item.category}</td>
+                                    <td>{isNaN(item.price) ? 0 : item.price}</td>
+                                </tr>
+                            ))}
+                    </tbody>
+                </table>
             </section>
-     </div>
+        </div>
     );
 }
