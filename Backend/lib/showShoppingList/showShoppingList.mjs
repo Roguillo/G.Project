@@ -1,15 +1,6 @@
 import { config } from './config.mjs'
 import mysql from 'mysql2'
 
-/**
- * event is JSON of the form:
-  
-  { 
-    "username" : "username",
-    "password" : "password"
-  }
-  
- */
 
 // Specify credentials
 var pool = mysql.createPool({
@@ -46,7 +37,7 @@ let LoginTokenExists = (token) => {
   let getShoppingListItemNames = (shoppingListID) => {
     return new Promise((resolve, reject) => {
       const query = "SELECT name FROM Items WHERE shoppingListID = ?"
-      pool.query(query, [shopperID], (error, rows) => {
+      pool.query(query, [shoppingListID], (error, rows) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
         } else {
@@ -71,7 +62,7 @@ let LoginTokenExists = (token) => {
     if(!isLoggedIn) throw(new Error("Shopper is not logged in")); // throw error for shopper not logged in
 
     //obtain items
-    const items = await getShoppingListItems(shopperCredentials)
+    const items = await getShoppingListItemNames(shoppingListID)
 
 
     // Returns 200 and success result
