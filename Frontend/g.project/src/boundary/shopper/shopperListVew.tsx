@@ -53,24 +53,6 @@ export function CreateShoppingList({model, shoppingList, setShoppingList, instan
       <b>List Name: </b><input id="list-name-to-add" placeholder="List Name" data-testid="list-name-to-add"></input>
 
       <button onClick={() => {createShoppingList()}}>Create Shopping List</button>
-      
-        {/* Display list name and items */}
-        {apiMessage && !apiMessage.error && (
-        <div>
-            <h3>{apiMessage.listName}</h3>
-            {shoppingList.items.length > 0 ? (
-            <ul>
-                {shoppingList.items.map((item : any)=> (
-                <li key={item.itemID}>
-                {item.name}
-                </li>
-            ))}
-            </ul>
-            ) : (
-            <p><i>No items yet</i></p>
-            )}
-        </div>
-        )}
 
         {/* Display error */}
         {apiMessage?.error && (
