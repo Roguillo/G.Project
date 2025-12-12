@@ -55,15 +55,19 @@ function ReviewActivity({model, instance, andRefreshDisplay}: {model: any, insta
         const inputActivityPeriod = document.getElementById("activity-period") as HTMLInputElement
         const activityPeriod = inputActivityPeriod.value
 
+        const inputReviewPeriod = document.getElementById("review-period") as HTMLInputElement
+        const reviewPeriod = parseInt(inputReviewPeriod.value)
+
         instance.post('/reviewActivity', {
                 "loginToken": model.getLoginToken(),
-                "activityPeriod": activityPeriod
+                "activityPeriod": activityPeriod,
+                "reviewPeriod": reviewPeriod
             })
             .then((response: any) => {
                 let message = JSON.parse(response.data.body)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
-                // console.log(message)
+                console.log(response)
                 if (response.data.statusCode == 400) {
-                    changeApiMessage("Not logged into account")
+                    changeApiMessage(message)
                 } else {
                     if (message.receiptData.length == 0) {
                         changeApiMessage("No receipts in specified timeframe")
@@ -82,6 +86,8 @@ function ReviewActivity({model, instance, andRefreshDisplay}: {model: any, insta
         <div>
             <h2>Review Activity</h2>
             {/* <b>Days Prior: </b><input id="days-prior" placeholder="Days Prior" data-testid="days-prior"></input> */}
+            <b>Review Period: </b><input id="review-period" placeholder="# of Days/Weeks/Months" data-testid="review-period"></input>
+            
             <select name="activity-period" id="activity-period">
                 <option value="daily">Daily</option>
                 <option value="weekly">Weekly</option>
@@ -124,7 +130,6 @@ function SearchRecentPurchases({model, instance, andRefreshDisplay}: {model: any
     function searchRecentPurchases() {
 
         const inputSearchField = document.getElementById("search-field") as HTMLInputElement
-
         const searchField = inputSearchField.value
 
         instance.post('/searchRecentPurchases', {
