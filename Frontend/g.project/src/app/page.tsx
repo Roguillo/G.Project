@@ -4,7 +4,7 @@ import styles from './page.module.css';
 
 import { instance } from './aws';
 import { ShopperReceiptView } from '../boundary/shopper/shopperReceiptView';
-import { AddItemShoppingList, RemoveItemShoppingList, CreateShoppingList, ReportOptionsShoppingList, ShowShoppingList} from '../boundary/shopper/shopperListVew';
+import { AddItemShoppingList, RemoveItemShoppingList, CreateShoppingList, ReportOptionsShoppingList, ShowShoppingList, CurrShoppingList} from '../boundary/shopper/shopperListVew';
 import { AdminDashboard, RemoveStore, RemoveChain } from '../boundary/adminDashboard';
 import { LoginAdmin } from '../boundary/loginPage';
 import { RegisterShopper, LoginShopper } from '../boundary/shopper/shopperRegister';
@@ -26,7 +26,7 @@ export default function Home() {
   const [shopperView, setShopperView] = React.useState("dashboard");
   // can be: "dashboard" | "receipts" | "shoppingList" | "history"
 
-  
+  const [SL_Selected, changeState] = React.useState<true | false>(false);
   /** Called when admin logs in */
   const handleLoginSuccess = (token: string) => {
     setAdminToken(token);
@@ -136,6 +136,7 @@ export default function Home() {
                   setShoppingList={setShoppingList}
                   instance={instance}
                   andRefreshDisplay={andRefreshDisplay}
+                  changeState={changeState}
                 />
                 <ShowShoppingList
                   model = {model}
@@ -143,15 +144,21 @@ export default function Home() {
                   setShoppingList={setShoppingList}
                   instance={instance}
                   andRefreshDisplay={andRefreshDisplay}
+                  changeState={changeState}
                 />
-                <br />
+                <CurrShoppingList
+                  shoppingList={shoppingList}
+                  andRefreshDisplay={andRefreshDisplay}
+                  flag = {SL_Selected}
+                />
+                <br/>
                 <AddItemShoppingList
                   model={model}
                   shoppingList={shoppingList}
                   setShoppingList={setShoppingList}
                   instance={instance}
                   andRefreshDisplay={andRefreshDisplay}
-                /><br />
+                /><br/>
                 <RemoveItemShoppingList
                   model={model}
                   shoppingList={shoppingList}

@@ -80,7 +80,6 @@ function LoginShopper({model, instance, andRefreshDisplay}: {model: any, instanc
                     for(let i = 0; i < message.shoppingListInfo.length; i++){
                         model.makeSL(message.shoppingListInfo[i].name, message.shoppingListInfo[i].shoppingListID)
                     }
-                    console.log(model.shoppingLists)
                     changeApiMessage(message.body)
                     andRefreshDisplay()
                 }
