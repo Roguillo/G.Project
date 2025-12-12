@@ -30,7 +30,8 @@ export const handler = async (event) => {
 
     //store does not exist 
     let storeName = event.storeName
-    const [rows] = await pool.query('SELECT * FROM `Stores` WHERE `name` = ?', [storeName]);
+    let address = event.address
+    const [rows] = await pool.query('SELECT * FROM `Stores` WHERE `name` = ? AND address = ?' , [storeName, address]);
     if (rows.length == 0) {
       code = 400
       result = ({"error" : "Store does not exist in database"})
@@ -43,7 +44,7 @@ export const handler = async (event) => {
     //delete store
     code = 200
     let storeSales = rows[0].sales
-    await pool.query('DELETE FROM `Stores` WHERE `name` = ?', [storeName]);
+    await pool.query('DELETE FROM `Stores` WHERE `name` = ? AND address = ?', [storeName, address]);
     await pool.query('UPDATE `Chains` SET `sales` = `sales` - ? WHERE `chainID` = ?', [storeSales, rows[0].chainID]);
     const [chains] = await pool.query('SELECT * FROM `Chains`');
     const chainsSummary = await Promise.all(
