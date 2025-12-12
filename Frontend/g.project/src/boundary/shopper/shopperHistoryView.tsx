@@ -14,7 +14,7 @@ function ReviewHistory({model, instance, andRefreshDisplay}: {model: any, instan
                 let message = JSON.parse(response.data.body)
                 // console.log(message)
                 if (response.data.statusCode == 400) {
-                    changeApiMessage("Not logged into account")
+                    changeApiMessage(message)
                 } else {
                     changeApiMessage(undefined)
                     changeReceiptData(message.receiptData)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
@@ -28,7 +28,8 @@ function ReviewHistory({model, instance, andRefreshDisplay}: {model: any, instan
     return (
         <div>
           <h2>Review History</h2>
-          <button onClick={() => {reviewHistory()}}>Review History</button>
+          <button onClick={() => {reviewHistory()}}>Review History</button><br/>
+          {apiMessage}
           <ul>
             {receiptData.map((receipt: any) => (
               <li key={receipt.receiptID}>
@@ -41,7 +42,6 @@ function ReviewHistory({model, instance, andRefreshDisplay}: {model: any, instan
               </li>
             ))}
           </ul>
-          {apiMessage}
         </div>
     )
 }
@@ -65,7 +65,7 @@ function ReviewActivity({model, instance, andRefreshDisplay}: {model: any, insta
             })
             .then((response: any) => {
                 let message = JSON.parse(response.data.body)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
-                console.log(response)
+                // console.log(response)
                 if (response.data.statusCode == 400) {
                     changeApiMessage(message)
                 } else {
@@ -140,7 +140,7 @@ function SearchRecentPurchases({model, instance, andRefreshDisplay}: {model: any
                 let message = JSON.parse(response.data.body)
                 // console.log(message.itemData)
                 if (response.data.statusCode == 400) {
-                    changeApiMessage("Not logged into account")
+                    changeApiMessage(message)
                 } else {
                     if (message.itemData.length == 0) {
                         changeApiMessage("No purchased items with specified name")
