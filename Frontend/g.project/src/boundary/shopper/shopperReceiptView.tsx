@@ -88,11 +88,11 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                              (           response.data.body              );
                 
                 if (APIMessage.error != undefined) {
-                    updateAPIMessage(APIMessage.error);
+                    updateAPIMessage(APIMessage.error); console.log(APIMessage.error);
                     return;
 
                 } else {
-                    updateAPIMessage(APIMessage);
+                    updateAPIMessage(APIMessage); console.log(APIMessage);
                 
                 }
         });
@@ -134,11 +134,11 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             APIMessage = JSON.parse(response.data.body);
 
             if (APIMessage.error != undefined) {
-                updateAPIMessage(APIMessage.error);
+                updateAPIMessage(APIMessage.error); console.log(APIMessage.error);
                 return;
 
             } else {
-                updateAPIMessage(APIMessage);
+                updateAPIMessage(APIMessage); console.log(APIMessage);
             
             }
         });
@@ -193,7 +193,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                              (           response.data.body              );
                 
                 if (APIMessage.error != undefined) {
-                    updateAPIMessage(APIMessage.error);
+                    updateAPIMessage(APIMessage.error); console.log(APIMessage.error);
                     return;
 
                 } else {
@@ -279,11 +279,11 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                              (           response.data.body              );
                 
                 if (APIMessage.error != undefined) {
-                    updateAPIMessage(APIMessage.error);
+                    updateAPIMessage(APIMessage.error); console.log(APIMessage.error);
                     return;
 
                 } else {
-                    updateAPIMessage(APIMessage);
+                    updateAPIMessage(APIMessage); console.log(APIMessage);
                 }
             }
         );
@@ -325,7 +325,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         const image        = imageElement.files![0];
         if(!image || !currentReceipt) return;
 
-        updateLoadingText("ChatGPT is thinking");
+        updateLoadingText("*ChatGPT is thinking*");
 
         const imageURL = await new Promise<string>((resolve, reject) => {
             const reader   = new FileReader();
@@ -357,25 +357,26 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                             (           APIMessage.summary              );
             updateAPIMessage(summary);
 
-            const itemsFromAPI      = summary.items || [];
-            let   newItems : Item[] = [];
+            const itemsFromAPI = summary.items || [];
 
-            itemsFromAPI.forEach((item: any) => {
-                const itemBuffer = new Item(
-                     item.itemCategory,
-                    "itemID" + crypto.randomUUID(),
-                     item.itemName,
-                     currentReceipt.receiptID
-                );
+            const newItems   = itemsFromAPI.map((item: any) => {
+            const itemBuffer = new Item(
+                item.itemCategory,
+                "itemID" + crypto.randomUUID(),
+                item.itemName,
+                currentReceipt.receiptID
+            );
 
-                currentReceipt.items                                 .push(itemBuffer);
-                currentReceipt.items[currentReceipt.items.length - 1].setPrice(item.itemPrice);
+            itemBuffer          .setPrice(item.itemPrice);
 
-                rAnalyzedItems                                        .push(itemBuffer);
-                rAnalyzedItems[rAnalyzedItems.length - 1]              .setPrice(item.itemPrice);
-            });
+            currentReceipt.items.push(itemBuffer);
+            rAnalyzedItems      .push(itemBuffer);
 
-            updaterAnalyzedItems(prev => [...prev, ...newItems]);
+            return itemBuffer;
+        });
+
+        updaterAnalyzedItems(prev => [...prev, ...newItems]);
+
             updateLoadingText("");
             sync();
         });
@@ -384,7 +385,9 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     
 
     async function submitReceipt() {
-        if(!currentReceipt) return;
+        if((!currentReceipt)                   ||
+           (currentReceipt.items.length === 0) ||
+           (rSubmitted)                       ) return;
 
         for(let i = 0; i < rAnalyzedItems.length; i++) {
             await instance.post('/addToReceipt', {
@@ -399,11 +402,11 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 APIMessage = JSON.parse(response.data.body);
 
                 if (APIMessage.error != undefined) {
-                    updateAPIMessage(APIMessage.error);
+                    updateAPIMessage(APIMessage.error); console.log(APIMessage.error);
                     return;
 
                 } else {
-                    updateAPIMessage(APIMessage);
+                    updateAPIMessage(APIMessage); console.log(APIMessage);
                 
                 }
             });
