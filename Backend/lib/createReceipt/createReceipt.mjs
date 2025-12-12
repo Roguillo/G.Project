@@ -87,6 +87,44 @@ export const handler = async (event) => {
     })
   }
 
+  // to get chainName
+  let getChainName = (chainID) => {
+    return new Promise((resolve, reject) => {
+      const query = "SELECT name FROM Chains WHERE chainID = ?";
+
+      pool.query(query, [chainID], (error, rows) => {
+        if (error) {
+          reject(new Error("Database error: " + error.sqlMessage));
+
+        } else if (rows.length === 0) {
+          resolve(false);
+
+        } else {
+          resolve(rows[0]["name"]);
+        }
+      })
+    })
+  }
+
+  // to get storeName
+  let getStoreName = (storeID) => {
+    return new Promise((resolve, reject) => {
+      const query = "SELECT name FROM Stores WHERE storeID = ?";
+
+      pool.query(query, [storeID], (error, rows) => {
+        if (error) {
+          reject(new Error("Database error: " + error.sqlMessage));
+
+        } else if (rows.length === 0) {
+          resolve(false);
+
+        } else {
+          resolve(rows[0]["name"]);
+        }
+      })
+    })
+  }
+
   // take in receipt fields and create one
   let createReceipt = (date, receiptID, shopperID, storeID, chainID) => {
     return new Promise((resolve, reject) => {
@@ -127,6 +165,14 @@ export const handler = async (event) => {
     if(!chainID) throw(new Error("Chain does not exist"));
     console.log("chainID: " + chainID)
 
+    const storeName = await getStoreName(storeID);
+    if(!storeName) throw(new Error("store does not exist"));
+    console.log("storeName: " + storeName)
+
+    const chainName = await getChainName(chainID);
+    if(!chainName) throw(new Error("Chain does not exist"));
+    console.log("chainName: " + chainName)
+
     const receiptID = "receiptID" + crypto.randomUUID();            // generate unique receipt ID
 
     console.log("date: " + date + " receiptID " + receiptID + " shopperID " + shopperID + " storeID " + storeID + " chainID " + chainID)
@@ -143,7 +189,9 @@ export const handler = async (event) => {
         receiptID: receiptID,
         shopperID: shopperID,
         chainID  : chainID,
-        storeID  : storeID
+        storeID  : storeID,
+        chainName: chainName,
+        storeName: storeName
       };
 
   } catch (error) {
