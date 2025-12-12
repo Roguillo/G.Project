@@ -1,5 +1,5 @@
 import   React      from 'react';
-import { Shopper, Item } from '../../Model';
+import { Shopper, Item, Receipt } from '../../Model';
 
 
 
@@ -96,6 +96,9 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 
                 }
         });
+
+        const ChainID = APIMessage.chainID;
+        const StoreID = APIMessage.storeID;
 
         //update the local model
         model.makeReceipt(ChainID, new Date(day, month, year), APIMessage.receiptID, StoreID);
@@ -354,7 +357,8 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                             (           APIMessage.summary              );
             updateAPIMessage(summary);
 
-            const itemsFromAPI = summary.items || [];
+            const itemsFromAPI      = summary.items || [];
+            let   newItems : Item[] = [];
 
             itemsFromAPI.forEach((item: any) => {
                 const itemBuffer = new Item(
@@ -367,8 +371,8 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 currentReceipt.items                                 .push(itemBuffer);
                 currentReceipt.items[currentReceipt.items.length - 1].setPrice(item.itemPrice);
 
-                analyzedItems                                        .push(itemBuffer);
-                analyzedItems[analyzedItems.length - 1]              .setPrice(item.itemPrice);
+                rAnalyzedItems                                        .push(itemBuffer);
+                rAnalyzedItems[rAnalyzedItems.length - 1]              .setPrice(item.itemPrice);
             });
 
             updaterAnalyzedItems(prev => [...prev, ...newItems]);

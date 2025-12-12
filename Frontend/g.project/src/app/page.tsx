@@ -78,7 +78,7 @@ export default function Home() {
           {/* Navigation Buttons */}
           <div>
             <button className={styles.navButtonStyle} onClick={() => setShopperView("dashboard")}>
-              Dashboard
+              Show Shopper Dashboard
             </button>
             <button className={styles.navButtonStyle} onClick={() => setShopperView("receipts")}>
               Receipts
