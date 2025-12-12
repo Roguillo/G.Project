@@ -25,9 +25,9 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     const [rLoadingText   , updateLoadingText    ] = React.useState             ("");
     const [rAnalyzedItems , updaterAnalyzedItems ] = React.useState<Item[]>     ([]);
     const [rSubmitted     , updateSubmitted      ] = React.useState             (false);
-    const [rDay           , updateDay            ] = React.useState<number>     ();
-    const [rMonth         , updateMonth          ] = React.useState<number>     ();
-    const [rYear          , updateYear           ] = React.useState<number>     ();
+    const [rDay           , updateDay            ] = React.useState<any>        (" ");
+    const [rMonth         , updateMonth          ] = React.useState<any>        (" ");
+    const [rYear          , updateYear           ] = React.useState<any>        (" ");
     const [rStoreName     , updateStoreName      ] = React.useState             (" ");
     const [rChainName     , updateChainName      ] = React.useState             (" ");
 
