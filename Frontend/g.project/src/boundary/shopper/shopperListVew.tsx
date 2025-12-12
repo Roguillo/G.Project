@@ -175,13 +175,20 @@ export function ReportOptionsShoppingList({model, shoppingList, setShoppingList,
                     }
 
                     let storeName
+                    let address
                     if(!opt.store || opt.store.length === 0){
                         storeName = "Unknown Store"
+                        address = "Unknown Address"
                     } else{
+                        if(!opt.store[0].address){
+                            address = "Unknown Address"
+                        } else{
+                            address = opt.store[0].address
+                        }
                         storeName = opt.store[0].name
                     }
                     
-                    return `${opt.itemName} (${opt.itemCategory}) — Store Name: ${storeName} — Address: ${opt.store[0].address} — $${opt.price}`;
+                    return `${opt.itemName} (${opt.itemCategory}) — Store Name: ${storeName} — Address: ${address} — $${opt.price}`;
                 })
                 .join("\n");
 
