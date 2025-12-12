@@ -41,7 +41,7 @@ export const handler = async (event) => {
   // Gets a list of receipts linked to a shopperID
   let getReceiptsByPeriod = (shopperID, startDate, endDate) => {
     return new Promise((resolve, reject) => {
-      const selectQuery = "SELECT receipt.receiptID, receipt.date, chain.name, chain.chainID, store.name, store.storeID FROM Receipts as receipt INNER JOIN Stores as store INNER JOIN Chains as chain ON receipt.storeID = store.storeID AND receipt.chainID = chain.chainID WHERE shopperID = ? AND date >= ? AND date <= ? ORDER BY date DESC"
+      const selectQuery = "SELECT receipt.receiptID, receipt.date, chain.name AS chainName, chain.chainID, store.name AS storeName, store.storeID, store.address FROM Receipts as receipt INNER JOIN Stores as store INNER JOIN Chains as chain ON receipt.storeID = store.storeID AND receipt.chainID = chain.chainID WHERE shopperID = ? AND date >= ? AND date <= ? ORDER BY date DESC"
       pool.query(selectQuery, [shopperID, startDate, endDate], (error, rows) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
@@ -137,10 +137,11 @@ export const handler = async (event) => {
             return {
               receiptID: receipt.receiptID,
               date: receipt.date,
-              chainName: receipt.name,
-              // chainID: receipt.chainID,
-              storeName: receipt.name,
-              // storeID: receipt.storeID,
+              chainName: receipt.chainName,
+              chainID: receipt.chainID,
+              storeName: receipt.storeName,
+              storeID: receipt.storeID,
+              storeAddress: receipt.address,
               items: items,
               totalCost: items.reduce((total, item) => total + parseFloat(item.price), 0)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
             }
