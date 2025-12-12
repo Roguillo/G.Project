@@ -135,11 +135,11 @@ export class Receipt {
 }
 
 export class ModelDate {
-    day: number | string
+    day  : number | string
     month: number | string
-    year: number | string
+    year : number | string
 
-    constructor(day: number, month: number, year: number) {
+    constructor(day: number | string, month: number | string, year: number | string) {
         this.day = day
         this.month = month
         this.year = year

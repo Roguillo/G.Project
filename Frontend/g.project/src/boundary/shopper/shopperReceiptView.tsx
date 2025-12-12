@@ -1,4 +1,4 @@
-import   React      from 'react';
+import   React                                      from 'react';
 import { Model, Shopper, Item, Receipt, ModelDate } from '../../Model';
 
 
@@ -23,7 +23,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     const [rAPIMessage    , updateAPIMessage     ] = React.useState<APIresponse>();
     const [rSubmission    , updateSubmission     ] = React.useState             ("");
     const [rLoadingText   , updateLoadingText    ] = React.useState             ("");
-    const [rAnalyzedItems , updaterAnalyzedItems ] = React.useState<Item[]>     ([]);
+    const [rAnalyzedItems , updateAnalyzedItems ] = React.useState<Item[]>     ([]);
     const [rSubmitted     , updateSubmitted      ] = React.useState             (false);
     const [rDay           , updateDay            ] = React.useState<any>        (" ");
     const [rMonth         , updateMonth          ] = React.useState<any>        (" ");
@@ -41,9 +41,21 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
     // current receipt
     let currentReceipt = (model.receipts[model.receipts.length - 1]) ?
                          (model.receipts[model.receipts.length - 1]) :
-              new Receipt("", new ModelDate(0, 0, 0), "", ""            ); /* I know there's an error, but the naming is the same as the default 'Date' object,
+              new Receipt("", new ModelDate(" ", " ", " "), "", ""            ); /* I know there's an error, but the naming is the same as the default 'Date' object,
                                                                        * and I don't want to mess up other functions/use cases that use the model's Date
                                                                        */
+
+    function uuidv4(): string {
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+            const r = Math.floor(Math.random() * 16);
+            const v = c === "x" ? r : (r & 0x3) | 0x8;
+
+            return v.toString(16);
+        });
+    }
+
+
+
 
     // create receipt controller
     async function CreateReceiptController() {
@@ -90,7 +102,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                              (           response.data.body              );
                 
                 if (APIMessage.error != undefined) {
-                    updateAPIMessage(APIMessage.error); console.log(APIMessage.error);
+                    updateAPIMessage({ error: APIMessage.error }); console.log(APIMessage.error);
                     return;
 
                 } else {
@@ -136,10 +148,13 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             "quantity"   : itemQuantity
         })
         .then((response : any) => {
-            APIMessage = JSON.parse(response.data.body);
+            APIMessage = (typeof    (response.data.body) === 'string') ?
+                         (JSON.parse(response.data.body)             ) :
+                         (           response.data.body              );
+
 
             if (APIMessage.error != undefined) {
-                updateAPIMessage(APIMessage.error); console.log(APIMessage.error);
+                updateAPIMessage({ error: APIMessage.error }); console.log(APIMessage.error);
                 return;
 
             } else {
@@ -171,7 +186,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         const itemToRemove = rAnalyzedItems.find(item => item.name === name);
         if (!itemToRemove) return;
 
-        updaterAnalyzedItems(items => items.filter(item => item.itemID !== itemToRemove.itemID));
+        updateAnalyzedItems(items => items.filter(item => item.itemID !== itemToRemove.itemID));
         currentReceipt.items = currentReceipt.items.filter(item => item.itemID !== itemToRemove.itemID);
     }
 
@@ -198,7 +213,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                              (           response.data.body              );
                 
                 if (APIMessage.error != undefined) {
-                    updateAPIMessage(APIMessage.error); console.log(APIMessage.error);
+                    updateAPIMessage({ error: APIMessage.error }); console.log(APIMessage.error);
                     return;
 
                 } else {
@@ -228,9 +243,17 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         const name               =            nameElement       .value;
         if(!name) return;
 
-        const newName            =            newNameElement    .value;
-        const newCategory        =            newCategoryElement.value;
-        const newPrice           = parseFloat(newPriceElement   .value);
+        const existingItem       = rAnalyzedItems.find(item => item.name === name)
+                   ||        currentReceipt.items.find(item => item.name === name);
+
+        let   newName            =            newNameElement    .value;
+        if(!newName) newName = name;
+        
+        let   newCategory        =            newCategoryElement.value;
+        if (!newCategory)     newCategory = existingItem!.category || "";
+
+        let   newPrice           = parseFloat(newPriceElement   .value);
+        if (isNaN(newPrice) || newPrice === 0)newPrice = existingItem!.price || 0;
 
         let   newQuantity        = parseInt  (newQuantityElement.value);
         if(!newQuantity) {
@@ -241,7 +264,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
         if (rAnalyzedItems.find(item => item.name === name)) {
             const others         = rAnalyzedItems.filter(item => item.name !== name);
-            updaterAnalyzedItems(others);
+            updateAnalyzedItems(others);
             currentReceipt.items = currentReceipt.items.filter((item: { name: string; }) => item.name !== name);
 
             const updatedItems: Item[] = [];
@@ -249,7 +272,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             for (let i = 0; i < newQuantity; i++) {
                 const item = new Item(
                      newCategory,
-                    "itemID" + crypto.randomUUID(),
+                    "itemID" + uuidv4(),
                      newName,
                      currentReceipt.receiptID
                 );
@@ -257,7 +280,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 updatedItems.push(item);
             }
 
-            updaterAnalyzedItems(items => [...items, ...updatedItems]);
+            updateAnalyzedItems(items => [...items, ...updatedItems]);
             for (let i = 0; i < updatedItems.length; i++) {
                 currentReceipt.items.push(updatedItems[i]);
             }
@@ -284,7 +307,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                              (           response.data.body              );
                 
                 if (APIMessage.error != undefined) {
-                    updateAPIMessage(APIMessage.error); console.log(APIMessage.error);
+                    updateAPIMessage({ error: APIMessage.error }); console.log(APIMessage.error);
                     return;
 
                 } else {
@@ -345,8 +368,8 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             receiptID : currentReceipt.receiptID
 
         }).then((response: any) => {
-            const APIMessage = (typeof    (response.data.body === 'string')) ?
-                               (JSON.parse(response.data.body             )) :
+            const APIMessage = (typeof    (response.data.body) === 'string') ?
+                               (JSON.parse(response.data.body)             ) :
                                (           response.data.body              );
 
             if (APIMessage.error) {
@@ -367,7 +390,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             const newItems   = itemsFromAPI.map((item: any) => {
             const itemBuffer = new Item(
                 item.itemCategory,
-                "itemID" + crypto.randomUUID(),
+                "itemID" + uuidv4(),
                 item.itemName,
                 currentReceipt.receiptID
             );
@@ -375,12 +398,10 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
             itemBuffer          .setPrice(item.itemPrice);
 
             currentReceipt.items.push(itemBuffer);
-            rAnalyzedItems      .push(itemBuffer);
-
             return itemBuffer;
         });
 
-        updaterAnalyzedItems(prev => [...prev, ...newItems]);
+        updateAnalyzedItems(prev => [...prev, ...newItems]);
 
             updateLoadingText("");
             sync();
@@ -404,10 +425,12 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                 "quantity"   : 1
             })
             .then((response : any) => {
-                APIMessage = JSON.parse(response.data.body);
+                APIMessage = (typeof    (response.data.body) === 'string') ?
+                             (JSON.parse(response.data.body)             ) :
+                             (           response.data.body              );
 
                 if (APIMessage.error != undefined) {
-                    updateAPIMessage(APIMessage.error); console.log(APIMessage.error);
+                    updateAPIMessage({ error: APIMessage.error }); console.log(APIMessage.error);
                     return;
 
                 } else {
@@ -420,7 +443,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
         currentReceipt.submitted  = true;
         updateSubmitted(currentReceipt.submitted);
         updateSubmission("*Receipt submitted*");
-        updaterAnalyzedItems([]);
+        updateAnalyzedItems([]);
 
         sync();
 
@@ -545,14 +568,14 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
                         </tr>
                     </thead>
                     <tbody>
-                        {!rSubmitted &&
-                            currentReceipt?.items?.map((item: any, i: number) => (
-                                <tr key={item.ID ?? i}>
-                                    <td>{item.name}</td>
-                                    <td>{item.category}</td>
-                                    <td>{isNaN(item.price) ? 0 : item.price}</td>
-                                </tr>
-                            ))}
+                    {!rSubmitted &&
+                        currentReceipt.items.map((item: Item, i: number) => (
+                            <tr key={item.itemID}>
+                                <td>{item.name}</td>
+                                <td>{item.category}</td>
+                                <td>{item.price}</td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </section>
