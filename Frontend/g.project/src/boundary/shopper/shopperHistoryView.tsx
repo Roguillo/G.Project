@@ -12,8 +12,9 @@ function ReviewHistory({model, instance, andRefreshDisplay}: {model: any, instan
             })
             .then((response: any) => {
                 let message = JSON.parse(response.data.body)
+                // console.log(message)
                 if (response.data.statusCode == 400) {
-                    changeApiMessage("Not logged into account")
+                    changeApiMessage(message)
                 } else {
                     changeApiMessage(undefined)
                     changeReceiptData(message.receiptData)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
@@ -27,19 +28,20 @@ function ReviewHistory({model, instance, andRefreshDisplay}: {model: any, instan
     return (
         <div>
           <h2>Review History</h2>
-          <button onClick={() => {reviewHistory()}}>Review History</button><br></br>
+          <button onClick={() => {reviewHistory()}}>Review History</button><br/>
+          {apiMessage}
           <ul>
             {receiptData.map((receipt: any) => (
-              <li key={receipt.receiptID}>{"Date: " + receipt.date.slice(0, 10) + "  | Chain: " + receipt.chainID + "  | Store: " + receipt.storeID}
+              <li key={receipt.receiptID}>
+                <b>{"Receipt purchased from " + receipt.chainName + " at " + receipt.storeName + " (" + receipt.address + ") on " + receipt.date.slice(0, 10) + " | Total: $" + receipt.totalCost}</b>
                 <ul>
                     {receipt.items.map((item: any) => (
-                        <li key={item.itemID}>{"Item: " + item.name + "  | Category: " + item.category + "  | Price: " + item.price}</li>
+                        <li key={item.itemID}>{"Item: " + item.name + " (" + item.category + ") | $" + item.price}</li>
                     ))}
-                </ul>
+                </ul><br/>
               </li>
             ))}
           </ul>
-          {apiMessage}
         </div>
     )
 }
@@ -49,27 +51,23 @@ function ReviewActivity({model, instance, andRefreshDisplay}: {model: any, insta
     const [apiMessage, changeApiMessage] = React.useState<string>()
     const [receiptData, changeReceiptData] = React.useState([])
 
-
     function reviewActivity() {
+        const inputActivityPeriod = document.getElementById("activity-period") as HTMLInputElement
+        const activityPeriod = inputActivityPeriod.value
 
-        const inputDaysPrior = document.getElementById("days-prior") as HTMLInputElement
-
-        const daysPrior = parseInt(inputDaysPrior.value)
-
-        if (daysPrior < 0) {
-            changeApiMessage("Enter a value >= 0")
-            return
-        }
+        const inputReviewPeriod = document.getElementById("review-period") as HTMLInputElement
+        const reviewPeriod = parseInt(inputReviewPeriod.value)
 
         instance.post('/reviewActivity', {
                 "loginToken": model.getLoginToken(),
-                "daysPrior": daysPrior
+                "activityPeriod": activityPeriod,
+                "reviewPeriod": reviewPeriod
             })
             .then((response: any) => {
                 let message = JSON.parse(response.data.body)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse
-                console.log(message)
+                // console.log(response)
                 if (response.data.statusCode == 400) {
-                    changeApiMessage("Not logged into account")
+                    changeApiMessage(message)
                 } else {
                     if (message.receiptData.length == 0) {
                         changeApiMessage("No receipts in specified timeframe")
@@ -86,21 +84,41 @@ function ReviewActivity({model, instance, andRefreshDisplay}: {model: any, insta
 
     return (
         <div>
-          <h2>Review Activity</h2>
-          <b>Days Prior: </b><input id="days-prior" placeholder="Days Prior" data-testid="days-prior"></input>
-          <button onClick={() => {reviewActivity()}}>Review Activity</button><br></br>
-          {apiMessage}<br></br>
-          <ul>
-            {receiptData.map((receipt: any) => (
-              <li key={receipt.receiptID}>{"Receipt from " + receipt.date.slice(0, 10) + " at chain \"" + receipt.chainID + "\" and store \"" + receipt.storeID + "\""}
-                <ul>
-                    {receipt.items.map((item: any) => (
-                        <li key={item.itemID}>{"Item: " + item.name + "  | Category: " + item.category + "  | Price: " + item.price}</li>
-                    ))}
-                </ul><br />
-              </li>
-            ))}
-          </ul>
+            <h2>Review Activity</h2>
+            {/* <b>Days Prior: </b><input id="days-prior" placeholder="Days Prior" data-testid="days-prior"></input> */}
+            <b>Review Period: </b><input id="review-period" placeholder="# of Days/Weeks/Months" data-testid="review-period"></input>
+            
+            <select name="activity-period" id="activity-period">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+            </select>
+
+            <button onClick={() => {reviewActivity()}}>Review Activity</button><br/>
+            {apiMessage}<br></br>
+
+            <ul>
+                {receiptData.map((receiptData: any) => (
+                <li key={receiptData.startDate}>
+                    <h3>{"From " + receiptData.startDate.slice(0, 10) + " to " + receiptData.endDate.slice(0, 10)}</h3>
+                    <b>{receiptData.receipts.length == 0 && "No receipts in this timeframe"}</b>
+                    <ul>
+                        {receiptData.receipts.map((receipt: any) => (
+                        <li key={receipt.receiptID}>
+                            <b>{"Receipt purchased from " + receipt.chainName + " at " + receipt.storeName + " (" + receipt.storeAddress + ") on " + receipt.date.slice(0, 10) + " | Total: $" + receipt.totalCost}</b>
+                            <ul>
+                                {receipt.items.map((item: any) => (
+                                    <li key={item.itemID}>
+                                        {"Item: " + item.name + " (" + item.category + ") | $" + item.price}
+                                    </li>
+                                ))}
+                            </ul><br/>
+                        </li>
+                        ))}
+                    </ul><br/>
+                </li>
+                ))}
+            </ul>
         </div>
     )
 }
@@ -112,7 +130,6 @@ function SearchRecentPurchases({model, instance, andRefreshDisplay}: {model: any
     function searchRecentPurchases() {
 
         const inputSearchField = document.getElementById("search-field") as HTMLInputElement
-
         const searchField = inputSearchField.value
 
         instance.post('/searchRecentPurchases', {
@@ -121,9 +138,9 @@ function SearchRecentPurchases({model, instance, andRefreshDisplay}: {model: any
             })
             .then((response: any) => {
                 let message = JSON.parse(response.data.body)
-                console.log(message.itemData)
+                // console.log(message.itemData)
                 if (response.data.statusCode == 400) {
-                    changeApiMessage("Not logged into account")
+                    changeApiMessage(message)
                 } else {
                     if (message.itemData.length == 0) {
                         changeApiMessage("No purchased items with specified name")
@@ -146,7 +163,7 @@ function SearchRecentPurchases({model, instance, andRefreshDisplay}: {model: any
           {apiMessage}<br></br>
           <ul>
             {itemData.map((item: any) => (
-              <li key={item.itemID}>{"Name: " + item.name + "  | Category: " + item.category + "  | Price: " + item.price + "  | Date: " + item.date.slice(0, 10)}</li>
+              <li key={item.itemID}>{"Item: " + item.name + " (" + item.category + ") | $" + item.price + " | Purchased from " + item.chainName + " at " + item.storeName + " (" + item.address + ") on " + item.date.slice(0, 10)}</li>
             ))}
           </ul>
         </div>
