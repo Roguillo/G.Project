@@ -30,7 +30,7 @@ export const handler = async (event) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
         } else if (rows.length == 0) {
-          reject(new Error("Invalid token"))
+          reject(new Error("Not logged into account"))
         } else {
           resolve(rows[0].shopperID)
         }
@@ -39,9 +39,10 @@ export const handler = async (event) => {
   }
 
   let getMatchingItems = (shopperID, searchField) => {
+    searchField = "%" + searchField + "%" // Makes the query search for items that contain the search field
     return new Promise((resolve, reject) => {
-      // Found at https://www.w3schools.com/mysql/mysql_join_inner.asp
-      const selectQuery = "SELECT item.itemID, item.name, item.category, item.price, receipt.date FROM Items AS item INNER JOIN Receipts AS receipt ON receipt.receiptID = item.receiptID WHERE receipt.shopperID = ? AND item.name = ? ORDER BY date DESC";
+      // Like found at https://www.w3schools.com/mysql/mysql_join_inner.asp
+      const selectQuery = "SELECT item.itemID, item.name, item.category, item.price, receipt.date, chain.name AS chainName, chain.chainID, store.name AS storeName, store.storeID, store.address FROM Items AS item INNER JOIN Receipts AS receipt INNER JOIN Chains AS chain INNER JOIN Stores AS store ON receipt.receiptID = item.receiptID AND receipt.chainID = chain.chainID AND receipt.storeID = store.storeID WHERE receipt.shopperID = ? AND item.name LIKE ? ORDER BY date DESC";
       pool.query(selectQuery, [shopperID, searchField], (error, rows) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
@@ -57,6 +58,8 @@ export const handler = async (event) => {
     const token = event.loginToken
     const searchField = event.searchField
 
+    if (searchField == "") { throw new Error("Search field cannot be empty") }
+
     const shopperID = await verifyToken(token)
 
     const items = await getMatchingItems(shopperID, searchField)
@@ -68,7 +71,7 @@ export const handler = async (event) => {
     }
 
   } catch (error){
-    result = "SQL error:" + error
+    result = error.toString()
     code = 400
   }
 

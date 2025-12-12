@@ -29,7 +29,7 @@ export const handler = async (event) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
         } else if (rows.length == 0) {
-          reject(new Error("Invalid token"))
+          reject(new Error("Not logged into account"))
         } else {
           resolve(rows[0].shopperID)
         }
@@ -40,7 +40,7 @@ export const handler = async (event) => {
   // Gets a list of receipts linked to a shopperID
   let getReceipts = (shopperID) => {
     return new Promise((resolve, reject) => {
-      const selectQuery = "SELECT receiptID, chainID, storeID, date FROM Receipts WHERE shopperID = ? ORDER BY date DESC"
+      const selectQuery = "SELECT receipt.receiptID, receipt.date, chain.name AS chainName, chain.chainID, store.name AS storeName, store.storeID, store.address FROM Receipts as receipt INNER JOIN Stores as store INNER JOIN Chains as chain ON receipt.storeID = store.storeID AND receipt.chainID = chain.chainID WHERE shopperID = ? ORDER BY date DESC"
       pool.query(selectQuery, [shopperID], (error, rows) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
@@ -52,7 +52,7 @@ export const handler = async (event) => {
   }
 
   // Gets a list of items linked to a receiptID
-  let getItem = (receipt) => {
+  let getItems = (receipt) => {
     return new Promise((resolve, reject) => {
       const selectQuery = "SELECT itemID, name, category, price FROM Items WHERE receiptID = ?"
       pool.query(selectQuery, [receipt], (error, rows) => {
@@ -78,10 +78,17 @@ export const handler = async (event) => {
     // Uses the list of receipts and formats each receiptID to have a list of items it contains
     const receiptData = await Promise.all(
       receipt.map(async (receipt) => {
-        const item = await getItem(receipt.receiptID)
+        const items = await getItems(receipt.receiptID)
         return {
-          receiptID: receipt.receiptID, date: receipt.date, chainID: receipt.chainID, storeID: receipt.storeID,
-          items: item
+          receiptID: receipt.receiptID,
+          date: receipt.date,
+          chainName: receipt.chainName,
+          chainID: receipt.chainID,
+          storeName: receipt.storeName,
+          storeID: receipt.storeID,
+          address: receipt.address,
+          totalCost: items.reduce((total, item) => total + parseFloat(item.price), 0).toFixed(2),
+          items: items
         }
       })
     )
@@ -92,7 +99,7 @@ export const handler = async (event) => {
     }
 
   } catch (error){
-    result = "SQL error:" + error
+    result = error.toString()
     code = 400
   }
 
