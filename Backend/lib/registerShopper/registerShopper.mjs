@@ -74,7 +74,7 @@ export const handler = async (event) => {
 
 
     // Registers shopper account if all previous test cases pass
-    registerShopper(name, username, password, shopperID)
+    await registerShopper(name, username, password, shopperID)
 
     // Returns 200 and success result
     result = "Created account: " + username
