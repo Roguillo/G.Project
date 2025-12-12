@@ -31,7 +31,7 @@ export const handler = async (event) => {
         if (error) {
           reject(new Error("Database error: " + error.sqlMessage))
         } else if (rows.length == 0) {
-          reject(new Error("Invalid token"))
+          reject(new Error("Not logged into account"))
         } else {
           resolve(rows[0].shopperID)
         }
@@ -167,8 +167,8 @@ export const handler = async (event) => {
       receiptData: receiptItemData
     }
 
-  } catch (error){
-    result = "SQL error:" + error
+  } catch (error) {
+    result = error.toString()
     code = 400
   }
 
