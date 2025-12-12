@@ -87,7 +87,7 @@ export const handler = async (event) => {
           storeName: receipt.storeName,
           storeID: receipt.storeID,
           address: receipt.address,
-          totalCost: items.reduce((total, item) => total + parseFloat(item.price), 0),
+          totalCost: items.reduce((total, item) => total + parseFloat(item.price), 0).toFixed(2),
           items: items
         }
       })

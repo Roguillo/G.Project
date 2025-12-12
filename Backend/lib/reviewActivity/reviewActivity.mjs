@@ -143,7 +143,7 @@ export const handler = async (event) => {
               storeID: receipt.storeID,
               storeAddress: receipt.address,
               items: items,
-              totalCost: items.reduce((total, item) => total + parseFloat(item.price), 0)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
+              totalCost: items.reduce((total, item) => total + parseFloat(item.price), 0).toFixed(2)  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
             }
           })
         )
