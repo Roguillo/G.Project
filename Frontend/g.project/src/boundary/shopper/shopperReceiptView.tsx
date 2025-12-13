@@ -135,7 +135,7 @@ export function ShopperReceiptView({ model,       instance,      sync      } :
 
         const itemName     = inputElementItemName.value;
         const itemCategory = inputElementItemCategory.value;
-        const itemPrice    = parseInt(inputElementItemPrice.value);
+        const itemPrice    = parseFloat(inputElementItemPrice.value).toFixed(2);
         const itemQuantity = parseInt(inputElementItemQuantity.value);
     
 
