@@ -341,7 +341,7 @@ export class ApplicationStack extends cdk.Stack {
       code: lambda.Code.fromAsset(path.join(__dirname, 'reviewActivity')),
       vpc: vpc,                                                             // Reference the VPC defined above
       securityGroups: [securityGroup],                                      // Associate the security group
-      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+      timeout: Duration.seconds(20),                                         // Example timeout, adjust as needed
     })
     reviewActivityResource.addMethod('POST', new apigw.LambdaIntegration(reviewActivity_fn, integration_parameters), response_parameters)
 

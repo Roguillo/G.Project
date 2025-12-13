@@ -82,9 +82,10 @@ export const handler = async (event) => {
 
     if (reviewPeriod < 1) {
       throw new Error("Review period must be at least 1")
-    } else if (reviewPeriod > 15) {
-      throw new Error("Review period must be at most 15")
-    }
+    } 
+    // else if (reviewPeriod > 15) {
+    //   throw new Error("Review period must be at most 15")
+    // }
 
     // Creates different start and end date 
     var startEndDates = []
