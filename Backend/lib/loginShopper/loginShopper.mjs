@@ -70,6 +70,19 @@ export const handler = async (event) => {
     })
   }
 
+  let getShoppingListInfo = (shopperID) => {
+    return new Promise((resolve, reject) => {
+      const selectQuery = "SELECT * FROM ShoppingLists WHERE shopperID = ?"
+      pool.query(selectQuery, [shopperID], (error, rows) => {
+        if (error) {
+          reject(new Error("Database error: " + error.sqlMessage))
+        } else {
+          resolve(rows)
+        }
+      })
+    })
+  }
+
 
   try {
     // Define JSON inputs as variables
@@ -95,10 +108,13 @@ export const handler = async (event) => {
     let loginToken = "loginToken" + crypto.randomUUID()
     generateLoginToken(loginToken, shopperCredentials)
 
+    const shoppingListInfo = await getShoppingListInfo(shopperCredentials)
+    
     // Returns 200 and success result
     result = { "body" : "Successfully logged into " + username,
                "loginToken" : loginToken,
-               "name" : name }
+               "name" : name,
+               "shoppingListInfo" : shoppingListInfo }
     code = 200
 
   } catch (error) {
